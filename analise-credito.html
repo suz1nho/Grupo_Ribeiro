@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Crédito - Grupo Ribeiros</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/analise-credito.css">
+</head>
+<body>
+    <!-- Simplified header matching the image design -->
+    <header class="credit-header">
+        <div class="credit-header-content">
+            <div class="logo-text">Grupo Ribeiros</div>
+            <a href="index.html" class="btn-voltar">Voltar</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="credit-analysis-page">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Análise de Crédito</h1>
+                <p class="page-description">Envie seus documentos para agilizar sua análise</p>
+            </div>
+
+            <div class="credit-form-wrapper">
+                <form id="creditAnalysisForm" class="credit-form">
+                    <!-- CPF e RG ou CNH -->
+                    <div class="form-card">
+                        <div class="form-card-header">
+                            <div class="icon-circle icon-blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                            </div>
+                            <h3 class="form-card-title">CPF e RG ou CNH</h3>
+                        </div>
+                        <div class="form-card-content">
+                            <input type="file" id="docIdentidade" accept="image/*" capture="environment" class="file-input">
+                            <label for="docIdentidade" class="file-upload-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                Enviar Arquivo
+                            </label>
+                            <button type="button" class="btn-nao-tenho" data-field="identidade">Não tenho</button>
+                        </div>
+                        <div id="previewIdentidade" class="file-preview"></div>
+                    </div>
+
+                    <!-- Comprovante de Endereço -->
+                    <div class="form-card">
+                        <div class="form-card-header">
+                            <div class="icon-circle icon-blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                            </div>
+                            <h3 class="form-card-title">Comprovante de Endereço</h3>
+                        </div>
+                        <div class="form-card-content">
+                            <input type="file" id="docEndereco" accept="image/*" capture="environment" class="file-input">
+                            <label for="docEndereco" class="file-upload-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                Enviar Arquivo
+                            </label>
+                            <button type="button" class="btn-nao-tenho" data-field="endereco">Não tenho</button>
+                        </div>
+                        <div id="previewEndereco" class="file-preview"></div>
+                    </div>
+
+                    <!-- Comprovante de Renda -->
+                    <div class="form-card">
+                        <div class="form-card-header">
+                            <div class="icon-circle icon-blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="1" x2="12" y2="23"/>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                            </div>
+                            <h3 class="form-card-title">Comprovante de Renda</h3>
+                        </div>
+                        <div class="form-card-content">
+                            <input type="file" id="docRenda" accept="image/*" capture="environment" class="file-input">
+                            <label for="docRenda" class="file-upload-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                Enviar Arquivo
+                            </label>
+                            <button type="button" class="btn-nao-tenho" data-field="renda">Não tenho</button>
+                        </div>
+                        <div id="previewRenda" class="file-preview"></div>
+                    </div>
+
+                    <!-- Dados Bancários -->
+                    <div class="form-card">
+                        <div class="form-card-header">
+                            <div class="icon-circle icon-blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                    <line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                            </div>
+                            <h3 class="form-card-title">Dados Bancários</h3>
+                        </div>
+                        <div class="form-card-content">
+                            <input type="file" id="docBancario" accept="image/*" capture="environment" class="file-input">
+                            <label for="docBancario" class="file-upload-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                Enviar Arquivo
+                            </label>
+                            <button type="button" class="btn-nao-tenho" data-field="bancario">Não tenho</button>
+                        </div>
+                        <div id="previewBancario" class="file-preview"></div>
+                    </div>
+
+                    <!-- Número de Contato -->
+                    <div class="form-card">
+                        <div class="form-card-header">
+                            <div class="icon-circle icon-blue">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                </svg>
+                            </div>
+                            <h3 class="form-card-title">Número de Contato <span class="required">*</span></h3>
+                        </div>
+                        <div class="form-card-content">
+                            <input 
+                                type="tel" 
+                                id="telefone" 
+                                class="phone-input" 
+                                placeholder="(00) 00000-0000" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit">
+                        Enviar Análise
+                    </button>
+
+                    <!-- Alert Messages -->
+                    <div id="formAlert" class="form-alert hidden"></div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/js/analise-credito.js"></script>
+</body>
+</html>

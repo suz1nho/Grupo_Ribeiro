@@ -1,0 +1,564 @@
+/* Complete redesign matching the image design */
+
+/* Header */
+.credit-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 1000;
+  padding: 1rem 0;
+}
+
+.credit-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.btn-voltar {
+  color: #64748b;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.btn-voltar:hover {
+  color: #1e293b;
+}
+
+/* Main Page */
+.credit-analysis-page {
+  min-height: 100vh;
+  padding-top: 80px;
+  padding-bottom: 4rem;
+  background: #f8f9fa;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-top: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #000;
+  letter-spacing: -0.02em;
+}
+
+.page-description {
+  font-size: 1rem;
+  color: #8b6914;
+  line-height: 1.5;
+}
+
+/* Form Wrapper */
+.credit-form-wrapper {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.credit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Form Cards */
+.form-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.form-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-blue {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.icon-circle svg {
+  width: 24px;
+  height: 24px;
+}
+
+.form-card-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.required {
+  color: #dc2626;
+  margin-left: 0.25rem;
+}
+
+/* Form Card Content */
+.form-card-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Ajustado para não incluir preview no flex */
+.file-input {
+  display: none;
+}
+
+.file-upload-btn {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-upload-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.file-upload-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Estilo melhorado para o botão toggle */
+.btn-nao-tenho {
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  color: #f59e0b;
+  border: 2px solid #f59e0b;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-nao-tenho:hover {
+  background: #fffbeb;
+}
+
+.btn-nao-tenho.active {
+  background: #f59e0b;
+  color: #fff;
+  border-color: #f59e0b;
+}
+
+/* File Preview */
+/* Preview agora é uma linha separada completa */
+.file-preview {
+  display: none;
+  width: 100%;
+  margin-top: 1rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.file-preview.has-file {
+  display: block;
+}
+
+.file-preview img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.file-remove {
+  padding: 0.5rem;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-remove:hover {
+  background: #fca5a5;
+}
+
+.file-remove svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Adicionado preview de imagens com melhor visualização */
+.file-preview-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.preview-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.preview-image:hover {
+  transform: scale(1.05);
+  border-color: #3b82f6;
+}
+
+/* Estilo para mensagem "Não tenho" */
+/* Melhorado o estilo da mensagem "Não tenho" */
+.no-doc-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+
+.no-doc-message svg {
+  width: 24px;
+  height: 24px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.no-doc-message p {
+  font-size: 0.9375rem;
+  color: #78350f;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Removido btn-undo pois agora o botão principal faz toggle */
+
+/* Phone Input */
+.phone-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 0.9375rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.phone-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.phone-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Submit Button */
+.btn-submit {
+  width: 100%;
+  max-width: 300px;
+  margin: 2rem auto 0;
+  padding: 1rem 2rem;
+  background: #1e40af;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: block;
+}
+
+.btn-submit:hover {
+  background: #1e3a8a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Form Alert */
+.form-alert {
+  display: none;
+  padding: 1rem;
+  border-radius: 8px;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  margin-top: 1.5rem;
+}
+
+.form-alert.show {
+  display: flex;
+}
+
+.form-alert svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.form-alert.success {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.form-alert.error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Spinner animation */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .form-card {
+    padding: 1.25rem;
+  }
+
+  .form-card-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .file-upload-btn {
+    min-width: auto;
+  }
+
+  .btn-nao-tenho {
+    width: 100%;
+  }
+
+  .btn-submit {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .credit-header-content {
+    padding: 0 1rem;
+  }
+
+  .logo-text {
+    font-size: 1.125rem;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+  }
+
+  .page-description {
+    font-size: 0.9375rem;
+  }
+
+  .form-card {
+    padding: 1rem;
+  }
+
+  .icon-circle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-circle svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .form-card-title {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Adicionando modal para visualização de imagens em tela cheia */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 2rem;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.image-modal-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.image-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.image-modal-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 640px) {
+  .image-modal {
+    padding: 1rem;
+  }
+
+  .image-modal-close {
+    top: -40px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .image-modal-close svg {
+    width: 18px;
+    height: 18px;
+  }
+}

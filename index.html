@@ -1,0 +1,3291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grupo Ribeiro - Realize Seus Sonhos com Créditos</title>
+    <style>
+      
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+  
+  /* Updated color palette to match Grupo Ribeiro branding (gold/bronze and dark navy blue) */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    /* New color theme matching Grupo Ribeiro branding */
+    --navy-dark: #0a1628;
+    --navy-medium: #152238;
+    --navy-light: #1e2f47;
+    --gold: #c9a961;
+    --gold-light: #d4b876;
+    --gold-dark: #b5954d;
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray-medium: #e0e0e0;
+    --gray-dark: #757575;
+    --black: #000000;
+  
+    /* Legacy variables for compatibility */
+    --background: #ffffff;
+    --foreground: #0a1628;
+    --card: #ffffff;
+    --card-foreground: #0a1628;
+    --primary: #c9a961;
+    --primary-foreground: #0a1628;
+    --muted: #f5f5f5;
+    --muted-foreground: #757575;
+    --border: #e0e0e0;
+    --radius: 0.5rem;
+  }
+  
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--white);
+    color: var(--navy-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Header */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid var(--gray-medium);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+  }
+  
+  .nav {
+    display: none;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  @media (min-width: 768px) {
+    .nav {
+      display: flex;
+    }
+  }
+  
+  .nav a {
+    text-decoration: none;
+    color: var(--navy-dark);
+    font-weight: 500;
+    transition: color 0.3s;
+    font-size: 0.9375rem;
+  }
+  
+  .nav a:hover {
+    color: var(--gold);
+  }
+  
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    line-height: 1.25rem;
+    white-space: nowrap;
+  }
+  
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy-dark);
+  }
+  
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 97, 0.3);
+  }
+  
+  .btn-gold {
+    background: var(--gold);
+    color: var(--navy-dark);
+  }
+  
+  .btn-gold:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 97, 0.3);
+  }
+  
+  .btn-outline {
+    background: transparent;
+    border: 2px solid var(--navy-dark);
+    color: var(--navy-dark);
+  }
+  
+  .btn-outline:hover {
+    background: var(--navy-dark);
+    color: var(--white);
+  }
+  
+  .btn-outline-light {
+    background: transparent;
+    border: 2px solid var(--white);
+    color: var(--white);
+  }
+  
+  .btn-outline-light:hover {
+    background: var(--white);
+    color: var(--navy-dark);
+  }
+  
+  .btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+  
+  .btn-full {
+    width: 100%;
+  }
+  
+  /* New Hero Section with dark navy background and gold accents */
+  .hero-new {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-medium) 50%, var(--navy-light) 100%);
+    overflow: hidden;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(201,169,97,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.5;
+  }
+  
+  .hero-content-new {
+    position: relative;
+    z-index: 10;
+    padding: 4rem 1rem;
+  }
+  
+  .hero-text {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .hero-title-new {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+  
+  @media (min-width: 768px) {
+    .hero-title-new {
+      font-size: 4rem;
+    }
+  }
+  
+  .hero-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
+  }
+  
+  .hero-badges {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  
+  .hero-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gold);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .hero-badge-item svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  /* New About Section */
+  .section-about {
+    background: var(--white);
+    padding: 5rem 1rem;
+  }
+  
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  @media (min-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+  
+  .about-image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section-title-gold {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--navy-dark);
+    position: relative;
+    display: inline-block;
+  }
+  
+  .section-title-gold::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+  
+  .about-text {
+    font-size: 1.0625rem;
+    color: var(--gray-dark);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+  
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+  
+  .about-stat {
+    text-align: center;
+  }
+  
+  .about-stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  
+  .about-stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+  }
+  
+  /* New Cartas Contempladas Section */
+  .section-cartas {
+    background: var(--navy-dark);
+    padding: 5rem 1rem;
+  }
+  
+  .section-header-center {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  
+  .section-description-light {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+  .section-description-dark {
+    font-size: 1.125rem;
+    color: var(--gray-dark);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+  .section-title-light {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+  
+  .cartas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  @media (min-width: 768px) {
+    .cartas-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem;
+    }
+  }
+  
+  .carta-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .carta-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(201, 169, 97, 0.3);
+  }
+  
+  .carta-image-wrapper {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+  }
+  
+  .carta-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .carta-info {
+    padding: 2rem;
+  }
+  
+  .carta-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy-dark);
+    margin-bottom: 1rem;
+  }
+  
+  .carta-description {
+    font-size: 1rem;
+    color: var(--gray-dark);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* New Benefits Section */
+  .section-benefits-new {
+    background: var(--gray-light);
+    padding: 5rem 1rem;
+  }
+  
+  .benefits-grid-new {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .benefit-card-new {
+    background: var(--white);
+    border: 2px solid var(--gray-medium);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .benefit-card-new:hover {
+    border-color: var(--gold);
+    box-shadow: 0 8px 24px rgba(201, 169, 97, 0.15);
+    transform: translateY(-4px);
+  }
+  
+  .benefit-icon-gold {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--navy-dark);
+  }
+  
+  .benefit-icon-gold svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  
+  .benefit-title-new {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--navy-dark);
+  }
+  
+  .benefit-description-new {
+    color: var(--gray-dark);
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+  
+  /* New Team Section */
+  .section-team {
+    background: var(--navy-dark);
+    padding: 5rem 1rem;
+  }
+  
+  .team-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .team-intro {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+  
+  .team-cta {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* New How It Works Section */
+  .section-how-new {
+    background: var(--white);
+    padding: 5rem 1rem;
+  }
+  
+  .steps-grid-new {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .step-card-new {
+    background: var(--white);
+    border: 2px solid var(--gray-medium);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .step-card-new:hover {
+    border-color: var(--gold);
+    box-shadow: 0 8px 24px rgba(201, 169, 97, 0.15);
+    transform: translateY(-4px);
+  }
+  
+  .step-number-gold {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 auto 1.5rem;
+  }
+  
+  .step-title-new {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--navy-dark);
+  }
+  
+  .step-description-new {
+    color: var(--gray-dark);
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+  
+  /* New Requirements Section */
+  .section-requirements-new {
+    background: var(--navy-dark);
+    padding: 5rem 1rem;
+  }
+  
+  .requirements-grid-new {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .requirement-card-new {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(201, 169, 97, 0.3);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .requirement-card-new:hover {
+    border-color: var(--gold);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-4px);
+  }
+  
+  .requirement-icon-gold {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--navy-dark);
+  }
+  
+  .requirement-icon-gold svg {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .requirement-title-new {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--white);
+  }
+  
+  .requirement-description-new {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.7;
+  }
+  
+  /* New Contact Section */
+  .section-contact-new {
+    background: var(--gold);
+    padding: 5rem 1rem;
+  }
+  
+  .contact-grid-new {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .contact-item-new {
+    text-align: center;
+  }
+  
+  .contact-icon-gold {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--navy-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--gold);
+  }
+  
+  .contact-icon-gold svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .contact-title-new {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--navy-dark);
+  }
+  
+  .contact-link-new {
+    color: var(--navy-dark);
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.3s;
+    font-size: 1.125rem;
+  }
+  
+  .contact-link-new:hover {
+    opacity: 0.7;
+  }
+  
+  /* Added styles for contact action buttons */
+  .btn-contact-action {
+    margin-top: 1rem;
+    background: var(--navy-dark);
+    color: var(--gold);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: 2px solid var(--navy-dark);
+  }
+  
+  .btn-contact-action:hover {
+    background: transparent;
+    color: var(--navy-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 22, 40, 0.2);
+  }
+  
+  .btn-contact-action svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* New Footer */
+  .footer-new {
+    background: var(--navy-dark);
+    color: var(--white);
+    padding: 4rem 1rem 2rem;
+  }
+  
+  .footer-content-new {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+  
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .footer-brand img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+  }
+  
+  .footer-text-new {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+  
+  .footer-title-new {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--gold);
+  }
+  
+  .footer-links-new {
+    list-style: none;
+  }
+  
+  .footer-links-new li {
+    margin-bottom: 0.75rem;
+  }
+  
+  .footer-links-new a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.3s;
+    font-size: 1rem;
+  }
+  
+  .footer-links-new a:hover {
+    color: var(--gold);
+  }
+  
+  .footer-bottom-new {
+    max-width: 1200px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9375rem;
+  }
+  
+  /* Hero Section - Matching original design */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+    background: linear-gradient(to bottom, var(--muted), var(--background));
+    overflow: hidden;
+  }
+  
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .hero-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.06;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  
+  .hero-circle-1 {
+    top: 10%;
+    left: 10%;
+    width: 300px;
+    height: 300px;
+    background: var(--primary);
+  }
+  
+  .hero-circle-2 {
+    bottom: 10%;
+    right: 10%;
+    width: 400px;
+    height: 400px;
+    background: var(--accent);
+    animation-delay: 2s;
+  }
+  
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.06;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.08;
+    }
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 4rem 1rem;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+  
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(0.8);
+    }
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  
+  @media (min-width: 768px) {
+    .hero-title {
+      font-size: 3.75rem;
+    }
+  }
+  
+  .text-primary {
+    color: var(--primary);
+  }
+  
+  .hero-description {
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    max-width: 42rem;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  
+  .hero-features {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .hero-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+  
+  .hero-feature svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--primary);
+  }
+  
+  /* Stats Section */
+  .stats {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 4rem 1rem;
+  }
+  
+  .stats-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+    }
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+  
+  @media (min-width: 768px) {
+    .stat-value {
+      font-size: 3rem;
+    }
+  }
+  
+  .stat-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+  
+  /* Section Styles */
+  .section {
+    padding: 5rem 1rem;
+  }
+  
+  .section-benefits {
+    background: var(--background);
+  }
+  
+  .section-how-it-works {
+    background: var(--muted);
+  }
+  
+  .section-requirements {
+    background: var(--background);
+  }
+  
+  .section-scheduling {
+    background: linear-gradient(to bottom, var(--muted), var(--background));
+  }
+  
+  .section-contact {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  
+  @media (min-width: 768px) {
+    .section-title {
+      font-size: 2.5rem;
+    }
+  }
+  
+  .section-description {
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    line-height: 1.6;
+  }
+  
+  .section-contact .section-description {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Benefits Grid */
+  .benefits-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .benefit-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .benefit-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+  }
+  
+  .benefit-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: calc(var(--radius) - 2px);
+    background: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: var(--primary);
+  }
+  
+  .benefit-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .benefit-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .benefit-description {
+    color: var(--muted-foreground);
+    line-height: 1.6;
+    font-size: 0.9375rem;
+  }
+  
+  /* Steps Grid (How It Works) */
+  .steps-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  
+  
+  /* Scheduling Container */
+  .scheduling-container {
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+  
+  .scheduling-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .step-content {
+    display: none;
+  }
+  
+  .step-content.active {
+    display: block;
+  }
+  
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .step-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--primary);
+  }
+  
+  .step-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .step-info {
+    color: var(--muted-foreground);
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+  }
+  
+  /* Calendar */
+  .calendar-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+  
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  
+  .calendar-nav {
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: calc(var(--radius) - 2px);
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .calendar-nav:hover {
+    background: var(--muted);
+  }
+  
+  .calendar-nav svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .calendar-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  
+  .calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .calendar-weekdays div {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    padding: 0.5rem;
+  }
+  
+  .calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .calendar-day {
+    padding: 0.75rem;
+    border-radius: calc(var(--radius) - 2px);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    min-width: 0;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .calendar-day:hover:not(:disabled) {
+    background: var(--accent);
+  }
+  
+  .calendar-day:disabled {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  
+  .calendar-day.empty {
+    background: transparent;
+    cursor: default;
+  }
+  
+  .calendar-note {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  /* Time Slots */
+  .time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .time-slot {
+    padding: 0.75rem 1rem;
+    border-radius: calc(var(--radius) - 2px);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    position: relative;
+  }
+  
+  .time-slot:hover:not(:disabled) {
+    background: var(--accent);
+  }
+  
+  .time-slot:disabled {
+    background: #fee2e2;
+    color: #dc2626;
+    cursor: not-allowed;
+  }
+  
+  .time-slot.blocked::after {
+    content: "✕";
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    background: #dc2626;
+    color: white;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  
+  /* Form */
+  .appointment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .form-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .form-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  .form-input {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--input);
+    background: var(--background);
+    border-radius: calc(var(--radius) - 2px);
+    font-size: 0.9375rem;
+    transition: all 0.2s;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px rgba(var(--ring), 0.1);
+  }
+  
+  .form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--muted);
+    border-radius: calc(var(--radius) - 2px);
+  }
+  
+  .form-checkbox input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    cursor: pointer;
+    accent-color: var(--primary);
+  }
+  
+  .form-checkbox label {
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.9375rem;
+  }
+  
+  .form-alert {
+    padding: 1rem;
+    border-radius: calc(var(--radius) - 2px);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+  }
+  
+  .form-alert svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
+  
+  .form-alert.success {
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #166534;
+  }
+  
+  .form-alert.error {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+  }
+  
+  .form-note {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  /* Contact Section */
+  .contact-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .contact-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .contact-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .contact-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .contact-text {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+    font-size: 0.9375rem;
+  }
+  
+  .contact-link {
+    color: var(--secondary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    font-size: 1rem;
+  }
+  
+  .contact-link:hover {
+    opacity: 0.8;
+  }
+  
+  .contact-subtext {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+  
+  /* Footer */
+  .footer {
+    background: var(--foreground);
+    color: white;
+    padding: 3rem 1rem 2rem;
+  }
+  
+  .footer-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .footer-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-text {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    font-size: 0.9375rem;
+  }
+  
+  .footer-links {
+    list-style: none;
+  }
+  
+  .footer-links li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-size: 0.9375rem;
+  }
+  
+  .footer-links a:hover {
+    color: white;
+  }
+  
+  .footer-bottom {
+    max-width: 1280px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+  }
+  
+  /* Animations - Matching original project */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  
+  /* Utility Classes */
+  .hidden {
+    display: none;
+  }
+  
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* Recreating entire CSS to match original Next.js project exactly */
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Color theme matching original project */
+  --background: oklch(0.99 0.005 240);
+  --foreground: oklch(0.13 0.01 240);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.13 0.01 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0.01 240);
+  --primary: oklch(0.32 0.14 265);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.75 0.15 85);
+  --secondary-foreground: oklch(0.13 0.01 240);
+  --muted: oklch(0.95 0.01 240);
+  --muted-foreground: oklch(0.5 0.01 240);
+  --accent: oklch(0.55 0.12 265);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.91 0.01 240);
+  --input: oklch(0.95 0.01 240);
+  --ring: oklch(0.32 0.14 265);
+  --radius: 0.75rem;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header - Exactly like original */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  width: 48px;
+  height: 48px;
+}
+
+.nav {
+  display: none;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .nav {
+    display: flex;
+  }
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--foreground);
+  font-weight: 500;
+  transition: color 0.3s;
+  font-size: 0.875rem;
+}
+
+.nav a:hover {
+  color: var(--primary);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background: var(--muted);
+}
+
+.btn-lg {
+  padding: 0.625rem 1.5rem;
+  font-size: 1rem;
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.btn-secondary:hover {
+  opacity: 0.9;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* Hero Section - Matching original design */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 80px;
+  background: linear-gradient(to bottom, var(--muted), var(--background));
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.06;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.hero-circle-1 {
+  top: 10%;
+  left: 10%;
+  width: 300px;
+  height: 300px;
+  background: var(--primary);
+}
+
+.hero-circle-2 {
+  bottom: 10%;
+  right: 10%;
+  width: 400px;
+  height: 400px;
+  background: var(--accent);
+  animation-delay: 2s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.06;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.08;
+  }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 4rem 1rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.hero-description {
+  font-size: 1.125rem;
+  color: var(--muted-foreground);
+  max-width: 42rem;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.hero-features {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.hero-feature svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary);
+}
+
+/* Stats Section */
+.stats {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 4rem 1rem;
+}
+
+.stats-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+  }
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+@media (min-width: 768px) {
+  .stat-value {
+    font-size: 3rem;
+  }
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* Section Styles */
+.section {
+  padding: 5rem 1rem;
+}
+
+.section-benefits {
+  background: var(--background);
+}
+
+.section-how-it-works {
+  background: var(--muted);
+}
+
+.section-requirements {
+  background: var(--background);
+}
+
+.section-scheduling {
+  background: linear-gradient(to bottom, var(--muted), var(--background));
+}
+
+.section-contact {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 2.5rem;
+  }
+}
+
+.section-description {
+  font-size: 1.125rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.section-contact .section-description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Benefits Grid */
+.benefits-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.benefit-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+}
+
+.benefit-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.benefit-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.benefit-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.benefit-description {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+/* Steps Grid (How It Works) */
+.steps-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.step-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+}
+
+.step-number {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.step-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+/* Requirements Grid */
+.requirements-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.requirement-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.requirement-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.requirement-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: var(--primary);
+}
+
+.requirement-icon svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.requirement-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.requirement-description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+/* Scheduling Container */
+.scheduling-container {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.scheduling-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.step-content {
+  display: none;
+}
+
+.step-content.active {
+  display: block;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.step-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--primary);
+}
+
+.step-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.step-info {
+  color: var(--muted-foreground);
+  margin-top: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+/* Calendar */
+.calendar-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-nav {
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: calc(var(--radius) - 2px);
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-nav:hover {
+  background: var(--muted);
+}
+
+.calendar-nav svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.calendar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-weekdays div {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  padding: 0.5rem;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendar-day {
+  padding: 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  min-width: 0;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .calendar-day {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-weekdays div {
+    font-size: 0.75rem;
+    padding: 0.25rem;
+  }
+
+  .calendar-days {
+    gap: 0.25rem;
+  }
+
+  .calendar-container {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .calendar-day {
+    padding: 0.375rem 0.125rem;
+    font-size: 0.6875rem;
+    min-height: 2rem;
+  }
+
+  .calendar-weekdays div {
+    font-size: 0.625rem;
+  }
+}
+
+.calendar-note {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* Time Slots */
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.time-slot {
+  padding: 0.75rem 1rem;
+  border-radius: calc(var(--radius) - 2px);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  position: relative;
+}
+
+.time-slot:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+.time-slot:disabled {
+  background: #fee2e2;
+  color: #dc2626;
+  cursor: not-allowed;
+}
+
+.time-slot.blocked::after {
+  content: "✕";
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  background: #dc2626;
+  color: white;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Form */
+.appointment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.form-input {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--input);
+  background: var(--background);
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px rgba(var(--ring), 0.1);
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--muted);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+.form-checkbox input[type="checkbox"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.form-checkbox label {
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9375rem;
+}
+
+.form-alert {
+  padding: 1rem;
+  border-radius: calc(var(--radius) - 2px);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.form-alert svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.form-alert.success {
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.form-alert.error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.form-note {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Contact Section */
+.contact-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.contact-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.contact-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.contact-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.contact-text {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+}
+
+.contact-link {
+  color: var(--secondary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  font-size: 1rem;
+}
+
+.contact-link:hover {
+  opacity: 0.8;
+}
+
+.contact-subtext {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+.footer {
+  background: var(--foreground);
+  color: white;
+  padding: 3rem 1rem 2rem;
+}
+
+.footer-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: 0.9375rem;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+/* Animations - Matching original project */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Requirements Section - New Styles */
+.section-requirements-new {
+  background: var(--navy-dark);
+  padding: 5rem 1rem;
+}
+
+.section-header-center {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title-gold {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  color: #d4af37;
+}
+
+@media (min-width: 768px) {
+  .section-title-gold {
+    font-size: 2.5rem;
+  }
+}
+
+.section-description-light {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.requirements-grid-new {
+  max-width: 1280px;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="public/logo.jpeg" alt="Grupo Ribeiro Logo" width="48" height="48">
+                </div>
+                <nav class="nav">
+                    <a href="#sobre">Sobre</a>
+                    <a href="#beneficios">Benefícios</a>
+                    <a href="#equipe">Equipe</a>
+                    <a href="#contato">Contato</a>
+                </nav>
+                <div class="header-actions">
+                    <a href="#scheduling" class="btn btn-primary">Agendar Consulta</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-new">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content-new">
+            <div class="hero-text">
+                <h1 class="hero-title-new">Seu Sonho Está Aqui</h1>
+                <p class="hero-subtitle">Realize o sonho do seu bem com as melhores condições de crédito do mercado</p>
+                <div class="hero-badges">
+                    <div class="hero-badge-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        <span>Sem burocracia</span>
+                    </div>
+                    <div class="hero-badge-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        <span>Aprovação rápida</span>
+                    </div>
+                    <div class="hero-badge-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <span>Análise em 24h</span>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <a href="#scheduling" class="btn btn-gold btn-lg">Consultar Agora</a>
+                    <a href="#documentos" class="btn btn-outline-light btn-lg">Fazer Análise de Crédito</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre" class="section section-about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="public/foto.jpeg" alt="Grupo Ribeiro Equipe" />
+                </div>
+                <div class="about-content">
+                    <h2 class="section-title-gold">Grupo Ribeiro Representações</h2>
+                    <p class="about-text">
+                        Somos especialistas em Crédito com mais de 50 anos de experiência no mercado. 
+                        Nossa missão é transformar sonhos em realidade, oferecendo as melhores soluções 
+                        para aquisição de veículos e imóveis.
+                    </p>
+                    <p class="about-text">
+                        Com uma equipe dedicada e processos transparentes, garantimos que você tenha 
+                        a melhor experiência desde a consulta inicial até a contemplação da sua carta.
+                    </p>
+                    <div class="about-stats">
+                        <div class="about-stat">
+                            <div class="about-stat-number">50+</div>
+                            <div class="about-stat-label">Anos de Experiência</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-number">10k+</div>
+                            <div class="about-stat-label">Clientes Satisfeitos</div>
+                        </div>
+                        <div class="about-stat">
+                            <div class="about-stat-number">98%</div>
+                            <div class="about-stat-label">Taxa de Aprovação</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Benefits Section -->
+    <section id="beneficios" class="section section-benefits-new">
+        <div class="container">
+            <div class="section-header-center">
+                <h2 class="section-title-gold">Por Que Escolher o Grupo Ribeiro?</h2>
+                <p class="section-description-dark">Vantagens exclusivas para você realizar seus sonhos</p>
+            </div>
+            <div class="benefits-grid-new">
+                <div class="benefit-card-new">
+                    <div class="benefit-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title-new">Análise de Crédito Grátis</h3>
+                    <p class="benefit-description-new">Avaliamos seu perfil sem custo e sem compromisso em até 24 horas</p>
+                </div>
+                <div class="benefit-card-new">
+                    <div class="benefit-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title-new">Aprovação Rápida</h3>
+                    <p class="benefit-description-new">Processo ágil e sem burocracia para você</p>
+                </div>
+                <div class="benefit-card-new">
+                    <div class="benefit-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title-new">Parcelas Flexíveis</h3>
+                    <p class="benefit-description-new">Adapte o pagamento ao seu orçamento mensal</p>
+                </div>
+                <div class="benefit-card-new">
+                    <div class="benefit-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title-new">Atendimento Personalizado</h3>
+                    <p class="benefit-description-new">Equipe especializada pronta para ajudar você</p>
+                </div>
+                <div class="benefit-card-new">
+                    <div class="benefit-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            <polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title-new">Melhor Investimento</h3>
+                    <p class="benefit-description-new">Valorize seu patrimônio com segurança e planejamento</p>
+                </div>
+                <div class="benefit-card-new">
+                    <div class="benefit-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="7"/>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                        </svg>
+                    </div>
+                    <h3 class="benefit-title-new">50+ Anos de Mercado</h3>
+                    <p class="benefit-description-new">Experiência e tradição que você pode confiar</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="equipe" class="section section-team">
+        <div class="container">
+            <div class="section-header-center">
+                <h2 class="section-title-gold">Nossa Equipe</h2>
+                <p class="section-description-light">Profissionais dedicados a realizar seus sonhos</p>
+            </div>
+            <div class="team-content">
+                <p class="team-intro">
+                    Nossa equipe é formada por especialistas em Créditos, prontos para oferecer o melhor 
+                    atendimento e orientação personalizada. Com anos de experiência no mercado, trabalhamos 
+                    para garantir que você tenha acesso às melhores condições e um processo transparente do 
+                    início ao fim.
+                </p>
+                <div class="team-cta">
+                    <a href="https://www.instagram.com/reel/DRKmTDsDbFd/" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                        Conheça Nossa Equipe no Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section section-how-new">
+        <div class="container">
+            <div class="section-header-center">
+                <h2 class="section-title-gold">Como Funciona</h2>
+                <p class="section-description-dark">Processo simples e transparente em 4 passos</p>
+            </div>
+            <div class="steps-grid-new">
+                <div class="step-card-new">
+                    <div class="step-number-gold">1</div>
+                    <h3 class="step-title-new">Agende sua Consulta</h3>
+                    <p class="step-description-new">Escolha o melhor horário através do nosso sistema online</p>
+                </div>
+                <div class="step-card-new">
+                    <div class="step-number-gold">2</div>
+                    <h3 class="step-title-new">Envie seus Documentos</h3>
+                    <p class="step-description-new">Prepare e envie os documentos de forma segura e digital</p>
+                </div>
+                <div class="step-card-new">
+                    <div class="step-number-gold">3</div>
+                    <h3 class="step-title-new">Análise de Crédito</h3>
+                    <p class="step-description-new">Nossa equipe analisa seu perfil gratuitamente em até 24h</p>
+                </div>
+                <div class="step-card-new">
+                    <div class="step-number-gold">4</div>
+                    <h3 class="step-title-new">Aproveite seu Crédito</h3>
+                    <p class="step-description-new">Receba a aprovação e comece a realizar seus sonhos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section id="documentos" class="section section-requirements-new">
+        <div class="container">
+            <div class="section-header-center">
+                <h2 class="section-title-gold">Documentos Necessários</h2>
+                <p class="section-description-light">Tenha estes documentos em mãos para agilizar sua análise</p>
+            </div>
+            <div class="requirements-grid-new">
+                <div class="requirement-card-new">
+                    <div class="requirement-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3 class="requirement-title-new">CPF e RG ou CNH</h3>
+                    <p class="requirement-description-new">Documentos de identificação válidos</p>
+                </div>
+                <div class="requirement-card-new">
+                    <div class="requirement-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="requirement-title-new">Comprovante de Endereço</h3>
+                    <p class="requirement-description-new">Recente (até 90 dias)</p>
+                </div>
+                <div class="requirement-card-new">
+                    <div class="requirement-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                    </div>
+                    <h3 class="requirement-title-new">Comprovante de Renda</h3>
+                    <p class="requirement-description-new">Holerite, extrato ou declaração</p>
+                </div>
+                <div class="requirement-card-new">
+                    <div class="requirement-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                    </div>
+                    <h3 class="requirement-title-new">Dados Bancários</h3>
+                    <p class="requirement-description-new">Para débito automático das parcelas</p>
+                </div>
+            </div>
+            <br><br>
+
+            <div class="team-cta">
+              <a href="analise-credito.html" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9" y1="15" x2="15" y2="15"/>
+              </svg>
+                  Análise de Crédito
+              </a>
+          </div>
+
+    </section>
+
+    <!-- Scheduling Section -->
+    <section id="scheduling" class="section section-scheduling">
+        <div class="container scheduling-container">
+            <div class="section-header">
+                <h2 class="section-title">Agende Seu Atendimento</h2>
+                <p class="section-description">Selecione uma data e horário disponível para sua consultoria gratuita</p>
+            </div>
+
+            <div id="scheduling-app" class="scheduling-card">
+                <!-- Calendar Step -->
+                <div id="calendar-step" class="step-content active">
+                    <div class="step-header">
+                        <svg class="step-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <h3 class="step-title">Selecione uma Data</h3>
+                    </div>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button id="prev-month" class="calendar-nav">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"/>
+                                </svg>
+                            </button>
+                            <h4 id="current-month-year" class="calendar-title"></h4>
+                            <button id="next-month" class="calendar-nav">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>Dom</div>
+                            <div>Seg</div>
+                            <div>Ter</div>
+                            <div>Qua</div>
+                            <div>Qui</div>
+                            <div>Sex</div>
+                            <div>Sáb</div>
+                        </div>
+                        <div id="calendar-days" class="calendar-days"></div>
+                        <p class="calendar-note">Selecione uma data de hoje até os próximos 30 dias</p>
+                    </div>
+                </div>
+
+                <!-- Time Step -->
+                <div id="time-step" class="step-content">
+                    <button id="back-to-calendar" class="btn btn-outline btn-back">← Voltar</button>
+                    <div class="step-header">
+                        <svg class="step-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <h3 class="step-title">Selecione um Horário para <span id="selected-date-display"></span></h3>
+                    </div>
+                    <div id="time-slots" class="time-slots"></div>
+                    <p class="calendar-note">Horários com <span style="font-weight: bold">✕ vermelho</span> estão bloqueados (aguardando confirmação do administrador)</p>
+                </div>
+
+                <!-- Form Step -->
+                <div id="form-step" class="step-content">
+                    <button id="back-to-time" class="btn btn-outline btn-back">← Voltar</button>
+                    <div class="step-header">
+                        <h3 class="step-title">Confirmação de Agendamento</h3>
+                        <p class="step-info">
+                            Data: <strong id="form-date-display"></strong> | 
+                            Horário: <strong id="form-time-display"></strong>
+                        </p>
+                    </div>
+                    <form id="appointment-form" class="appointment-form">
+                        <div class="form-group">
+                            <label class="form-label">Nome Completo *</label>
+                            <input type="text" id="name" name="name" required placeholder="Seu nome completo" class="form-input">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Email *</label>
+                                <input type="email" id="email" name="email" required placeholder="seu@email.com" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Telefone *</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="(XX) XXXXX-XXXX" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mensagem Adicional</label>
+                            <textarea id="message" name="message" rows="3" placeholder="Conte-nos mais sobre suas necessidades..." class="form-input"></textarea>
+                        </div>
+                        <div id="form-alert" class="form-alert" style="display: none;"></div>
+                        <button type="submit" class="btn btn-primary btn-full">Confirmar Agendamento</button>
+                        <p class="form-note">Precisamos dos seus dados para entrar em contato. Seus dados são confidenciais e seguros.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contato" class="section section-contact-new">
+        <div class="container">
+            <div class="section-header-center">
+                <h2 class="section-title-light">Entre em Contato</h2>
+                <p class="section-description-light">Estamos prontos para atender você</p>
+            </div>
+            <div class="contact-grid-new">
+                <div class="contact-item-new">
+                    <div class="contact-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <h3 class="contact-title-new">Telefone</h3>
+                    <a href="tel:+5564999493560" class="contact-link-new">+55 64 99949-3560</a><br>
+                    <class="contact-link-new">Atendimento de segunda a sexta</a><br>
+                    <a href="https://wa.me/5564999493560?text=Olá, gostaria de agendar uma consulta" target="_blank" rel="noopener noreferrer" class="btn btn-contact-action">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        WhatsApp
+                    </a>
+                </div>
+                <div class="contact-item-new">
+                    <div class="contact-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="contact-title-new">Localização</h3>
+                    <p class="contact-link-new">Anápolis, GO</p>
+                    <p class="contact-link-new">sala 702</p>
+                    <p class="contact-link-new">Gênesis Office</p>
+                    <a href="https://maps.app.goo.gl/gS2XaxnD2e7ZUDGg6" target="_blank" rel="noopener noreferrer" class="btn btn-contact-action">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="10" r="3"/>
+                            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/>
+                        </svg>
+                        Ver no Mapa
+                    </a>
+                </div>
+                <div class="contact-item-new">
+                    <div class="contact-icon-gold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <h3 class="contact-title-new">Instagram</h3>
+                    <p class="contact-link-new">Acompanhe nossas atualizações</p>
+                    <p class="contact-link-new">@ribeiro_representacoes</p>
+                    <a href="https://www.instagram.com/ribeiro_representacoes_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="btn btn-contact-action">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.073-1.689-.073-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.163zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                        Seguir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-new">
+        <div class="container">
+            <div class="footer-content-new">
+                <div class="footer-brand">
+                    <img src="public/logo.jpeg" alt="Grupo Ribeiro Logo" width="48" height="48">
+                    <p class="footer-text-new">Realizando sonhos há mais de 50 anos</p>
+                </div>
+                <div class="footer-links-section">
+                    <h4 class="footer-title-new">Links Rápidos</h4>
+                    <ul class="footer-links-new">
+                        <li><a href="#sobre">Sobre</a></li>
+                        <li><a href="#beneficios">Benefícios</a></li>
+                        <li><a href="#equipe">Equipe</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-section">
+                    <h4 class="footer-title-new">Contato</h4>
+                    <ul class="footer-links-new">
+                        <li><a href="https://www.instagram.com/ribeiro_representacoes_" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                        <li><a href="https://wa.me/5564999493560?text=Olá, gostaria de agendar uma consulta" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+                        <li><a href="https://maps.app.goo.gl/gS2XaxnD2e7ZUDGg6" target="_blank" rel="noopener noreferrer">Localização</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom-new">
+                <p>&copy; 2025 Grupo Ribeiro Representações. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Appointment form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const appointmentForm = document.getElementById('appointment-form');
+            if (appointmentForm) {
+                appointmentForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    console.log('[v0] Form submitted');
+                    
+                    const formData = new FormData(appointmentForm);
+                    const selectedDate = document.querySelector('.calendar-day.selected')?.dataset.date;
+                    const selectedTime = document.querySelector('.time-slot.selected')?.dataset.time;
+                    
+                    console.log('[v0] Selected date:', selectedDate);
+                    console.log('[v0] Selected time:', selectedTime);
+                    
+                    if (!selectedDate || !selectedTime) {
+                        alert('Por favor, selecione uma data e horário antes de enviar.');
+                        return;
+                    }
+                    
+                    const dateObj = new Date(selectedDate + 'T00:00:00');
+                    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+                    const dayOfWeek = daysOfWeek[dateObj.getDay()];
+                    
+                    const data = {
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        phone: formData.get('phone'),
+                        appointment_date: selectedDate,
+                        appointment_day: dayOfWeek,
+                        appointment_time: selectedTime,
+                        message: formData.get('message') || ''
+                    };
+                    
+                    console.log('[v0] Data to send:', data);
+                    
+                    const submitBtn = appointmentForm.querySelector('button[type="submit"]');
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Enviando...';
+                    
+                    try {
+                        const response = await fetch('api/appointments.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        console.log('[v0] Response status:', response.status);
+                        
+                        const result = await response.json();
+                        console.log('[v0] Response data:', result);
+                        
+                        const alertDiv = document.getElementById('form-alert');
+                        if (result.success) {
+                            alertDiv.style.display = 'block';
+                            alertDiv.className = 'form-alert success';
+                            alertDiv.style.padding = '15px';
+                            alertDiv.style.marginBottom = '15px';
+                            alertDiv.style.borderRadius = '8px';
+                            alertDiv.style.backgroundColor = '#d4edda';
+                            alertDiv.style.color = '#155724';
+                            alertDiv.style.border = '1px solid #c3e6cb';
+                            alertDiv.textContent = 'Agendamento realizado com sucesso! Entraremos em contato em breve.';
+                            appointmentForm.reset();
+                            
+                            setTimeout(() => {
+                                alertDiv.style.display = 'none';
+                                document.querySelectorAll('.step-content').forEach(step => step.classList.remove('active'));
+                                document.getElementById('calendar-step').classList.add('active');
+                                
+                                document.querySelectorAll('.calendar-day').forEach(day => {
+                                    day.classList.remove('selected');
+                                    day.style.background = '';
+                                });
+                                document.querySelectorAll('.time-slot').forEach(slot => {
+                                    slot.classList.remove('selected');
+                                    slot.style.background = '';
+                                });
+                            }, 3000);
+                        } else {
+                            alertDiv.style.display = 'block';
+                            alertDiv.className = 'form-alert error';
+                            alertDiv.style.padding = '15px';
+                            alertDiv.style.marginBottom = '15px';
+                            alertDiv.style.borderRadius = '8px';
+                            alertDiv.style.backgroundColor = '#f8d7da';
+                            alertDiv.style.color = '#721c24';
+                            alertDiv.style.border = '1px solid #f5c6cb';
+                            alertDiv.textContent = 'Erro ao agendar: ' + result.message;
+                        }
+                    } catch (error) {
+                        console.error('[v0] Error:', error);
+                        const alertDiv = document.getElementById('form-alert');
+                        alertDiv.style.display = 'block';
+                        alertDiv.className = 'form-alert error';
+                        alertDiv.style.padding = '15px';
+                        alertDiv.style.marginBottom = '15px';
+                        alertDiv.style.borderRadius = '8px';
+                        alertDiv.style.backgroundColor = '#f8d7da';
+                        alertDiv.style.color = '#721c24';
+                        alertDiv.style.border = '1px solid #f5c6cb';
+                        alertDiv.textContent = 'Erro ao enviar agendamento. Verifique sua conexão e tente novamente.';
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Confirmar Agendamento';
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
