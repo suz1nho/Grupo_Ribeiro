@@ -2,6 +2,7 @@ DROP DATABASE grupo_ribeiro;
 CREATE DATABASE grupo_ribeiro
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
+SET GLOBAL time_zone = '-3:00';
 
 USE grupo_ribeiro;
 
@@ -30,10 +31,15 @@ CREATE TABLE IF NOT EXISTS employees (
 -- =============================
 -- TABELA: credit_analysis
 -- =============================
+DROP TABLE credit_analysis;
 CREATE TABLE IF NOT EXISTS credit_analysis (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cpf VARCHAR(14) NOT NULL,
-    name VARCHAR(100) NOT NULL,
+    cpf VARCHAR(14),
+    doc_identidade VARCHAR(150),
+    doc_endereco VARCHAR(150),
+    doc_renda VARCHAR(150),
+    doc_bancario VARCHAR(150),
+    name VARCHAR(100),
     email VARCHAR(100),
     phone VARCHAR(20),
     status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
