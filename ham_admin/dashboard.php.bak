@@ -14,7 +14,13 @@ try {
     $totalAppointments = $stmt->fetch()['total'] ?? 0;
 
     $stmt = $db->query("SELECT COUNT(*) as total FROM appointments WHERE status = 'confirmed'");
+    $confirmedAppointments = $stmt->fetch()['total'] ?? 0;
+
+    $stmt = $db->query("SELECT COUNT(*) as total FROM appointments WHERE status = 'closed'");
     $contractsClosed = $stmt->fetch()['total'] ?? 0;
+    
+    $stmt = $db->query("SELECT COUNT(*) as total FROM credit_analysis WHERE status = 'pendente'");
+    $creditAnalysisPending = $stmt->fetch()['total'] ?? 0;
     
     $confirmationRate = $totalAppointments > 0 ? round(($contractsClosed / $totalAppointments) * 100) : 0;
     
@@ -26,18 +32,13 @@ try {
     WHERE
         a.status = 'pending' OR
         a.status = 'confirmed' OR
-        .astatus IS NULL
+        a.status IS NULL
         ORDER BY
             appointment_date DESC,
             appointment_time DESC
         LIMIT 50");
     $recentAppointments = $stmt->fetchAll();
     
-
-    // $stmt = $db->query("SELECT a.*, e.name as confirmed_by_name FROM appointments a LEFT JOIN employees e ON a.confirmed_by = e.id WHERE a.contract_status = 'pending' OR a.contract_status IS NULL ORDER BY a.appointment_date DESC, a.appointment_time DESC LIMIT 50");
-
-    // $stmt = $db->query("SELECT a.*, e.name as confirmed_by_name, e2.name as contract_closed_by_name FROM appointments a LEFT JOIN employees e ON a.confirmed_by = e.id LEFT JOIN employees e2 ON a.contract_closed_by = e2.id WHERE a.status = 'confirmed' ORDER BY a.contract_closed_at DESC LIMIT 50");
-
     $stmt = $db->query(
     "SELECT
         a.*,
@@ -52,17 +53,27 @@ try {
             a.appointment_time DESC
         LIMIT 50");
 
-
     $closedContracts = $stmt->fetchAll();
+    
+    $stmt = $db->query(
+    "SELECT
+        ca.*,
+        DATE_FORMAT(ca.created_at, '%d/%m/%Y %H:%i') as data_formatada
+    FROM credit_analysis ca
+    ORDER BY ca.created_at DESC
+    LIMIT 50");
+    $creditAnalyses = $stmt->fetchAll();
     
 } catch (PDOException $e) {
     error_log($e->getMessage());
     $totalAppointments = 0;
     $confirmedAppointments = 0;
     $contractsClosed = 0;
+    $creditAnalysisPending = 0;
     $confirmationRate = 0;
     $recentAppointments = [];
     $closedContracts = [];
+    $creditAnalyses = [];
 }
 ?>
 <!DOCTYPE html>
@@ -70,89 +81,200 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <title>Painel Administrativo - GR7</title>
+    <!-- Updated CSS to use new professional dashboard stylesheet -->
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
-<body class="bg-background min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header matching admin.png design -->
-        <div class="flex justify-between items-center mb-8">
+<body>
+    <div class="container">
+        <!-- Updated header structure with new classes -->
+        <div class="dashboard-header">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
-                <p class="text-gray-600 mt-1">Logado como: <span class="text-blue-600"><?php echo htmlspecialchars($_SESSION['employee_name']); ?></span> (<?php echo htmlspecialchars($_SESSION['employee_role'] ?? 'Administrativo'); ?>)</p>
+                <h1>Painel Administrativo</h1>
+                <p>Logado como: <span class="user-name"><?php echo htmlspecialchars($_SESSION['employee_name']); ?></span> (<?php echo htmlspecialchars($_SESSION['employee_role'] ?? 'Administrativo'); ?>)</p>
             </div>
-            <div class="flex gap-3">
-                <a href="rank.php" class="admin-btn bg-yellow-600 hover:bg-yellow-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            <div class="header-actions">
+                <!-- Mobile menu button (shown only on mobile) -->
+                <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
-                    Ver Ranking
-                </a>
-                <a href="logout.php" class="admin-btn-outline">
-                    Sair
-                </a>
+                    Menu
+                </button>
+                <a href="logout.php" class="btn-logout">Sair</a>
             </div>
         </div>
 
-        <!-- Stats cards matching admin.png with exact colors -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <!-- Total de Agendamentos - Blue -->
-            <div class="stats-card bg-blue-50 border-blue-200">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-gray-600 text-sm mb-2">Total de Agendamentos</p>
-                        <p class="text-4xl font-bold text-blue-900"><?php echo $totalAppointments; ?></p>
+        <!-- Updated stats cards with new structure and classes -->
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-card-header">
+                    <div class="stat-card-content">
+                        <h3>Total de Agendamentos</h3>
+                        <div class="stat-card-value"><?php echo $totalAppointments; ?></div>
+                        <div class="stat-card-label">Todos os agendamentos</div>
                     </div>
-                    <svg class="icon-small text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
+                    <div class="stat-card-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <!-- Contratos Fechados - Purple -->
-            <div class="stats-card bg-purple-50 border-purple-200">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-gray-600 text-sm mb-2">Contratos Fechados</p>
-                        <p class="text-4xl font-bold text-purple-600"><?php echo $contractsClosed; ?></p>
+            <div class="stat-card orange">
+                <div class="stat-card-header">
+                    <div class="stat-card-content">
+                        <h3>Agendamentos Confirmados</h3>
+                        <div class="stat-card-value"><?php echo $confirmedAppointments; ?></div>
+                        <div class="stat-card-label">Presença confirmada</div>
                     </div>
-                    <svg class="icon-small text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
+                    <div class="stat-card-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <!-- Taxa Confirmação - Red -->
-            <div class="stats-card bg-red-50 border-red-200">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-gray-600 text-sm mb-2">Taxa Confirmação</p>
-                        <p class="text-4xl font-bold text-red-600"><?php echo $confirmationRate; ?>%</p>
+            <div class="stat-card green">
+                <div class="stat-card-header">
+                    <div class="stat-card-content">
+                        <h3>Contratos Fechados</h3>
+                        <div class="stat-card-value"><?php echo $contractsClosed; ?></div>
+                        <div class="stat-card-label">Contratos concluídos</div>
                     </div>
-                    <svg class="icon-small text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
+                    <div class="stat-card-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card cyan">
+                <div class="stat-card-header">
+                    <div class="stat-card-content">
+                        <h3>Análise de Crédito</h3>
+                        <div class="stat-card-value"><?php echo $creditAnalysisPending; ?></div>
+                        <div class="stat-card-label">Pendentes de análise</div>
+                    </div>
+                    <div class="stat-card-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card purple">
+                <div class="stat-card-header">
+                    <div class="stat-card-content">
+                        <h3>Taxa de Conversão</h3>
+                        <div class="stat-card-value"><?php echo $confirmationRate; ?>%</div>
+                        <div class="stat-card-label">Taxa de conversão</div>
+                    </div>
+                    <div class="stat-card-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Appointments list section matching admin.png -->
-        <div class="admin-card">
-            <!-- Tabs Navigation -->
-            <div class="flex gap-6 border-b border-gray-200 mb-6">
-                <button 
-                    onclick="switchTab('active')" 
-                    id="tab-active" 
-                    class="tab-btn text-lg font-semibold pb-3 border-b-2 border-purple-600 text-purple-600"
-                >
+        <!-- Added mobile menu overlay -->
+        <div id="mobile-menu" class="mobile-menu-overlay">
+            <div class="mobile-menu-content">
+                <div class="mobile-menu-header">
+                    <h2>Menu</h2>
+                    <button onclick="toggleMobileMenu()" class="mobile-menu-close">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mobile-stats-list">
+                    <div class="mobile-stat-card blue">
+                        <div class="mobile-stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="mobile-stat-content">
+                            <h3>Total de Agendamentos</h3>
+                            <div class="mobile-stat-value"><?php echo $totalAppointments; ?></div>
+                            <div class="mobile-stat-label">Todos os agendamentos</div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-stat-card orange">
+                        <div class="mobile-stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="mobile-stat-content">
+                            <h3>Agendamentos Confirmados</h3>
+                            <div class="mobile-stat-value"><?php echo $confirmedAppointments; ?></div>
+                            <div class="mobile-stat-label">Presença confirmada</div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-stat-card green">
+                        <div class="mobile-stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="mobile-stat-content">
+                            <h3>Contratos Fechados</h3>
+                            <div class="mobile-stat-value"><?php echo $contractsClosed; ?></div>
+                            <div class="mobile-stat-label">Contratos concluídos</div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-stat-card cyan">
+                        <div class="mobile-stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="mobile-stat-content">
+                            <h3>Análise de Crédito</h3>
+                            <div class="mobile-stat-value"><?php echo $creditAnalysisPending; ?></div>
+                            <div class="mobile-stat-label">Pendentes de análise</div>
+                        </div>
+                    </div>
+
+                    <div class="mobile-stat-card purple">
+                        <div class="mobile-stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="mobile-stat-content">
+                            <h3>Taxa Confirmação</h3>
+                            <div class="mobile-stat-value"><?php echo $confirmationRate; ?>%</div>
+                            <div class="mobile-stat-label">Taxa de conversão</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Updated content panel with active tab stored in localStorage -->
+        <div class="content-panel">
+            <div class="tabs-nav">
+                <button onclick="switchTab('active')" id="tab-active" class="tab-btn active">
                     Agendamentos Ativos
                 </button>
-                <button 
-                    onclick="switchTab('closed')" 
-                    id="tab-closed" 
-                    class="tab-btn text-lg font-semibold pb-3 border-b-2 border-transparent text-gray-600"
-                >
+                <button onclick="switchTab('closed')" id="tab-closed" class="tab-btn">
                     Contratos Fechados
+                </button>
+                <button onclick="switchTab('credit')" id="tab-credit" class="tab-btn">
+                    Análise de Crédito
                 </button>
             </div>
 
@@ -227,6 +349,19 @@ try {
                                     </div>
                                 </div>
 
+                                <!-- Display client message if provided -->
+                                <?php if (!empty($appointment['message']) && $appointment['status'] == 'confirmed' && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
+                                    <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-md">
+                                        <p class="font-semibold text-blue-800 flex items-center gap-2">
+                                           
+                                            Mensagem do Cliente:
+                                        </p>
+                                        <p class="text-sm text-blue-700 mt-2 leading-relaxed">
+                                            <?php echo htmlspecialchars($appointment['message']); ?>
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
+
                                 <!-- Action buttons -->
                                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
                                     <?php if ($appointment['status'] == 'confirmed' && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
@@ -244,7 +379,7 @@ try {
                                             class="admin-btn bg-purple-600 hover:bg-purple-700"
                                         >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-2a2 2 0 00-2-2z"></path>
                                             </svg>
                                             Informações
                                         </button>
@@ -258,7 +393,7 @@ try {
                                         
                                         <button onclick="printAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2a2 2 0 002-2zm2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                             </svg>
                                             Imprimir
                                         </button>
@@ -270,7 +405,7 @@ try {
                                         <?php endif; ?>
                                     <?php elseif ($appointment['status'] !== 'confirmed'): ?>
                                         <!-- Show confirm button only if not confirmed -->
-                                        <button onclick="showEmployeeSelection(<?php echo $appointment['id']; ?>)" class="admin-btn bg-green-500">
+                                        <button onclick="confirmAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-green-600 hover:bg-green-700">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
@@ -285,13 +420,18 @@ try {
                                     <?php endif; ?>
                                 </div>
                                 
-                                <!-- Confirmation status display after action buttons -->
+                                <!-- Updated confirmation status display with red background and better styling -->
                                 <?php if ($appointment['status'] === 'confirmed' && $appointment['confirmed_by']): ?>
-                                    <!-- Red alert box showing confirmation status and attendant name -->
-                                    <div class="mt-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-md">
-                                        <p class="font-semibold text-red-800">Presença confirmada - Horário bloqueado</p>
-                                        <p class="text-sm text-red-600 mt-1">
-                                            Atendente: <?php echo htmlspecialchars($appointment['confirmed_by_name'] ?? 'Não identificado'); ?>
+                                    <div class="mt-4 p-4 bg-red-100 border-l-4 border-red-600 rounded-md shadow-sm">
+                                        <div class="flex items-center gap-2">
+
+                                            <p class="font-bold text-red-900">HORÁRIO BLOQUEADO - Presença Confirmada</p>
+                                        </div>
+                                        <p class="text-sm text-red-700 mt-2 font-medium">
+                                             Atendente responsável: <?php echo htmlspecialchars($appointment['confirmed_by_name'] ?? 'Não identificado'); ?>
+                                        </p>
+                                        <p class="text-xs text-red-600 mt-1 italic">
+                                            Este horário não estará disponível no calendário público até ser desconfirmado
                                         </p>
                                     </div>
                                 <?php endif; ?>
@@ -372,6 +512,19 @@ try {
                                     </div>
                                 </div>
 
+                                <!-- Display client message in closed contracts as well -->
+                                <?php if (!empty($contract['message']) && $contract['contract_closed_by'] == $_SESSION['employee_id']): ?>
+                                    <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-md">
+                                        <p class="font-semibold text-blue-800 flex items-center gap-2">
+                            
+                                            Mensagem do Cliente
+                                        </p>
+                                        <p class="text-sm text-blue-700 mt-2 leading-relaxed">
+                                            <?php echo htmlspecialchars($contract['message']); ?>
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
+
                                 <!-- Contract info -->
                                 <div class="mt-4 p-4 bg-green-100 border-l-4 border-green-600 rounded-md">
                                     <p class="font-semibold text-green-800">Contrato Fechado</p>
@@ -387,7 +540,7 @@ try {
                                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
                                     <button onclick="printAppointment(<?php echo $contract['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2a2 2 0 002-2zm2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                         </svg>
                                         Imprimir
                                     </button>
@@ -403,19 +556,155 @@ try {
                     <?php endif; ?>
                 </div>
             </div>
-        </div>
 
-        <!-- Instructions section matching admin.png -->
-        <div class="admin-card mt-8 bg-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Instruções:</h3>
-            <ul class="space-y-2 text-gray-700 text-sm">
-                <li> Clique em "Confirmar Presença" e digite o nome de quem atenderá (sugestões aparecem automaticamente)</li>
-                <li> Quando confirmado, o horário fica marcado com "X" vermelho no calendário do cliente</li>
-                <li> Apenas o funcionário que confirmou pode desconfirmar, imprimir e marcar contrato</li>
-                <li> Após confirmação, clique em "Marcar Contrato" para registrar que o contrato foi fechado</li>
-                <li> Clique em "Imprimir" para imprimir os dados do agendamento (inclui contrato feito)</li>
-                <li> Somente administradores com cargo "Administrativo" podem deletar agendamentos</li>
-            </ul>
+            <!-- NEW Tab Content: Análise de Crédito -->
+            <div id="content-credit" class="tab-content" style="display: none;">
+                <div id="creditAnalysisList" class="space-y-4">
+                    <?php if (empty($creditAnalyses)): ?>
+                        <div class="text-center py-12 text-gray-500">
+                            Nenhuma análise de crédito no momento
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($creditAnalyses as $analysis): ?>
+                            <div class="appointment-card bg-cyan-50 border-cyan-200">
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div class="space-y-3">
+                                        <!-- Data de Envio -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs text-gray-600">Data de Envio</p>
+                                                <p class="font-semibold text-gray-900"><?php echo $analysis['data_formatada']; ?></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Telefone -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs text-gray-600">Telefone</p>
+                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['phone']); ?></p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs text-gray-600">Status</p>
+                                                <p class="font-semibold text-gray-900">
+                                                    <?php 
+                                                    $statusText = [
+                                                        'pending' => 'Pendente',
+                                                        'approved' => 'Aprovado',
+                                                        'rejected' => 'Rejeitado'
+                                                    ];
+                                                    echo $statusText[$analysis['status']] ?? 'Pendente';
+                                                    ?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="space-y-3">
+                                        <!-- Documentos Enviados -->
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-700 mb-2">Documentos Enviados:</p>
+                                            <div class="space-y-2">
+                                                <?php if ($analysis['doc_identidade']): ?>
+                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_identidade']); ?>" 
+                                                       target="_blank" 
+                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                        CPF e RG/CNH
+                                                    </a>
+                                                <?php endif; ?>
+                                                
+                                                <?php if ($analysis['doc_endereco']): ?>
+                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_endereco']); ?>" 
+                                                       target="_blank" 
+                                                       class="flex items-center gap-2 text-sm text-blue-600  hover:text-blue-800">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                        Comprovante de Endereço
+                                                    </a>
+                                                <?php endif; ?>
+                                                
+                                                <?php if ($analysis['doc_renda']): ?>
+                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_renda']); ?>" 
+                                                       target="_blank" 
+                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                        Comprovante de Renda
+                                                    </a>
+                                                <?php endif; ?>
+                                                
+                                                <?php if ($analysis['doc_bancario']): ?>
+                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_bancario']); ?>" 
+                                                       target="_blank" 
+                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                        </svg>
+                                                        Dados Bancários
+                                                    </a>
+                                                <?php endif; ?>
+                                                
+                                                <?php if (!$analysis['doc_identidade'] && !$analysis['doc_endereco'] && !$analysis['doc_renda'] && !$analysis['doc_bancario']): ?>
+                                                    <p class="text-sm text-gray-500 italic">Nenhum documento enviado</p>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action buttons -->
+                                <?php if ($analysis['status'] === 'pendente'): ?>
+                                    <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
+                                        <button 
+                                            onclick="updateCreditAnalysisStatus(<?php echo $analysis['id']; ?>, 'approved')" 
+                                            class="admin-btn bg-green-600 hover:bg-green-700"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Aprovar
+                                        </button>
+                                        
+                                        <button 
+                                            onclick="updateCreditAnalysisStatus(<?php echo $analysis['id']; ?>, 'rejected')" 
+                                            class="admin-btn bg-red-600 hover:bg-red-700"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            Rejeitar
+                                        </button>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="mt-4 p-4 rounded-md <?php echo $analysis['status'] === 'approved' ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'; ?> border-l-4">
+                                        <p class="font-semibold <?php echo $analysis['status'] === 'approved' ? 'text-green-800' : 'text-red-800'; ?>">
+                                            Status: <?php echo $statusText[$analysis['status']]; ?>
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -423,28 +712,75 @@ try {
     <script>
         window.employeeId = <?php echo json_encode($_SESSION['employee_id']); ?>;
         
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+        }
+        
         function switchTab(tab) {
             const tabActive = document.getElementById('tab-active');
             const tabClosed = document.getElementById('tab-closed');
+            const tabCredit = document.getElementById('tab-credit');
             const contentActive = document.getElementById('content-active');
             const contentClosed = document.getElementById('content-closed');
+            const contentCredit = document.getElementById('content-credit');
             
+            // Save current tab to localStorage
+            localStorage.setItem('activeTab', tab);
+            
+            // Remove active classes from all tabs
+            [tabActive, tabClosed, tabCredit].forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Hide all content
+            [contentActive, contentClosed, contentCredit].forEach(c => {
+                c.style.display = 'none';
+            });
+            
+            // Show selected tab
             if (tab === 'active') {
-                // Ativar aba de Agendamentos Ativos
-                tabActive.classList.add('border-purple-600', 'text-purple-600');
-                tabActive.classList.remove('border-transparent', 'text-gray-600');
-                tabClosed.classList.remove('border-purple-600', 'text-purple-600');
-                tabClosed.classList.add('border-transparent', 'text-gray-600');
+                tabActive.classList.add('active');
                 contentActive.style.display = 'block';
-                contentClosed.style.display = 'none';
-            } else {
-                // Ativar aba de Contratos Fechados
-                tabClosed.classList.add('border-purple-600', 'text-purple-600');
-                tabClosed.classList.remove('border-transparent', 'text-gray-600');
-                tabActive.classList.remove('border-purple-600', 'text-purple-600');
-                tabActive.classList.add('border-transparent', 'text-gray-600');
+            } else if (tab === 'closed') {
+                tabClosed.classList.add('active');
                 contentClosed.style.display = 'block';
-                contentActive.style.display = 'none';
+            } else if (tab === 'credit') {
+                tabCredit.classList.add('active');
+                contentCredit.style.display = 'block';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTab = localStorage.getItem('activeTab') || 'active';
+            switchTab(savedTab);
+        });
+        
+        async function updateCreditAnalysisStatus(id, status) {
+            if (!confirm(`Confirmar ${status === 'approved' ? 'aprovação' : 'rejeição'} desta análise de crédito?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('../api/credit-analysis.php', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, status })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Status atualizado com sucesso!');
+                    location.reload();
+                } else {
+                    alert('Erro ao atualizar status: ' + result.message);
+                }
+            } catch (error) {
+                console.error('[v0] Error updating status:', error);
+                alert('Erro ao atualizar status. Tente novamente.');
             }
         }
     </script>

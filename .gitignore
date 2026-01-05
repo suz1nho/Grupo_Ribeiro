@@ -1,0 +1,3 @@
+uploads/credit-analysis/**
+config/database.php
+**/**.bak

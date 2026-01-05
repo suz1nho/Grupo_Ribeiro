@@ -587,7 +587,7 @@ try {
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Telefone</p>
-                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['telefone']); ?></p>
+                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['phone']); ?></p>
                                             </div>
                                         </div>
 
@@ -601,7 +601,7 @@ try {
                                                 <p class="font-semibold text-gray-900">
                                                     <?php 
                                                     $statusText = [
-                                                        'pendente' => 'Pendente',
+                                                        'pending' => 'Pendente',
                                                         'approved' => 'Aprovado',
                                                         'rejected' => 'Rejeitado'
                                                     ];
@@ -621,7 +621,7 @@ try {
                                                     <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_identidade']); ?>" 
                                                        target="_blank" 
                                                        class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                         </svg>
                                                         CPF e RG/CNH
@@ -631,8 +631,8 @@ try {
                                                 <?php if ($analysis['doc_endereco']): ?>
                                                     <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_endereco']); ?>" 
                                                        target="_blank" 
-                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                       class="flex items-center gap-2 text-sm text-blue-600  hover:text-blue-800">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                         </svg>
                                                         Comprovante de Endereço
@@ -643,7 +643,7 @@ try {
                                                     <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_renda']); ?>" 
                                                        target="_blank" 
                                                        class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                         </svg>
                                                         Comprovante de Renda
@@ -654,7 +654,7 @@ try {
                                                     <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_bancario']); ?>" 
                                                        target="_blank" 
                                                        class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                         </svg>
                                                         Dados Bancários
