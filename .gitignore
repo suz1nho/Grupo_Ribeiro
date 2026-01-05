@@ -1,3 +1,4 @@
 uploads/credit-analysis/**
 config/database.php
-**/**.bak
+**/*.bak
+*.bak

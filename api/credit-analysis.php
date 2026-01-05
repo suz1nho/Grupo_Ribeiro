@@ -155,8 +155,8 @@ try {
             }
             
             $stmt = $db->prepare("
-                INSERT INTO credit_analysis (telefone, doc_identidade, doc_endereco, doc_renda, doc_bancario, status)
-                VALUES (?, ?, ?, ?, ?, 'pendente')
+                INSERT INTO credit_analysis (phone, doc_identidade, doc_endereco, doc_renda, doc_bancario, status)
+                VALUES (?, ?, ?, ?, ?, 'pending')
             ");
             
             $stmt->execute([
