@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentDate = new Date()
   let selectedDate = null
   let selectedTime = null
+  let blockedTimeSlots = []
 
   const months = [
     "Janeiro",
@@ -43,6 +44,21 @@ document.addEventListener("DOMContentLoaded", () => {
     "16:00-17:00",
     "17:00-18:00",
   ]
+
+  async function fetchBlockedSlots(date) {
+    try {
+      const response = await fetch(`api/appointments.php?check_date=${date}`)
+      const data = await response.json()
+
+      if (data.success && data.blocked_slots) {
+        return data.blocked_slots
+      }
+      return []
+    } catch (error) {
+      console.error("Error fetching blocked slots:", error)
+      return []
+    }
+  }
 
   function renderCalendar() {
     if (!calendarDays || !currentMonthYear) return
@@ -93,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function selectDate(dayElement) {
+  async function selectDate(dayElement) {
     // Remove previous selection
     document.querySelectorAll(".calendar-day").forEach((day) => {
       day.classList.remove("selected")
@@ -105,6 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
     dayElement.style.background = "var(--accent)"
 
     selectedDate = dayElement.dataset.date
+
+    blockedTimeSlots = await fetchBlockedSlots(selectedDate)
 
     // Format date for display
     const dateObj = new Date(selectedDate + "T00:00:00")
@@ -122,16 +140,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     timeSlotsContainer.innerHTML = ""
 
-    // All time slots are available
     timeSlots.forEach((time) => {
       const timeButton = document.createElement("button")
       timeButton.className = "time-slot"
       timeButton.textContent = time
       timeButton.dataset.time = time
 
-      timeButton.addEventListener("click", function () {
-        selectTime(this)
-      })
+      const isBlocked = blockedTimeSlots.includes(time)
+
+      if (isBlocked) {
+        timeButton.classList.add("blocked")
+        timeButton.disabled = true
+        timeButton.style.background = "#dc2626"
+        timeButton.style.color = "white"
+        timeButton.style.cursor = "not-allowed"
+        timeButton.style.fontWeight = "600"
+        timeButton.innerHTML = `<span style="text-decoration: line-through;">${time}</span> <span style="font-size: 1.2em;">✕</span>`
+        timeButton.title = "Horário bloqueado (aguardando confirmação do administrador)"
+      } else {
+        timeButton.addEventListener("click", function () {
+          selectTime(this)
+        })
+      }
 
       timeSlotsContainer.appendChild(timeButton)
     })

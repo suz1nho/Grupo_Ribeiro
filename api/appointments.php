@@ -86,8 +86,26 @@ try {
 try {
     switch ($method) {
         case 'GET':
-            if (isset($_GET['id'])) {
-                $stmt = $db->prepare("SELECT a.*, e.name as confirmed_by_name FROM appointments a LEFT JOIN employees e ON a.confirmed_by = e.id WHERE a.id = ?");
+            if (isset($_GET['check_date'])) {
+                $date = $_GET['check_date'];
+                
+                // When employee confirms presence, status becomes 'confirmed' and blocks the slot
+                // When employee unconfirms, status goes back to 'pending' and unblocks the slot
+                $stmt = $db->prepare("
+                    SELECT appointment_time 
+                    FROM appointments 
+                    WHERE appointment_date = ? 
+                    AND status = 'confirmed'
+                ");
+                $stmt->execute([$date]);
+                $appointments = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                
+                sendJsonResponse([
+                    'success' => true,
+                    'blocked_slots' => $appointments
+                ]);
+            } elseif (isset($_GET['id'])) {
+                $stmt = $db->prepare("SELECT a.*, e.name as confirmed_by_name FROM appointments a LEFT JOIN employees e ON a.contract_closed_by = e.id WHERE a.id = ?");
                 $stmt->execute([$_GET['id']]);
                 $appointment = $stmt->fetch();
                 
@@ -174,8 +192,8 @@ try {
             $stmt = $db->prepare("
                 INSERT INTO appointments (
                     name, email, phone, appointment_date, appointment_day, 
-                    appointment_time, message, status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+                    appointment_time, message, status, notes
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
             ");
             
             $result = $stmt->execute([
@@ -185,7 +203,8 @@ try {
                 $data['appointment_date'],
                 $data['appointment_day'] ?? '',
                 $data['appointment_time'],
-                $data['message'] ?? ''
+                $data['message'] ?? '',
+                $data['notes'] ?? ''
             ]);
             
             if ($result) {
@@ -209,6 +228,8 @@ try {
             
         case 'PUT':
             $data = json_decode(file_get_contents('php://input'), true);
+
+            error_log(file_get_contents('php://input'));
             
             if (empty($data['id'])) {
                 sendJsonResponse(['success' => false, 'message' => 'ID é obrigatório'], 400);
@@ -217,7 +238,7 @@ try {
             $fields = [];
             $params = [];
             
-            $allowedFields = ['status', 'confirmed_by', 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message'];
+            $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', "contract_closed_at", 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes'];
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
                     $fields[] = "$field = ?";
@@ -230,7 +251,7 @@ try {
             }
             
             if (isset($data['status']) && $data['status'] === 'confirmed') {
-                $fields[] = "confirmed_at = CURRENT_TIMESTAMP";
+                $fields[] = "contract_closed_at = CURRENT_TIMESTAMP";
             }
             
             $params[] = $data['id'];

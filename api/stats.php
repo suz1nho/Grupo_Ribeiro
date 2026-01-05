@@ -69,7 +69,7 @@ try {
                 SUM(CASE WHEN a.status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
                 SUM(CASE WHEN a.status = 'cancelled' THEN 1 ELSE 0 END) as cancelled
             FROM employees e
-            LEFT JOIN appointments a ON e.id = a.confirmed_by
+            LEFT JOIN appointments a ON e.id = a.contract_closed_by
             WHERE e.status = 'active'
             GROUP BY e.id, e.name
             ORDER BY confirmed DESC, total_confirmations DESC

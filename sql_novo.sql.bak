@@ -91,14 +91,12 @@ CREATE TABLE IF NOT EXISTS appointments (
     status VARCHAR(20) DEFAULT 'pending',
 
     contract_closed_by INT NULL,
-    confirmed_by INT NULL,
     contract_closed_at TIMESTAMP,
 
-    confirmed_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_appointments_employee
-        FOREIGN KEY (confirmed_by)
+        FOREIGN KEY (contract_closed_by)
         REFERENCES employees(id)
         ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

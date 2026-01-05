@@ -6,6 +6,7 @@
   --primary-purple: #a855f7;
   --primary-red: #ef4444;
   --primary-yellow: #d97706;
+  --primary-orange: #f97316;
   --bg-light: #f5f7fa;
   --border-light: #e5e7eb;
 }
@@ -17,7 +18,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-light);
 }
 
@@ -392,6 +393,9 @@ svg {
   .md\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+  .md\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }
 
 /* ===== ADMIN CARD STYLES ===== */
@@ -399,7 +403,146 @@ svg {
   background: white;
   border-radius: 16px;
   padding: 2.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* Enhanced shadow for modern look */
+  transition: box-shadow 0.3s ease;
+}
+
+.admin-card:hover {
+  /* Added subtle hover effect */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== ENHANCED STATS CARDS WITH MODERN GRADIENTS ===== */
+.stats-card-enhanced {
+  background: white;
+  border: 2px solid;
+  border-radius: 20px;
+  /* Increased border radius for modern look */
+  padding: 2rem;
+  /* Increased padding */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smoother transition curve */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* Enhanced base shadow */
+  min-height: 160px;
+  /* Increased min height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card-enhanced::before {
+  /* Added subtle animated gradient overlay */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.stats-card-enhanced:hover {
+  transform: translateY(-8px) scale(1.02);
+  /* Enhanced hover effect */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+  /* Dramatic shadow on hover */
+}
+
+.stats-card-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* Blue gradient card */
+.stats-card-enhanced.bg-gradient-to-br.from-blue-50.to-blue-100 {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  /* Changed angle for better depth */
+  border-color: #93c5fd;
+}
+
+/* Orange gradient card (NEW for Agendamentos Confirmados) */
+.stats-card-enhanced.bg-gradient-to-br.from-orange-50.to-orange-100 {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #fdba74;
+}
+
+.border-orange-300 {
+  border-color: #fdba74;
+}
+
+.text-orange-900 {
+  color: #7c2d12;
+}
+
+.text-orange-600 {
+  color: #ea580c;
+}
+
+.text-orange-700 {
+  color: #c2410c;
+}
+
+.bg-orange-50 {
+  background-color: #fff7ed;
+}
+
+.bg-orange-100 {
+  background-color: #ffedd5;
+}
+
+.bg-orange-200 {
+  background-color: #fed7aa;
+}
+
+/* Green gradient card */
+.stats-card-enhanced.bg-gradient-to-br.from-green-50.to-green-100 {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+}
+
+.border-green-300 {
+  border-color: #86efac;
+}
+
+.text-green-900 {
+  color: #14532d;
+}
+
+.text-green-700 {
+  color: #15803d;
+}
+
+/* Purple gradient card */
+.stats-card-enhanced.bg-gradient-to-br.from-purple-50.to-purple-100 {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-color: #d8b4fe;
+}
+
+.border-purple-300 {
+  border-color: #d8b4fe;
+}
+
+.text-purple-900 {
+  color: #581c87;
+}
+
+.text-purple-700 {
+  color: #7e22ce;
+}
+
+/* Rounded icon containers */
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.p-3 {
+  padding: 0.75rem;
 }
 
 /* Reduced stats card padding and adjusted layout to match admin.png */
@@ -522,16 +665,227 @@ svg {
 /* ===== APPOINTMENT CARD STYLES ===== */
 .appointment-card {
   background: white;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  transition: all 0.2s ease;
+  border: 2px solid var(--border-light);
+  /* Increased border width */
+  border-radius: 16px;
+  /* Increased border radius */
+  padding: 2rem;
+  /* Increased padding */
+  margin-bottom: 1.5rem;
+  /* Increased margin */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smoother transition */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* Added subtle shadow */
+}
+
+.appointment-card:hover {
+  /* Added hover effect for better interactivity */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: #d1d5db;
 }
 
 .appointment-card.confirmed {
-  border-left: 4px solid var(--primary-red);
+  border-left: 6px solid var(--primary-red);
+  /* Increased border width for emphasis */
   background-color: #fef2f2;
+}
+
+/* ===== CLIENT MESSAGE BOX STYLES ===== */
+/* Added blue message box styling for client messages */
+.appointment-card .bg-blue-50.border-l-4.border-blue-500 {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  /* Added gradient background */
+  border-left: 5px solid #3b82f6;
+  /* Increased border width */
+  padding: 1.25rem;
+  /* Increased padding */
+  margin-top: 1rem;
+  border-radius: 12px;
+  /* Increased border radius */
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+  /* Added blue tinted shadow */
+}
+
+.border-blue-500 {
+  border-left-color: #3b82f6;
+}
+
+.text-blue-800 {
+  color: #1e40af;
+}
+
+.text-blue-700 {
+  color: #1d4ed8;
+}
+
+.leading-relaxed {
+  line-height: 1.625;
+}
+
+/* ===== CONFIRMATION ALERT BOX (ENHANCED) ===== */
+/* Enhanced red blocked time slot indicator with better styling */
+.border-l-4 {
+  border-left-width: 4px;
+}
+
+.border-red-500 {
+  border-left-color: #ef4444;
+}
+
+.border-red-600 {
+  border-left-color: #dc2626;
+}
+
+.rounded-md {
+  border-radius: 0.5rem;
+  /* Increased from 0.375rem */
+}
+
+.text-red-800 {
+  color: #991b1b;
+}
+
+.text-red-900 {
+  color: #7f1d1d;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+.text-red-700 {
+  color: #b91c1c;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Updated styling for red confirmation alert */
+/* Enhanced styling for red confirmation alert with animation */
+.appointment-card .bg-red-100.border-l-4.border-red-600 {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  /* Gradient background */
+  border-left: 6px solid #dc2626;
+  /* Thicker border */
+  padding: 1.5rem;
+  /* Increased padding */
+  margin-top: 1rem;
+  border-radius: 12px;
+  /* Increased border radius */
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+  /* Enhanced shadow */
+  position: relative;
+  animation: pulseRed 2s ease-in-out infinite;
+  /* Added pulse animation */
+}
+
+@keyframes pulseRed {
+  /* New animation for blocked status visibility */
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.25);
+  }
+}
+
+.appointment-card .bg-red-100.border-l-4.border-red-600 .font-bold {
+  font-weight: 700;
+  color: #7f1d1d;
+  font-size: 1rem;
+  /* Increased font size */
+  letter-spacing: 0.05em;
+  /* Increased letter spacing */
+  text-transform: uppercase;
+  /* Made text uppercase for emphasis */
+}
+
+.appointment-card .bg-red-100.border-l-4.border-red-600 .font-medium {
+  font-weight: 600;
+  /* Increased from 500 */
+}
+
+.appointment-card .bg-red-100.border-l-4.border-red-600 .text-sm {
+  font-size: 0.9375rem;
+  /* Slightly increased font size */
+  color: #b91c1c;
+  margin-top: 0.75rem;
+  /* Increased margin */
+}
+
+.appointment-card .bg-red-100.border-l-4.border-red-600 .text-xs {
+  font-size: 0.8125rem;
+  /* Slightly increased font size */
+  color: #dc2626;
+  margin-top: 0.5rem;
+  /* Increased margin */
+}
+
+.italic {
+  font-style: italic;
+}
+
+/* Icon flex utilities */
+.items-center {
+  align-items: center;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+/* ===== CONFIRMATION ALERT BOX ===== */
+.border-l-4 {
+  border-left-width: 4px;
+}
+
+.border-red-500 {
+  border-left-color: #ef4444;
+}
+
+.rounded-md {
+  border-radius: 0.375rem;
+}
+
+.text-red-800 {
+  color: #991b1b;
+}
+
+.text-red-600 {
+  color: #dc2626;
+}
+
+/* Added specific styling for confirmation alert */
+.appointment-card .bg-red-50.border-l-4 {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0.375rem;
+}
+
+.appointment-card .bg-red-50.border-l-4 p {
+  margin: 0;
+}
+
+.appointment-card .bg-red-50.border-l-4 p.font-semibold {
+  font-weight: 600;
+  color: #991b1b;
+  font-size: 0.9375rem;
+}
+
+.appointment-card .bg-red-50.border-l-4 p.text-sm {
+  font-size: 0.875rem;
+  color: #dc2626;
+  margin-top: 0.25rem;
 }
 
 /* Empty state message */
@@ -597,26 +951,39 @@ svg {
 
 /* ===== BUTTON STYLES ===== */
 .admin-btn {
-  padding: 0.625rem 1.25rem;
+  padding: 0.75rem 1.5rem;
+  /* Increased padding */
   background: var(--primary-blue);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  /* Increased border radius */
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Better transition curve */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* Added shadow */
 }
 
 .admin-btn:hover {
   background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  /* Increased lift effect */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  /* Enhanced hover shadow */
+}
+
+.admin-btn:active {
+  /* Added active state */
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .admin-btn.bg-green-500 {
@@ -625,6 +992,16 @@ svg {
 
 .admin-btn.bg-green-500:hover {
   background: #059669;
+}
+
+/* Added green-600 hover state for confirm button */
+.admin-btn.bg-green-600 {
+  background: #16a34a;
+}
+
+.admin-btn.bg-green-600:hover,
+.hover\:bg-green-700:hover {
+  background: #15803d;
 }
 
 .admin-btn.bg-red-500 {
@@ -644,430 +1021,4 @@ svg {
 }
 
 .admin-btn.bg-blue-600 {
-  background: var(--primary-blue);
-}
-
-.admin-btn.bg-blue-600:hover {
-  background: #1d4ed8;
-}
-
-.admin-btn.bg-blue-500 {
-  background: var(--primary-blue);
-}
-
-.admin-btn.bg-blue-500:hover {
-  background: #2563eb;
-}
-
-.admin-btn.bg-gray-600 {
-  background: #4b5563;
-}
-
-.admin-btn.bg-gray-600:hover {
-  background: #374151;
-}
-
-/* Yellow/Gold button styling for Ver Ranking matching admin.png */
-.bg-yellow-600 {
-  background: #d97706 !important;
-  color: white !important;
-  font-weight: 600;
-}
-
-.bg-yellow-600:hover,
-.hover\:bg-yellow-700:hover {
-  background: #b45309 !important;
-}
-
-/* ===== BUTTON OUTLINE STYLES ===== */
-.admin-btn-outline {
-  padding: 0.625rem 1.25rem;
-  background: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-family: inherit;
-}
-
-.admin-btn-outline:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-/* ===== COLOR UTILITIES ===== */
-.bg-blue-50 {
-  background-color: #eff6ff;
-}
-.bg-green-50 {
-  background-color: #f0fdf4;
-}
-.bg-red-50 {
-  background-color: #fef2f2;
-}
-.bg-red-100 {
-  background-color: #fee2e2;
-}
-.bg-yellow-100 {
-  background-color: #fef3c7;
-}
-.bg-green-100 {
-  background-color: #dcfce7;
-}
-.bg-gray-100 {
-  background-color: #f3f4f6;
-}
-.bg-amber-50 {
-  background-color: #fffbeb;
-}
-.bg-blue-100 {
-  background-color: #dbeafe;
-}
-.bg-amber-100 {
-  background-color: #fef3c7;
-}
-.bg-purple-50 {
-  background-color: #faf5ff;
-}
-/* Added cyan color utilities for additional info */
-.bg-cyan-50 {
-  background-color: #ecf8ff;
-}
-.bg-cyan-100 {
-  background-color: #cff0ff;
-}
-
-/* ===== BORDER & TEXT COLOR UTILITIES ===== */
-.border-blue-200 {
-  border-color: #bfdbfe;
-}
-.border-blue-300 {
-  border-color: #93c5fd;
-}
-.border-green-200 {
-  border-color: #bbf7d0;
-}
-.border-purple-200 {
-  border-color: #e9d5ff;
-}
-.border-red-200 {
-  border-color: #fecaca;
-}
-.border-red-300 {
-  border-color: #fca5a5;
-}
-.border-amber-200 {
-  border-color: #fde68a;
-}
-.border-amber-300 {
-  border-color: #fcd34d;
-}
-.border-yellow-300 {
-  border-color: #fcd34d;
-}
-.border-l-4 {
-  border-left: 4px solid;
-}
-.border-l-red-600 {
-  border-left-color: var(--primary-red);
-}
-
-.text-yellow-900 {
-  color: #78350f;
-}
-.text-amber-600 {
-  color: #d97706;
-}
-.text-amber-700 {
-  color: #b45309;
-}
-.text-amber-900 {
-  color: #78350f;
-}
-.text-blue-900 {
-  color: #1e3a8a;
-}
-.text-blue-300 {
-  color: #93c5fd;
-}
-.text-green-300 {
-  color: #86efac;
-}
-.text-purple-300 {
-  color: #d8b4fe;
-}
-.text-red-300 {
-  color: #fca5a5;
-}
-/* Added cyan text color utilities */
-.text-cyan-600 {
-  color: #0891b2;
-}
-.text-cyan-700 {
-  color: #0e7490;
-}
-.text-cyan-900 {
-  color: #164e63;
-}
-/* Added cyan border utilities */
-.border-cyan-200 {
-  border-color: #a5f3fc;
-}
-.border-cyan-300 {
-  border-color: #67e8f9;
-}
-
-/* ===== INFO BOX STYLES ===== */
-.info-box {
-  padding: 1rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  font-size: 0.9375rem;
-  margin: 0.75rem 0;
-}
-
-.info-box.blue {
-  background-color: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #1e40af;
-}
-
-.info-box.amber {
-  background-color: #fffbeb;
-  border: 1px solid #fde68a;
-  color: #78350f;
-}
-
-.info-box.red {
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #991b1b;
-}
-
-/* ===== MODAL STYLES ===== */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  max-width: 28rem;
-  width: 100%;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-/* ===== DROPDOWN STYLES ===== */
-.suggestions-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid var(--border-light);
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 10;
-  display: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.suggestions-dropdown.active {
-  display: block;
-}
-
-.suggestion-item {
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.suggestion-item:hover {
-  background: #f9fafb;
-}
-
-/* ===== ADMIN OPTIONS (INDEX PAGE) ===== */
-.admin-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-.admin-option-card {
-  background: white;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.admin-option-card:hover {
-  border-color: var(--primary-blue);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-  transform: translateY(-2px);
-}
-
-.admin-option-icon {
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto 1rem;
-  color: var(--primary-blue);
-}
-
-/* ===== TAB STYLES ===== */
-.tab-btn {
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.tab-btn:hover {
-  color: #374151;
-}
-
-.tab-btn.active {
-  color: var(--primary-purple);
-  border-bottom-color: var(--primary-purple);
-}
-
-.border-b {
-  border-bottom-width: 1px;
-}
-
-.border-b-2 {
-  border-bottom-width: 2px;
-}
-
-.border-transparent {
-  border-color: transparent;
-}
-
-.border-purple-600 {
-  border-color: var(--primary-purple);
-}
-
-.border-gray-200 {
-  border-color: #e5e7eb;
-}
-
-.hover\:text-gray-800:hover {
-  color: #1f2937;
-}
-
-.text-purple-600 {
-  color: var(--primary-purple);
-}
-
-.text-gray-600 {
-  color: #6b7280;
-}
-
-.text-gray-800 {
-  color: #1f2937;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .flex-col-reverse {
-    flex-direction: column-reverse;
-  }
-
-  /* Em mobile, mostrar 1 coluna para melhor visualização */
-  .md\:grid-cols-4 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-}
-
-/* Em tablets, mostrar 2 colunas */
-@media (min-width: 640px) and (max-width: 1023px) {
-  .md\:grid-cols-4 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* Estilos para preview de documentos no painel administrativo */
-.doc-preview-card {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.doc-preview-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid #e5e7eb;
-}
-
-.doc-preview-image:hover {
-  transform: scale(1.02);
-  border-color: var(--primary-blue);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
-
-.btn-download-doc {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: var(--primary-blue);
-  color: white;
-  text-decoration: none;
-  text-align: center;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.btn-download-doc:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-/* Completando estilos do modal de visualização de imagens */
-/* Modal para visualização de imagens em tamanho grande */
-.image-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image-modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  cursor: pointer;
 }

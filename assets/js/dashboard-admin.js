@@ -1,6 +1,6 @@
 // Dashboard Admin JavaScript
 
-const API_BASE_URL = "/api"
+const API_BASE_URL = "../api"
 
 // Função para fazer requisições à API
 async function fetchAPI(endpoint, options = {}) {
@@ -27,15 +27,11 @@ async function loadDashboardStats() {
 
   if (response.success) {
     const stats = response.data
-
-    // Atualizar cards de estatísticas se existirem
     updateStatCard("total-appointments", stats.total_appointments)
     updateStatCard("pending-appointments", stats.pending_appointments)
     updateStatCard("confirmed-appointments", stats.confirmed_appointments)
     updateStatCard("new-contacts", stats.new_contacts)
     updateStatCard("pending-analysis", stats.pending_credit_analysis)
-
-    console.log("[v0] Dashboard stats loaded:", stats)
   }
 }
 
@@ -47,84 +43,31 @@ function updateStatCard(id, value) {
   }
 }
 
-// Visualizar detalhes de agendamento
-async function viewAppointment(id) {
-  const response = await fetchAPI(`/appointments.php?id=${id}`)
-
-  if (response.success) {
-    const appointment = response.data
-
-    // Criar modal ou expandir linha com detalhes
-    const modalHTML = `
-            <div class="modal-overlay" onclick="closeModal()">
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <h2>Detalhes do Agendamento</h2>
-                    <div class="details-grid">
-                        <div><strong>Nome:</strong> ${appointment.name}</div>
-                        <div><strong>Email:</strong> ${appointment.email}</div>
-                        <div><strong>Telefone:</strong> ${appointment.phone}</div>
-                        <div><strong>CPF:</strong> ${appointment.cpf}</div>
-                        <div><strong>Data:</strong> ${formatDate(appointment.appointment_date)}</div>
-                        <div><strong>Hora:</strong> ${appointment.appointment_time}</div>
-                        <div><strong>Status:</strong> ${appointment.status}</div>
-                        <div><strong>Análise de Crédito:</strong> ${appointment.credit_analysis ? "Sim" : "Não"}</div>
-                        ${appointment.message ? `<div class="full-width"><strong>Mensagem:</strong><br>${appointment.message}</div>` : ""}
-                    </div>
-                    <button onclick="closeModal()" class="btn btn-primary">Fechar</button>
-                </div>
-            </div>
-        `
-
-    document.body.insertAdjacentHTML("beforeend", modalHTML)
-  }
+// Confirmar agendamento
+async function confirmAppointment(id) {
+  showEmployeeSelection(id)
 }
 
-// Visualizar detalhes de contato
-async function viewContact(id) {
-  const response = await fetchAPI(`/contacts.php?id=${id}`)
-
-  if (response.success) {
-    const contact = response.data
-
-    const modalHTML = `
-            <div class="modal-overlay" onclick="closeModal()">
-                <div class="modal-content" onclick="event.stopPropagation()">
-                    <h2>Detalhes do Contato</h2>
-                    <div class="details-grid">
-                        <div><strong>Nome:</strong> ${contact.name}</div>
-                        <div><strong>Email:</strong> ${contact.email}</div>
-                        <div><strong>Telefone:</strong> ${contact.phone}</div>
-                        <div><strong>Status:</strong> ${contact.status}</div>
-                        <div class="full-width"><strong>Mensagem:</strong><br>${contact.message}</div>
-                    </div>
-                    <div class="modal-actions">
-                        <button onclick="markContactAsContacted(${id})" class="btn btn-success">Marcar como Contatado</button>
-                        <button onclick="closeModal()" class="btn btn-primary">Fechar</button>
-                    </div>
-                </div>
-            </div>
-        `
-
-    document.body.insertAdjacentHTML("beforeend", modalHTML)
+// Desconfirmar agendamento
+async function unconfirmAppointment(appointmentId) {
+  if (!confirm("Tem certeza que deseja desconfirmar este agendamento?")) {
+    return
   }
-}
 
-// Marcar contato como contatado
-async function markContactAsContacted(id) {
-  const response = await fetchAPI("/contacts.php", {
+  const response = await fetchAPI("/appointments.php", {
     method: "PUT",
     body: JSON.stringify({
-      id: id,
-      status: "contacted",
+      id: appointmentId,
+      status: "pending",
+      confirmed_by: null,
     }),
   })
 
   if (response.success) {
-    closeModal()
-    alert("Contato marcado como contatado!")
+    alert("Agendamento desconfirmado com sucesso!")
     location.reload()
   } else {
-    alert("Erro ao atualizar contato: " + response.message)
+    alert("Erro ao desconfirmar agendamento: " + response.message)
   }
 }
 
@@ -161,181 +104,80 @@ function formatDate(dateString) {
   return date.toLocaleDateString("pt-BR")
 }
 
-// Formatar data e hora
-function formatDateTime(dateString) {
-  const date = new Date(dateString)
-  return date.toLocaleString("pt-BR")
-}
-
 let allEmployees = []
 
 async function loadEmployees() {
-  console.log("[v0] Iniciando carregamento de funcionários...")
-
-  // Store request details for error logging
-  const requestDetails = {
-    url: `${API_BASE_URL}/employees.php`,
-    method: 'GET',
-    timestamp: new Date().toISOString(),
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  }
-
-  console.log("[v0] Fazendo requisição para:", requestDetails.url)
-
-  let response = null;
-  let responseText = null;
-
   try {
-    response = await fetch(requestDetails.url, {
-      method: requestDetails.method,
-      headers: requestDetails.headers
-    })
-
-    console.log("[v0] Status da resposta:", response.status)
-    console.log("[v0] Response OK:", response.ok)
-    console.log("[v0] Headers da resposta:", Object.fromEntries([...response.headers.entries()]))
-
-    // Try to get the response text first (for debugging)
-    responseText = await response.text();
-    console.log("[v0] Resposta bruta (texto):", responseText);
-
-    // Try to parse as JSON
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error("[v0] Falha ao fazer parse da resposta como JSON:", parseError);
-      throw new Error(`Resposta inválida do servidor (não é JSON). Resposta: ${responseText}`);
-    }
-
-    console.log("[v0] Dados recebidos (JSON parseado):", data)
-    console.log("[v0] Sucesso:", data.success)
-    console.log("[v0] Data.data existe:", !!data.data)
-    console.log("[v0] Número de funcionários:", data.data ? data.data.length : 0)
+    const url = API_BASE_URL + "/employees.php"
+    const response = await fetch(url)
+    const data = await response.json()
 
     if (data.success && data.data) {
       allEmployees = data.data
-      console.log("[v0] Funcionários carregados com sucesso:", allEmployees)
-      console.log("[v0] Total de funcionários:", allEmployees.length)
     } else {
-      console.error("[v0] Falha ao carregar funcionários:", data.message)
-      console.error("[v0] Conteúdo completo da resposta de erro:", data)
       allEmployees = []
     }
   } catch (error) {
-    console.error("[v0] === ERRO DETECTADO ===")
-    console.error("[v0] Tipo de erro:", error.name)
-    console.error("[v0] Mensagem de erro:", error.message)
-
-    // Log the stack trace if available
-    if (error.stack) {
-      console.error("[v0] Stack do erro:", error.stack)
-    }
-
-    console.error("[v0] === DETALHES DA REQUISIÇÃO ===")
-    console.error("[v0] URL:", requestDetails.url)
-    console.error("[v0] Método:", requestDetails.method)
-    console.error("[v0] Timestamp:", requestDetails.timestamp)
-    console.error("[v0] Headers:", JSON.stringify(requestDetails.headers, null, 2))
-    console.error("[v0] API_BASE_URL (valor atual):", API_BASE_URL)
-
-    console.error("[v0] === CONTEÚDO DA RESPOSTA ===")
-    if (response) {
-      console.error("[v0] Status da resposta:", response.status)
-      console.error("[v0] Status text:", response.statusText)
-      console.error("[v0] Response headers:", Object.fromEntries([...response.headers.entries()]))
-    }
-
-    if (responseText !== null) {
-      console.error("[v0] Conteúdo da resposta (texto bruto):", responseText)
-      console.error("[v0] Tamanho da resposta:", responseText.length, "caracteres")
-
-      // Try to display as JSON if possible
-      try {
-        const parsedResponse = JSON.parse(responseText);
-        console.error("[v0] Conteúdo da resposta (JSON parseado):", JSON.stringify(parsedResponse, null, 2))
-      } catch (e) {
-        console.error("[v0] Resposta não é JSON válido")
-        // Show first 500 characters if response is too long
-        console.error("[v0] Primeiros 500 caracteres da resposta:",
-          responseText.length > 500 ? responseText.substring(0, 500) + "..." : responseText)
-      }
-    } else {
-      console.error("[v0] Nenhum conteúdo de resposta disponível (possível erro de rede)")
-    }
-
-    // Additional debugging info
-    console.error("[v0] === INFO ADICIONAL PARA DEBUG ===")
-    console.error("[v0] Tipo da API_BASE_URL:", typeof API_BASE_URL)
-    console.error("[v0] API_BASE_URL está definida?", typeof API_BASE_URL !== 'undefined')
-    console.error("[v0] URL completa montada:", requestDetails.url)
-
+    console.error("[v0] Erro ao carregar funcionários:", error)
     allEmployees = []
-
-    // Re-throw the error if you want to handle it further up the call stack
-    // throw error;
   }
 }
 
 async function showEmployeeSelection(appointmentId) {
-  console.log("[v0] showEmployeeSelection chamado para agendamento:", appointmentId)
-  console.log("[v0] Funcionários em cache:", allEmployees.length)
-
-  // Ensure employees are loaded
   if (allEmployees.length === 0) {
-    console.log("[v0] Nenhum funcionário em cache, carregando...")
     await loadEmployees()
   }
 
-  console.log("[v0] Total de funcionários após carregamento:", allEmployees.length)
-
   if (allEmployees.length === 0) {
-    console.error("[v0] ERRO: Nenhum funcionário encontrado!")
-    alert("Nenhum funcionário encontrado no sistema. Verifique o console para mais detalhes.")
+    alert("Nenhum funcionário encontrado no sistema.")
     return
   }
 
-  console.log("[v0] Criando botões para funcionários:", allEmployees)
-
-  // Create modal with all employees
   const employeeButtons = allEmployees
     .map((employee) => {
-      console.log("[v0] Criando botão para:", employee.name)
-      return `
-    <button 
-      onclick="confirmAppointmentWithEmployee(${appointmentId}, ${employee.id}, '${employee.name.replace(/'/g, "\\'")}')"
-      class="employee-selection-button"
-    >
-      <div class="employee-info">
-        <div class="employee-name">${employee.name}</div>
-        <div class="employee-details">${employee.role || "Funcionário"} - ${employee.email}</div>
-      </div>
-    </button>
-  `
+      const safeName = employee.name.replace(/'/g, "\\'")
+      return (
+        '<button onclick="confirmAppointmentWithEmployee(' +
+        appointmentId +
+        "," +
+        employee.id +
+        ",'" +
+        safeName +
+        '\')" class="employee-selection-button">' +
+        '<div class="employee-info">' +
+        '<div class="employee-name">' +
+        employee.name +
+        "</div>" +
+        '<div class="employee-details">' +
+        (employee.role || "Funcionário") +
+        " - " +
+        employee.email +
+        "</div>" +
+        "</div>" +
+        "</button>"
+      )
     })
     .join("")
 
-  const modalHTML = `
-    <div class="modal-overlay" onclick="closeModal()">
-      <div class="modal-content employee-selection-modal" onclick="event.stopPropagation()">
-        <h2>Selecione o Funcionário</h2>
-        <p class="modal-subtitle">Escolha quem irá atender este agendamento (${allEmployees.length} funcionários disponíveis):</p>
-        <div class="employee-selection-grid">
-          ${employeeButtons}
-        </div>
-        <div class="modal-actions">
-          <button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  `
+  const modalHTML =
+    '<div class="modal-overlay" onclick="closeModal()">' +
+    '<div class="modal-content employee-selection-modal" onclick="event.stopPropagation()">' +
+    "<h2>Selecione o Funcionário</h2>" +
+    '<p class="modal-subtitle">Escolha quem irá atender este agendamento (' +
+    allEmployees.length +
+    " funcionários disponíveis):</p>" +
+    '<div class="employee-selection-grid">' +
+    employeeButtons +
+    "</div>" +
+    '<div class="modal-actions">' +
+    '<button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>' +
+    "</div>" +
+    "</div>" +
+    "</div>"
 
   document.body.insertAdjacentHTML("beforeend", modalHTML)
 }
 
-// Confirmar agendamento com funcionário
 async function confirmAppointmentWithEmployee(appointmentId, employeeId, employeeName) {
   const response = await fetchAPI("/appointments.php", {
     method: "PUT",
@@ -348,171 +190,197 @@ async function confirmAppointmentWithEmployee(appointmentId, employeeId, employe
 
   if (response.success) {
     closeModal()
-    alert(`Agendamento confirmado por ${employeeName}!`)
+    alert("Agendamento confirmado por " + employeeName + "!")
     location.reload()
   } else {
     alert("Erro ao confirmar agendamento: " + response.message)
   }
 }
 
-// Inicializar dashboard quando a página carregar
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("[v0] Dashboard admin initialized")
+async function markContract(appointmentId) {
+  if (!confirm("Confirmar que o contrato foi fechado?")) {
+    return
+  }
 
-  console.log("[v0] Carregando funcionários na inicialização...")
+  const response = await fetchAPI("/appointments.php", {
+    method: "PUT",
+    body: JSON.stringify({
+      id: appointmentId,
+      status: "closed",
+      contract_closed_by: window.employeeId,
+    }),
+  })
+
+  if (response.success) {
+    alert("Contrato marcado como fechado! O horário ficará disponível novamente.")
+    location.reload()
+  } else {
+    alert("Erro ao marcar contrato: " + response.message)
+  }
+}
+
+function printAppointment(appointmentId) {
+  fetchAPI("/appointments.php?id=" + appointmentId)
+    .then((response) => {
+      if (response.success) {
+        const apt = response.data
+        const printWindow = window.open("", "_blank")
+
+        const html =
+          "<!DOCTYPE html>" +
+          "<html>" +
+          "<head>" +
+          "<title>Agendamento - " +
+          apt.name +
+          "</title>" +
+          "<style>" +
+          "body { font-family: Arial, sans-serif; padding: 40px; }" +
+          "h1 { color: #333; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }" +
+          ".info { margin: 20px 0; }" +
+          ".info-row { display: flex; margin: 10px 0; }" +
+          ".label { font-weight: bold; width: 150px; }" +
+          ".value { color: #555; }" +
+          ".confirmed { background: #fef2f2; padding: 15px; border-left: 4px solid #ef4444; margin-top: 20px; }" +
+          ".contract-closed { background: #f0fdf4; padding: 15px; border-left: 4px solid #10b981; margin-top: 20px; }" +
+          "@media print { body { padding: 20px; } }" +
+          "</style>" +
+          "</head>" +
+          "<body>" +
+          "<h1>Detalhes do Agendamento</h1>" +
+          '<div class="info">' +
+          '<div class="info-row"><span class="label">Nome:</span><span class="value">' +
+          apt.name +
+          "</span></div>" +
+          '<div class="info-row"><span class="label">Email:</span><span class="value">' +
+          apt.email +
+          "</span></div>" +
+          '<div class="info-row"><span class="label">Telefone:</span><span class="value">' +
+          apt.phone +
+          "</span></div>" +
+          '<div class="info-row"><span class="label">Data:</span><span class="value">' +
+          formatDate(apt.appointment_date) +
+          "</span></div>" +
+          '<div class="info-row"><span class="label">Horário:</span><span class="value">' +
+          apt.appointment_time +
+          "</span></div>" +
+          (apt.confirmed_by_name
+            ? '<div class="confirmed"><strong>Presença Confirmada</strong><br>Atendente: ' +
+              apt.confirmed_by_name +
+              "</div>"
+            : "") +
+          (apt.contract_status === "closed"
+            ? '<div class="contract-closed"><strong>Contrato Fechado</strong></div>'
+            : "") +
+          "</div>" +
+          "</body>" +
+          "</html>"
+
+        printWindow.document.write(html)
+        printWindow.document.close()
+        printWindow.focus()
+        setTimeout(() => {
+          printWindow.print()
+        }, 250)
+      }
+    })
+    .catch((error) => {
+      alert("Erro ao buscar dados do agendamento")
+      console.error(error)
+    })
+}
+
+async function showNotesModal(appointmentId) {
+  const response = await fetchAPI("/appointments.php?id=" + appointmentId)
+
+  let currentNotes = ""
+  if (response.success && response.data) {
+    currentNotes = response.data.notes || ""
+  }
+
+  const modalHTML =
+    '<div class="modal-overlay" onclick="closeModal()">' +
+    '<div class="modal-content notes-modal" onclick="event.stopPropagation()">' +
+    "<h2>Informações do Agendamento</h2>" +
+    '<p class="modal-subtitle">Adicione anotações importantes sobre este agendamento:</p>' +
+    '<div class="notes-container">' +
+    '<textarea id="appointmentNotes" class="notes-textarea" placeholder="Digite suas anotações aqui..." rows="10">' +
+    currentNotes +
+    "</textarea>" +
+    "</div>" +
+    '<div class="modal-actions">' +
+    '<button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>' +
+    '<button onclick="saveNotes(' +
+    appointmentId +
+    ')" class="btn btn-primary">Salvar</button>' +
+    "</div>" +
+    "</div>" +
+    "</div>"
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML)
+
+  setTimeout(() => {
+    const textarea = document.getElementById("appointmentNotes")
+    if (textarea) {
+      textarea.focus()
+    }
+  }, 100)
+}
+
+async function saveNotes(appointmentId) {
+  const notes = document.getElementById("appointmentNotes").value
+
+  const response = await fetchAPI("/appointments.php", {
+    method: "PUT",
+    body: JSON.stringify({
+      id: appointmentId,
+      notes: notes,
+    }),
+  })
+
+  if (response.success) {
+    closeModal()
+    alert("Anotações salvas com sucesso!")
+    location.reload()
+  } else {
+    alert("Erro ao salvar anotações: " + response.message)
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
   loadEmployees()
 
-  // Carregar estatísticas
   if (document.getElementById("appointments-tbody")) {
     loadDashboardStats()
   }
 
-  // Auto-refresh a cada 30 segundos
   setInterval(loadDashboardStats, 30000)
 })
 
-// CSS adicional para o modal
-const modalStyles = `
-    <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        padding: 1rem;
-    }
-    
-    .modal-content {
-        background: white;
-        border-radius: 12px;
-        padding: 2rem;
-        max-width: 600px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-    
-    .modal-content h2 {
-        margin-bottom: 1.5rem;
-        color: #111827;
-    }
-    
-    .modal-subtitle {
-        color: #6B7280;
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
-    }
-    
-    .employee-selection-modal {
-        max-width: 700px;
-    }
-    
-    .employee-selection-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-        max-height: 500px;
-        overflow-y: auto;
-        padding: 0.5rem;
-    }
-    
-    .employee-selection-button {
-        background: #F3F4F6;
-        border: 2px solid #E5E7EB;
-        border-radius: 8px;
-        padding: 1rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-align: left;
-        width: 100%;
-    }
-    
-    .employee-selection-button:hover {
-        background: #EEF2FF;
-        border-color: #6366F1;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .employee-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    
-    .employee-name {
-        font-weight: 600;
-        color: #111827;
-        font-size: 1rem;
-    }
-    
-    .employee-details {
-        font-size: 0.85rem;
-        color: #6B7280;
-    }
-    
-    .details-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .details-grid .full-width {
-        grid-column: 1 / -1;
-    }
-    
-    .modal-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-        margin-top: 1.5rem;
-    }
-    
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-    
-    .btn-primary {
-        background: #6366F1;
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background: #4F46E5;
-    }
-    
-    .btn-secondary {
-        background: #E5E7EB;
-        color: #374151;
-    }
-    
-    .btn-secondary:hover {
-        background: #D1D5DB;
-    }
-    
-    .btn-success {
-        background: #10B981;
-        color: white;
-    }
-    
-    .btn-success:hover {
-        background: #059669;
-    }
-    </style>
-`
+const modalStyles =
+  "<style>" +
+  ".modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }" +
+  ".modal-content { background: white; border-radius: 12px; padding: 2rem; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }" +
+  ".modal-content h2 { margin-bottom: 1.5rem; color: #111827; }" +
+  ".modal-subtitle { color: #6B7280; margin-bottom: 1.5rem; font-size: 0.95rem; }" +
+  ".employee-selection-modal { max-width: 700px; }" +
+  ".employee-selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; max-height: 500px; overflow-y: auto; padding: 0.5rem; }" +
+  ".employee-selection-button { background: #F3F4F6; border: 2px solid #E5E7EB; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; }" +
+  ".employee-selection-button:hover { background: #EEF2FF; border-color: #6366F1; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }" +
+  ".employee-info { display: flex; flex-direction: column; gap: 0.25rem; }" +
+  ".employee-name { font-weight: 600; color: #111827; font-size: 1rem; }" +
+  ".employee-details { font-size: 0.85rem; color: #6B7280; }" +
+  ".modal-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }" +
+  ".btn { padding: 0.75rem 1.5rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; }" +
+  ".btn-primary { background: #6366F1; color: white; }" +
+  ".btn-primary:hover { background: #4F46E5; }" +
+  ".btn-secondary { background: #E5E7EB; color: #374151; }" +
+  ".btn-secondary:hover { background: #D1D5DB; }" +
+  ".notes-modal { max-width: 650px; }" +
+  ".notes-container { margin: 1.5rem 0; }" +
+  ".notes-textarea { width: 100%; padding: 1rem; border: 2px solid #E5E7EB; border-radius: 8px; font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; transition: border-color 0.2s; }" +
+  ".notes-textarea:focus { outline: none; border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }" +
+  ".notes-textarea::placeholder { color: #9CA3AF; }" +
+  "</style>"
 
 if (!document.getElementById("modal-styles")) {
   const style = document.createElement("div")

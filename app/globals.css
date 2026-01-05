@@ -76,8 +76,6 @@
 }
 
 @theme inline {
-  --font-sans: "Geist", "Geist Fallback";
-  --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -125,7 +123,6 @@
   }
 }
 
-/* Added custom animation keyframes for smooth scroll effects */
 @keyframes fadeInUp {
   from {
     opacity: 0;
