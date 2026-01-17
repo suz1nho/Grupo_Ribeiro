@@ -65,6 +65,7 @@ try {
     LEFT JOIN employees e ON ca.analyzed_by = e.id
     ORDER BY ca.created_at DESC
     LIMIT 50");
+
     $creditAnalyses = $stmt->fetchAll();
     
 } catch (PDOException $e) {
@@ -314,6 +315,33 @@ try {
                                                 <p class="font-semibold text-gray-900"><?php echo $appointment['appointment_time']; ?></p>
                                             </div>
                                         </div>
+
+
+                                        <!-- Atendente responsável agendamentos ativos -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs text-gray-600">Atendente responsável</p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    if ($appointment['confirmed_by_name'] != null) {
+
+        if ($appointment['status'] == "pending") {
+            echo "Não confirmado ainda"; // desconfirmado
+
+        } else
+            echo htmlspecialchars($appointment['confirmed_by_name']);
+
+    } else
+    echo "Não confirmado ainda"; // nunca confirmado
+    // error_log(json_encode($appointment));
+?>
+                                                </p>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                     <div class="space-y-3">
@@ -353,17 +381,35 @@ try {
                                 </div>
 
                                 <!-- Display client message if provided -->
-                                <?php if (!empty($appointment['message']) && ($appointment['status'] == 'confirmed' || $appointment['status'] == 'approved') && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
-                                    <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-md">
+<?php
+    // if (!empty($appointment['message']) && ($appointment['status'] == 'confirmed' || $appointment['status'] == 'approved') && $appointment['confirmed_by'] == $_SESSION['employee_id']):
+?>
+
+<?php
+    if (!empty($appointment['message'])):
+?>
+
+                                <!-- Mensagem do cliente Contrato Ativo -->
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                    </svg>
+                                    <div>
                                         <p class="font-semibold text-blue-800 flex items-center gap-2">
-                                           
-                                            Mensagem do Cliente:
+
+                                            Mensagem do Cliente
                                         </p>
                                         <p class="text-sm text-blue-700 mt-2 leading-relaxed">
-                                            <?php echo htmlspecialchars($appointment['message']); ?>
+<?php
+    echo nl2br(htmlspecialchars($appointment['message']));
+?>
                                         </p>
                                     </div>
-                                <?php endif; ?>
+                                </div>
+
+<?php
+    endif;
+?>
 
                                 <!-- Action buttons -->
                                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
@@ -426,6 +472,7 @@ try {
                                 </div>
                                 
                                 <!-- Updated confirmation status display with red background and better styling -->
+                                <?php /*
                                 <?php // Adicionado status 'approved' para mostrar mensagem de bloqueio ?>
                                 <?php if (($appointment['status'] === 'confirmed' || $appointment['status'] === 'approved') && $appointment['confirmed_by']): ?>
                                     <div class="mt-4 p-4 bg-red-100 border-l-4 border-red-600 rounded-md shadow-sm">
@@ -441,6 +488,7 @@ try {
                                         </p>
                                     </div>
                                 <?php endif; ?>
+                                */ ?>
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -465,8 +513,22 @@ try {
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                             </svg>
                                             <div>
-                                                <p class="text-xs text-gray-600">Data</p>
-                                                <p class="font-semibold text-gray-900"><?php echo date('d-m-Y', strtotime($contract["contract_closed_at"])); ?></p>
+                                                <p class="text-xs text-gray-600">Data em que o contrato foi fechado</p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+if (isset($contract["contract_closed_at"]) == true) {
+
+    echo date('d-m-Y',
+              strtotime($contract["contract_closed_at"]));
+
+    echo(" As ");
+
+    echo date('H:i:s',
+              strtotime($contract["contract_closed_at"]));
+} else
+    echo "Não Presente (Contate admin.)";
+
+?></p>
                                             </div>
                                         </div>
                                         
@@ -480,7 +542,32 @@ try {
                                                 <p class="font-semibold text-gray-900"><?php echo $contract['appointment_time']; ?></p>
                                             </div>
                                         </div>
+
+
+                                        <!-- Atentende -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                            </svg>
+
+                                            <div>
+                                                <p class="text-xs text-gray-600">Atendente responsável</p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    echo htmlspecialchars(
+        $contract['contract_closed_by_name']
+            ??
+        'Não identificado');
+    // error_log(json_encode($contract));
+?>
+                                                </p>
+                                            </div>
+                                        </div> <!-- Atendente -->
                                     </div>
+<?php
+    // error_log(json_encode($contract));
+    // error_log(strtotime($contract["contract_closed_at"]));
+?>
 
                                     <div class="space-y-3">
                                         <!-- Nome -->
@@ -518,30 +605,29 @@ try {
                                     </div>
                                 </div>
 
-                                <!-- Display client message in closed contracts as well -->
-                                <?php if (!empty($contract['message']) && $contract['contract_closed_by'] == $_SESSION['employee_id']): ?>
-                                    <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-md">
+
+
+                                <!-- Mensagem do cliente Contrato Fechado -->
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                    </svg>
+                                    <div>
                                         <p class="font-semibold text-blue-800 flex items-center gap-2">
-                            
+
                                             Mensagem do Cliente
                                         </p>
                                         <p class="text-sm text-blue-700 mt-2 leading-relaxed">
-                                            <?php echo htmlspecialchars($contract['message']); ?>
+<?php
+
+    // echo htmlspecialchars($contract['message']);
+    echo nl2br(htmlspecialchars($contract['message']));
+?>
+
                                         </p>
                                     </div>
-                                <?php endif; ?>
-
-                                <!-- Contract info -->
-                                <div class="mt-4 p-4 bg-green-100 border-l-4 border-green-600 rounded-md">
-                                    <p class="font-semibold text-green-800">Contrato Fechado</p>
-                                    <p class="text-sm text-green-700 mt-1">
-                                        Fechado por: <?php echo htmlspecialchars($contract['contract_closed_by_name'] ?? 'Não identificado'); ?>
-                                    </p>
-                                    <p class="text-sm text-green-700">
-                                        Data: <?php echo $contract['contract_closed_at'] ? date('d/m/Y H:i', strtotime($contract['contract_closed_at'])) : 'N/A'; ?>
-                                    </p>
                                 </div>
-                                
+
                                 <!-- Action buttons for closed contracts -->
                                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
                                     <button onclick="printAppointment(<?php echo $contract['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
@@ -566,11 +652,13 @@ try {
             <!-- NEW Tab Content: Análise de Crédito -->
             <div id="content-credit" class="tab-content" style="display: none;">
                 <div id="creditAnalysisList" class="space-y-4">
+
                     <?php if (empty($creditAnalyses)): ?>
                         <div class="text-center py-12 text-gray-500">
                             Nenhuma análise de crédito no momento
                         </div>
                     <?php else: ?>
+
                         <?php foreach ($creditAnalyses as $analysis): ?>
                             <div class="appointment-card bg-cyan-50 border-cyan-200">
                                 <div class="grid md:grid-cols-2 gap-6">
@@ -582,7 +670,11 @@ try {
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Data de Envio</p>
-                                                <p class="font-semibold text-gray-900"><?php echo $analysis['data_formatada']; ?></p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    echo $analysis['data_formatada'];
+?>
+                                                </p>
                                             </div>
                                         </div>
                                         
@@ -593,7 +685,11 @@ try {
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Telefone</p>
-                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['phone']); ?></p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    echo htmlspecialchars($analysis['phone']);
+?>
+                                                </p>
                                             </div>
                                         </div>
 
@@ -605,14 +701,14 @@ try {
                                             <div>
                                                 <p class="text-xs text-gray-600">Status</p>
                                                 <p class="font-semibold text-gray-900">
-                                                    <?php 
-                                                    $statusText = [
-                                                        'pending' => 'Pendente',
-                                                        'approved' => 'Aprovado',
-                                                        'rejected' => 'Rejeitado'
-                                                    ];
-                                                    echo $statusText[$analysis['status']] ?? 'Pendente';
-                                                    ?>
+<?php
+    $statusText = [
+        'pending' => 'Pendente',
+        'approved' => 'Aprovado',
+        'rejected' => 'Rejeitado'
+    ];
+    echo $statusText[$analysis['status']] ?? 'Pendente';
+?>
                                                 </p>
                                             </div>
                                         </div>
@@ -626,7 +722,15 @@ try {
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Nome</p>
-                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['name']); ?></p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    echo htmlspecialchars(
+        $analysis['name']
+    ??
+        "Nome não disponível"
+    );
+?>
+                                            </p>
                                             </div>
                                         </div>
                                         
@@ -637,17 +741,40 @@ try {
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Email</p>
-                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['email']); ?></p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    echo htmlspecialchars(
+        $analysis['email']
+    ??
+        "E-mail não disponível"
+    );
+?>
+                                                </p>
                                             </div>
                                         </div>
                                         
-                                        <!-- Valor Solicitado -->
-                                         
+                                        <!-- Atentende -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                            </svg>
+
                                             <div>
+                                                <p class="text-xs text-gray-600">Atendente responsável</p>
+                                                <p class="font-semibold text-gray-900">
+<?php
+    echo htmlspecialchars(
+        $analysis['confirmed_by_name']
+            ??
+        'Não identificado');
+?>
+                                                </p>
                                             </div>
-                                        </div>
+                                        </div> <!-- Atendente -->
+
                                     </div>
                                 </div>
+
 
                                 <!-- Action buttons --><br>
                                 <?php if ($analysis['analyzed_by']): ?>
@@ -724,37 +851,6 @@ try {
                                         Confirmar Análise de Crédito
                                     </button>
                                 <?php endif; ?>
-                            </div>
-                            
-                            <!-- Exibição do status de confirmação com nome do funcionário -->
-                            <?php if ($analysis['analyzed_by']): ?>
-                                <div class="mt-4 p-4 bg-green-100 border-l-4 border-green-600 rounded-md shadow-sm">
-                                    <div class="flex items-center gap-2">
-                                    
-                                        <p class="font-bold text-green-900">ANÁLISE CONFIRMADA</p>
-                                    </div>
-                                    <p class="text-sm text-green-700 mt-2 font-medium">
-                                        Atendente responsável: <?php echo htmlspecialchars($analysis['confirmed_by_name'] ?? 'Não identificado'); ?>
-                                    </p>
-                                    <?php if ($analysis['status'] && $analysis['status'] !== 'pending'): ?>
-                                        <p class="text-sm text-green-700 mt-1">
-                                            Status da análise: <span class="font-semibold <?php 
-                                                echo $analysis['status'] === 'approved' ? 'text-green-800' : 
-                                                     ($analysis['status'] === 'rejected' ? 'text-red-700' : 'text-yellow-700');
-                                            ?>">
-                                                <?php 
-                                                $statusLabels = [
-                                                    'pending' => 'Pendente',
-                                                    'approved' => 'Aprovado',
-                                                    'rejected' => 'Rejeitado'
-                                                ];
-                                                echo $statusLabels[$analysis['status']] ?? 'Pendente';
-                                                ?>
-                                            </span>
-                                        </p>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>

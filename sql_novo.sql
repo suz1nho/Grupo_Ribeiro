@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     cpf VARCHAR(14),
-    notes VARCHAR(150),
+    notes VARCHAR(250),
     appointment_day VARCHAR(15) NOT NULL,
     appointment_date DATE NOT NULL,
     appointment_time VARCHAR(20) NOT NULL,

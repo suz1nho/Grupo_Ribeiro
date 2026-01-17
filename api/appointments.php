@@ -79,7 +79,7 @@ try {
         'success' => false,
         'message' => 'Erro ao conectar ao banco de dados',
         'error' => $e->getMessage(),
-        'hint' => 'Verifique se o MySQL está rodando e as credenciais em config/database.php estão corretas'
+        'hint' => 'Verifique se o MySQL está rodando e as credenciais em conf/db.json estão corretas'
     ], 500);
 }
 
@@ -141,7 +141,8 @@ try {
             
         case 'POST':
             $rawInput = file_get_contents('php://input');
-            error_log("[API] Raw input: " . $rawInput);
+            // error_log("[API] Raw input: " . $rawInput);
+            // error_log("[API] [Appointments] +1 app.");
             
             $data = json_decode($rawInput, true);
             
@@ -152,7 +153,7 @@ try {
                 ], 400);
             }
             
-            error_log("[API] Decoded data: " . print_r($data, true));
+            // error_log("[API] Decoded data: " . print_r($data, true));
             
             $required = ['name', 'email', 'phone', 'appointment_date', 'appointment_time'];
             $missing = [];
@@ -237,7 +238,9 @@ try {
             
             $fields = [];
             $params = [];
-            
+
+            // error_log("PUT: " . json_encode($data) . "\n");
+
             $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', "contract_closed_at", 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes'];
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
@@ -249,18 +252,20 @@ try {
             if (empty($fields)) {
                 sendJsonResponse(['success' => false, 'message' => 'Nenhum campo para atualizar'], 400);
             }
-            
-            if (isset($data['status']) && $data['status'] === 'confirmed') {
+
+            if (isset($data['status']) && $data['status'] === 'approved') {
                 $fields[] = "contract_closed_at = CURRENT_TIMESTAMP";
             }
-            
+
             $params[] = $data['id'];
             
             $sql = "UPDATE appointments SET " . implode(', ', $fields) . " WHERE id = ?";
+
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             
             sendJsonResponse(['success' => true, 'message' => 'Agendamento atualizado com sucesso']);
+
             break;
             
         case 'DELETE':
