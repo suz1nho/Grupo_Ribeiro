@@ -179,17 +179,29 @@ async function showEmployeeSelection(appointmentId) {
 }
 
 async function confirmAppointmentWithEmployee(appointmentId, employeeId, employeeName) {
+  const appointmentResponse = await fetchAPI("/appointments.php?id=" + appointmentId)
+
+  if (!appointmentResponse.success || !appointmentResponse.data) {
+    alert("Erro ao buscar dados do agendamento")
+    return
+  }
+
+  const appointment = appointmentResponse.data
+
   const response = await fetchAPI("/appointments.php", {
     method: "PUT",
     body: JSON.stringify({
       id: appointmentId,
-      status: "confirmed",
+      status: "approved",
       confirmed_by: employeeId,
     }),
   })
 
   if (response.success) {
     closeModal()
+
+    sendWhatsAppMessage(appointment, employeeName)
+
     alert("Agendamento confirmado por " + employeeName + "!")
     location.reload()
   } else {
@@ -197,6 +209,34 @@ async function confirmAppointmentWithEmployee(appointmentId, employeeId, employe
   }
 }
 
+function sendWhatsAppMessage(appointment, employeeName) {
+  // Formatar a data do agendamento para formato brasileiro
+  const appointmentDate = new Date(appointment.appointment_date + "T00:00:00")
+  const formattedDate = appointmentDate.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  })
+
+  // Formatar o horário
+  const formattedTime = appointment.appointment_time
+
+  // Montar a mensagem
+  const message = `Olá, ${appointment.name}! O seu agendamento foi confirmado para o dia ${formattedDate} no horário ${formattedTime}. Aguardamos você!`
+
+  // Limpar o telefone (remover caracteres não numéricos)
+  const cleanPhone = appointment.phone.replace(/\D/g, "")
+
+  // Montar URL do WhatsApp
+  // Se o telefone não tiver código do país, adicionar +55 (Brasil)
+  const phoneWithCountry = cleanPhone.startsWith("55") ? cleanPhone : "55" + cleanPhone
+  const whatsappURL = `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`
+
+  // Abrir WhatsApp em nova aba
+  window.open(whatsappURL, "_blank")
+}
+
+// Marcar contrato como fechado
 async function markContract(appointmentId) {
   if (!confirm("Confirmar que o contrato foi fechado?")) {
     return
@@ -346,6 +386,298 @@ async function saveNotes(appointmentId) {
   }
 }
 
+// Confirmar análise de crédito - Abre modal de seleção de funcionário
+async function confirmCreditAnalysis(analysisId) {
+  const response = await fetchAPI("/credit-analysis.php?action=employees")
+
+  if (!response.success || !response.data) {
+    alert("Erro ao carregar funcionários")
+    return
+  }
+
+  const employees = response.data
+
+  // Criar modal de seleção de funcionário
+  const modalHTML =
+    '<div class="modal-overlay" onclick="closeModal()">' +
+    '<div class="modal-content employee-selection-modal" onclick="event.stopPropagation()">' +
+    "<h2>Selecionar Funcionário Responsável</h2>" +
+    '<p class="modal-subtitle">Escolha o funcionário que será responsável por esta análise de crédito:</p>' +
+    '<div class="employee-selection-grid">' +
+    employees
+      .map(
+        (emp) =>
+          '<button class="employee-selection-button" onclick="executeCreditConfirmation(' +
+          analysisId +
+          ", " +
+          emp.id +
+          ')">' +
+          '<div class="employee-info">' +
+          '<div class="employee-name">' +
+          emp.name +
+          "</div>" +
+          '<div class="employee-details">' +
+          (emp.role || "Funcionário") +
+          "</div>" +
+          "</div>" +
+          "</button>",
+      )
+      .join("") +
+    "</div>" +
+    '<div class="modal-actions">' +
+    '<button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>' +
+    "</div>" +
+    "</div>" +
+    "</div>"
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML)
+}
+
+// Executar confirmação da análise de crédito após selecionar funcionário
+async function executeCreditConfirmation(analysisId, employeeId) {
+  closeModal()
+
+  const analysisResponse = await fetchAPI("/credit-analysis.php?id=" + analysisId)
+
+  if (!analysisResponse.success || !analysisResponse.data) {
+    alert("Erro ao buscar dados da análise de crédito")
+    return
+  }
+
+  const analysis = analysisResponse.data
+
+  const response = await fetchAPI("/credit-analysis.php", {
+    method: "PUT",
+    body: JSON.stringify({
+      id: analysisId,
+      status: "approved",
+      analyzed_by: employeeId,
+    }),
+  })
+
+  if (response.success) {
+    sendCreditAnalysisWhatsAppMessage(analysis)
+
+    alert("Análise de crédito confirmada com sucesso!")
+    location.reload()
+  } else {
+    alert("Erro ao confirmar análise: " + response.message)
+  }
+}
+
+function sendCreditAnalysisWhatsAppMessage(analysis) {
+  // Formatar valor solicitado
+  const formattedAmount = Number.parseFloat(analysis.requested_amount).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  })
+
+  // Montar a mensagem
+  const message = `Olá, ${analysis.name}! A sua análise de crédito foi confirmada! ✅\n\nValor solicitado: ${formattedAmount}\n\nEntre em contato conosco para darmos continuidade ao seu processo. Aguardamos você!`
+
+  // Limpar o telefone (remover caracteres não numéricos)
+  const cleanPhone = analysis.phone.replace(/\D/g, "")
+
+  // Montar URL do WhatsApp
+  // Se o telefone não tiver código do país, adicionar +55 (Brasil)
+  const phoneWithCountry = cleanPhone.startsWith("55") ? cleanPhone : "55" + cleanPhone
+  const whatsappURL = `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`
+
+  // Abrir WhatsApp em nova aba
+  window.open(whatsappURL, "_blank")
+}
+
+// Atualizar status da análise de crédito (Pendente, Aprovado, Rejeitado)
+async function updateCreditStatus(analysisId, status) {
+  const statusLabels = {
+    pending: "Pendente",
+    approved: "Aprovado",
+    rejected: "Rejeitado",
+  }
+
+  if (!confirm("Confirmar alteração do status para: " + statusLabels[status] + "?")) {
+    return
+  }
+
+  const response = await fetchAPI("/credit-analysis.php", {
+    method: "PUT",
+    body: JSON.stringify({
+      id: analysisId,
+      status: status,
+    }),
+  })
+
+  if (response.success) {
+    alert("Status atualizado com sucesso!")
+    location.reload()
+  } else {
+    alert("Erro ao atualizar status: " + response.message)
+  }
+}
+
+// Desmarcar análise de crédito
+async function unconfirmCreditAnalysis(analysisId) {
+  if (!confirm("Deseja desmarcar esta análise de crédito? O funcionário responsável será removido.")) {
+    return
+  }
+
+  const response = await fetchAPI("/credit-analysis.php", {
+    method: "PUT",
+    body: JSON.stringify({
+      id: analysisId,
+      status: "pending",
+      analyzed_by: null,
+    }),
+  })
+
+  if (response.success) {
+    alert("Análise desmarcada com sucesso!")
+    location.reload()
+  } else {
+    alert("Erro ao desmarcar análise: " + response.message)
+  }
+}
+
+// Ver documentos da análise de crédito
+async function viewCreditDocuments(analysisId) {
+  const response = await fetchAPI("/credit-analysis.php?id=" + analysisId)
+
+  if (!response.success || !response.data) {
+    alert("Erro ao carregar documentos")
+    return
+  }
+
+  const analysis = response.data
+
+  // Função auxiliar para gerar preview de documento
+  function getDocumentPreview(docPath, docName) {
+    if (!docPath) {
+      return (
+        '<div class="document-item no-doc">' +
+        '<span class="doc-label">' +
+        docName +
+        ":</span> " +
+        '<span class="doc-status">Não enviado</span>' +
+        "</div>"
+      )
+    }
+
+    const fullPath = "../uploads/credit-analysis/" + docPath
+    const ext = docPath.split(".").pop().toLowerCase()
+    const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(ext)
+
+    if (isImage) {
+      return (
+        '<div class="document-item has-doc">' +
+        '<span class="doc-label">' +
+        docName +
+        ":</span>" +
+        '<div class="doc-image-container">' +
+        '<img src="' +
+        fullPath +
+        '" alt="' +
+        docName +
+        '" class="doc-thumbnail" onclick="openDocumentImage(\'' +
+        fullPath +
+        "')\">" +
+        '<a href="' +
+        fullPath +
+        '" target="_blank" class="doc-link-btn">Abrir em nova aba</a>' +
+        "</div>" +
+        "</div>"
+      )
+    } else {
+      return (
+        '<div class="document-item has-doc">' +
+        '<span class="doc-label">' +
+        docName +
+        ":</span> " +
+        '<a href="' +
+        fullPath +
+        '" target="_blank" class="doc-link">Ver documento (PDF)</a>' +
+        "</div>"
+      )
+    }
+  }
+
+  // Criar modal com documentos
+  const modalHTML =
+    '<div class="modal-overlay" onclick="closeModal()">' +
+    '<div class="modal-content documents-modal" onclick="event.stopPropagation()">' +
+    "<h2>Documentos da Análise de Crédito</h2>" +
+    '<div class="client-info-section">' +
+    "<p><strong>Nome:</strong> " +
+    (analysis.name || "Não informado") +
+    "</p>" +
+    "<p><strong>Email:</strong> " +
+    (analysis.email || "Não informado") +
+    "</p>" +
+    "<p><strong>Telefone:</strong> " +
+    (analysis.phone || "Não informado") +
+    "</p>" +
+    "</div>" +
+    '<hr style="margin: 15px 0; border: none; border-top: 1px solid #e5e7eb;">' +
+    '<h3 style="margin-bottom: 15px; color: #374151;">Documentos Enviados</h3>' +
+    '<div class="documents-grid">' +
+    getDocumentPreview(analysis.doc_identidade, "CPF e RG ou CNH") +
+    getDocumentPreview(analysis.doc_endereco, "Comprovante de Endereço") +
+    getDocumentPreview(analysis.doc_renda, "Comprovante de Renda") +
+    getDocumentPreview(analysis.doc_bancario, "Dados Bancários") +
+    "</div>" +
+    '<div class="modal-actions">' +
+    '<button onclick="closeModal()" class="btn btn-primary">Fechar</button>' +
+    "</div>" +
+    "</div>" +
+    "</div>"
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML)
+}
+
+function openDocumentImage(imageSrc) {
+  const imageModal = document.createElement("div")
+  imageModal.className = "image-modal-overlay"
+  imageModal.innerHTML =
+    '<div class="image-modal-content">' +
+    '<button class="image-modal-close" onclick="this.closest(\'.image-modal-overlay\').remove()">' +
+    '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">' +
+    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' +
+    "</svg>" +
+    "</button>" +
+    '<img src="' +
+    imageSrc +
+    '" alt="Documento">' +
+    "</div>"
+
+  imageModal.addEventListener("click", (e) => {
+    if (e.target === imageModal) {
+      imageModal.remove()
+    }
+  })
+
+  document.body.appendChild(imageModal)
+}
+
+// Deletar análise de crédito (apenas para administrativos)
+async function deleteCreditAnalysis(analysisId) {
+  if (!confirm("ATENÇÃO: Deseja realmente deletar esta análise de crédito? Esta ação não pode ser desfeita!")) {
+    return
+  }
+
+  const response = await fetchAPI("/credit-analysis.php", {
+    method: "DELETE",
+    body: JSON.stringify({
+      id: analysisId,
+    }),
+  })
+
+  if (response.success) {
+    alert("Análise de crédito deletada com sucesso!")
+    location.reload()
+  } else {
+    alert("Erro ao deletar análise: " + response.message)
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadEmployees()
 
@@ -380,6 +712,18 @@ const modalStyles =
   ".notes-textarea { width: 100%; padding: 1rem; border: 2px solid #E5E7EB; border-radius: 8px; font-family: inherit; font-size: 0.95rem; line-height: 1.6; resize: vertical; transition: border-color 0.2s; }" +
   ".notes-textarea:focus { outline: none; border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }" +
   ".notes-textarea::placeholder { color: #9CA3AF; }" +
+  ".documents-modal { max-width: 700px; }" +
+  ".document-item { margin-bottom: 1rem; }" +
+  ".document-link a { color: #6366F1; text-decoration: none; }" +
+  ".document-link a:hover { text-decoration: underline; }" +
+  ".image-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1001; }" +
+  ".image-modal-content { background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }" +
+  ".image-modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; cursor: pointer; }" +
+  ".image-modal-close svg { width: 24px; height: 24px; color: #6B7280; transition: color 0.2s; }" +
+  ".image-modal-close svg:hover { color: #EF4444; }" +
+  ".doc-thumbnail { max-width: 100%; height: auto; cursor: pointer; margin-bottom: 1rem; }" +
+  ".doc-link-btn { padding: 0.5rem 1rem; border-radius: 8px; border: 2px solid #6366F1; color: #6366F1; transition: all 0.2s; }" +
+  ".doc-link-btn:hover { background: #6366F1; color: white; }" +
   "</style>"
 
 if (!document.getElementById("modal-styles")) {

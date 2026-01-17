@@ -2,6 +2,181 @@
 session_start();
 require_once __DIR__ . '/../config/database.php';
 
+$accessPassword = 'Anderson_admin';
+$accessGranted = isset($_SESSION['register_access']) && $_SESSION['register_access'] === true;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['access_password'])) {
+    if ($_POST['access_password'] === $accessPassword) {
+        $_SESSION['register_access'] = true;
+        $accessGranted = true;
+    } else {
+        $accessError = 'Senha incorreta. Tente novamente.';
+    }
+}
+
+// Se não tem acesso, mostra tela de senha
+if (!$accessGranted) {
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito - Cadastro de Funcionários</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .access-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            max-width: 420px;
+            width: 100%;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .lock-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .access-container h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .access-container p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .btn-access {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-access:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #111827;
+        }
+    </style>
+</head>
+<body>
+    <div class="access-container">
+        <div class="lock-icon">🔒</div>
+        <h1>Acesso Restrito</h1>
+        <p>Digite a senha de administrador para acessar o cadastro de funcionários</p>
+        
+        <?php if (isset($accessError)): ?>
+            <div class="alert-error">
+                <?php echo htmlspecialchars($accessError); ?>
+            </div>
+        <?php endif; ?>
+        
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="access_password">Senha de Acesso</label>
+                <input type="password" id="access_password" name="access_password" required placeholder="Digite a senha">
+            </div>
+            <button type="submit" class="btn-access">Acessar</button>
+        </form>
+        
+        <a href="home.php" class="back-link">← Voltar para o início</a>
+    </div>
+</body>
+</html>
+<?php
+    exit;
+}
+
+// Código original do register.php continua aqui
 $success = '';
 $error = '';
 $employees = [];
@@ -32,7 +207,7 @@ function maskPassword($password) {
     return str_repeat('*', min(strlen($password), 8));
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $cpf = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
@@ -88,7 +263,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #f9fafb;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
             padding: 2rem;
         }
 
@@ -107,12 +283,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .page-title h1 {
             font-size: 1.75rem;
             font-weight: 700;
-            color: #111827;
+            color: #ffffff;
             margin-bottom: 0.25rem;
         }
 
         .page-title p {
-            color: #6b7280;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
         }
 
@@ -120,14 +296,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            color: #6b7280;
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             font-size: 0.9rem;
             transition: color 0.3s;
         }
 
         .back-link:hover {
-            color: #111827;
+            color: #ffffff;
         }
 
         .btn {
@@ -145,19 +321,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn-primary {
-            background: #2563eb;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
         }
 
         .form-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             margin-bottom: 2rem;
         }
 
@@ -197,16 +374,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-group input,
         .form-group select {
             padding: 0.625rem 0.875rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 0.95rem;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .form-group input::placeholder {
@@ -237,7 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .alert {
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
         }
@@ -256,9 +434,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .employees-list {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
 
         .empty-state {
@@ -312,29 +490,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .btn-view-more {
             padding: 0.5rem 1rem;
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
             font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
             text-align: center;
         }
 
         .btn-view-more:hover {
-            background: #e5e7eb;
-            border-color: #9ca3af;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .modal {
             display: none;
-            role: fixed;
+            position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -347,7 +525,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .modal-content {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 2rem;
             max-width: 600px;
             width: 100%;
@@ -402,28 +580,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .search-input {
             flex: 1;
             padding: 0.625rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 0.95rem;
         }
 
         .search-input:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: #3b82f6;
         }
 
         .btn-search {
             padding: 0.625rem 1.5rem;
-            background: #2563eb;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
         .btn-search:hover {
-            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -637,21 +817,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="modal-detail-value">${emp.role || '-'}</div>
                         </div>
                         <div class="modal-detail">
+                            <div class="modal-detail-label">Status</div>
+                            <div class="modal-detail-value">${emp.status === 'active' ? 'Ativo' : 'Inativo'}</div>
+                        </div>
+                        <div class="modal-detail">
                             <div class="modal-detail-label">Data de Contratação</div>
                             <div class="modal-detail-value">${emp.hired_date || '-'}</div>
                         </div>
-                        <div class="modal-detail">
-                            <div class="modal-detail-label">Status</div>
-                            <div class="modal-detail-value">
-                                <span class="badge badge-active">${emp.status === 'active' ? 'Ativo' : 'Inativo'}</span>
-                            </div>
-                        </div>
                     `;
                 } else {
-                    modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar detalhes do funcionário.</p>';
+                    modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar dados do funcionário.</p>';
                 }
             } catch (error) {
-                modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar detalhes do funcionário.</p>';
+                modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar dados do funcionário.</p>';
             }
         }
 
@@ -659,7 +837,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('employee-modal').classList.remove('active');
         }
 
-        // Close modal on outside click
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal on click outside
         document.getElementById('employee-modal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();

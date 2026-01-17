@@ -19,7 +19,7 @@ try {
     $stmt = $db->query("SELECT COUNT(*) as total FROM appointments WHERE status = 'closed'");
     $contractsClosed = $stmt->fetch()['total'] ?? 0;
     
-    $stmt = $db->query("SELECT COUNT(*) as total FROM credit_analysis WHERE status = 'pendente'");
+    $stmt = $db->query("SELECT COUNT(*) as total FROM credit_analysis WHERE status = 'pending'");
     $creditAnalysisPending = $stmt->fetch()['total'] ?? 0;
     
     $confirmationRate = $totalAppointments > 0 ? round(($contractsClosed / $totalAppointments) * 100) : 0;
@@ -32,6 +32,7 @@ try {
     WHERE
         a.status = 'pending' OR
         a.status = 'confirmed' OR
+        a.status = 'approved' OR
         a.status IS NULL
         ORDER BY
             appointment_date DESC,
@@ -58,8 +59,10 @@ try {
     $stmt = $db->query(
     "SELECT
         ca.*,
+        e.name as confirmed_by_name,
         DATE_FORMAT(ca.created_at, '%d/%m/%Y %H:%i') as data_formatada
     FROM credit_analysis ca
+    LEFT JOIN employees e ON ca.analyzed_by = e.id
     ORDER BY ca.created_at DESC
     LIMIT 50");
     $creditAnalyses = $stmt->fetchAll();
@@ -317,7 +320,7 @@ try {
                                         <!-- Nome -->
                                         <div class="flex items-center gap-3">
                                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7-7h14a7 7 0 00-7-7z"></path>
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Nome</p>
@@ -350,7 +353,7 @@ try {
                                 </div>
 
                                 <!-- Display client message if provided -->
-                                <?php if (!empty($appointment['message']) && $appointment['status'] == 'confirmed' && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
+                                <?php if (!empty($appointment['message']) && ($appointment['status'] == 'confirmed' || $appointment['status'] == 'approved') && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
                                     <div class="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-md">
                                         <p class="font-semibold text-blue-800 flex items-center gap-2">
                                            
@@ -364,7 +367,8 @@ try {
 
                                 <!-- Action buttons -->
                                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                                    <?php if ($appointment['status'] == 'confirmed' && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
+                                    <?php // Adicionado status 'approved' para mostrar botões após confirmação ?>
+                                    <?php if (($appointment['status'] == 'confirmed' || $appointment['status'] == 'approved') && $appointment['confirmed_by']): ?>
                                         <!-- Buttons only for employee who confirmed -->
                                         <button onclick="unconfirmAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-red-600 hover:bg-red-700">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,7 +383,7 @@ try {
                                             class="admin-btn bg-purple-600 hover:bg-purple-700"
                                         >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-2a2 2 0 00-2-2z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
                                             Informações
                                         </button>
@@ -403,7 +407,8 @@ try {
                                                 Deletar
                                             </button>
                                         <?php endif; ?>
-                                    <?php elseif ($appointment['status'] !== 'confirmed'): ?>
+                                    <?php // Adicionado status 'approved' na condição ?>
+                                    <?php elseif ($appointment['status'] !== 'confirmed' && $appointment['status'] !== 'approved'): ?>
                                         <!-- Show confirm button only if not confirmed -->
                                         <button onclick="confirmAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-green-600 hover:bg-green-700">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -421,7 +426,8 @@ try {
                                 </div>
                                 
                                 <!-- Updated confirmation status display with red background and better styling -->
-                                <?php if ($appointment['status'] === 'confirmed' && $appointment['confirmed_by']): ?>
+                                <?php // Adicionado status 'approved' para mostrar mensagem de bloqueio ?>
+                                <?php if (($appointment['status'] === 'confirmed' || $appointment['status'] === 'approved') && $appointment['confirmed_by']): ?>
                                     <div class="mt-4 p-4 bg-red-100 border-l-4 border-red-600 rounded-md shadow-sm">
                                         <div class="flex items-center gap-2">
 
@@ -480,7 +486,7 @@ try {
                                         <!-- Nome -->
                                         <div class="flex items-center gap-3">
                                             <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7-7h14a7 7 0 00-7-7z"></path>
                                             </svg>
                                             <div>
                                                 <p class="text-xs text-gray-600">Nome</p>
@@ -613,96 +619,145 @@ try {
                                     </div>
 
                                     <div class="space-y-3">
-                                        <!-- Documentos Enviados -->
-                                        <div>
-                                            <p class="text-sm font-semibold text-gray-700 mb-2">Documentos Enviados:</p>
-                                            <div class="space-y-2">
-                                                <?php if ($analysis['doc_identidade']): ?>
-                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_identidade']); ?>" 
-                                                       target="_blank" 
-                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                        </svg>
-                                                        CPF e RG/CNH
-                                                    </a>
-                                                <?php endif; ?>
-                                                
-                                                <?php if ($analysis['doc_endereco']): ?>
-                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_endereco']); ?>" 
-                                                       target="_blank" 
-                                                       class="flex items-center gap-2 text-sm text-blue-600  hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                        </svg>
-                                                        Comprovante de Endereço
-                                                    </a>
-                                                <?php endif; ?>
-                                                
-                                                <?php if ($analysis['doc_renda']): ?>
-                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_renda']); ?>" 
-                                                       target="_blank" 
-                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                        </svg>
-                                                        Comprovante de Renda
-                                                    </a>
-                                                <?php endif; ?>
-                                                
-                                                <?php if ($analysis['doc_bancario']): ?>
-                                                    <a href="../uploads/credit-analysis/<?php echo htmlspecialchars($analysis['doc_bancario']); ?>" 
-                                                       target="_blank" 
-                                                       class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800">
-                                                        <svg class="w-4 h-4" fill="none" width="48px" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                        </svg>
-                                                        Dados Bancários
-                                                    </a>
-                                                <?php endif; ?>
-                                                
-                                                <?php if (!$analysis['doc_identidade'] && !$analysis['doc_endereco'] && !$analysis['doc_renda'] && !$analysis['doc_bancario']): ?>
-                                                    <p class="text-sm text-gray-500 italic">Nenhum documento enviado</p>
-                                                <?php endif; ?>
+                                        <!-- Nome -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7-7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs text-gray-600">Nome</p>
+                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['name']); ?></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Email -->
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                            </svg>
+                                            <div>
+                                                <p class="text-xs text-gray-600">Email</p>
+                                                <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($analysis['email']); ?></p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Valor Solicitado -->
+                                         
+                                            <div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Action buttons -->
-                                <?php if ($analysis['status'] === 'pendente'): ?>
-                                    <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                                        <button 
-                                            onclick="updateCreditAnalysisStatus(<?php echo $analysis['id']; ?>, 'approved')" 
-                                            class="admin-btn bg-green-600 hover:bg-green-700"
-                                        >
+                                <!-- Action buttons --><br>
+                                <?php if ($analysis['analyzed_by']): ?>
+                                    <!-- Mostrar botão Ver Documentos sempre como primeiro botão após confirmação -->
+                                    <button onclick="viewCreditDocuments(<?php echo $analysis['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Ver Documentos
+                                    </button>
+                                    
+                                    <button onclick="updateCreditStatus(<?php echo $analysis['id']; ?>, 'pending')" class="admin-btn bg-yellow-600 hover:bg-yellow-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Pendente
+                                    </button>
+                                    
+                                    <button onclick="updateCreditStatus(<?php echo $analysis['id']; ?>, 'approved')" class="admin-btn bg-green-600 hover:bg-green-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Aprovado
+                                    </button>
+                                    
+                                    <button onclick="updateCreditStatus(<?php echo $analysis['id']; ?>, 'rejected')" class="admin-btn bg-red-600 hover:bg-red-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Rejeitado
+                                    </button>
+                                    
+                                    <button onclick="unconfirmCreditAnalysis(<?php echo $analysis['id']; ?>)" class="admin-btn bg-gray-600 hover:bg-gray-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Desmarcar Análise
+                                    </button>
+                                    
+                                    <?php if ($_SESSION['employee_role'] === 'Administrativo'): ?>
+                                        <!-- Botão deletar apenas para administrativos -->
+                                        <button onclick="deleteCreditAnalysis(<?php echo $analysis['id']; ?>)" class="admin-btn bg-red-800 hover:bg-red-900">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
-                                            Aprovar
+                                            Deletar
                                         </button>
-                                        
-                                        <button 
-                                            onclick="updateCreditAnalysisStatus(<?php echo $analysis['id']; ?>, 'rejected')" 
-                                            class="admin-btn bg-red-600 hover:bg-red-700"
-                                        >
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                            </svg>
-                                            Rejeitar
-                                        </button>
-                                    </div>
+                                    <?php endif; ?>
                                 <?php else: ?>
-                                    <div class="mt-4 p-4 rounded-md <?php echo $analysis['status'] === 'approved' ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'; ?> border-l-4">
-                                        <p class="font-semibold <?php echo $analysis['status'] === 'approved' ? 'text-green-800' : 'text-red-800'; ?>">
-                                            Status: <?php echo $statusText[$analysis['status']]; ?>
-                                        </p>
-                                    </div>
+                                    <!-- Botão Ver Documentos antes de Confirmar Análise quando não confirmado -->
+                                    <button onclick="viewCreditDocuments(<?php echo $analysis['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Ver Documentos
+                                    </button>
+                                    
+                                    <?php if ($_SESSION['employee_role'] === 'Administrativo'): ?>
+                                        <button onclick="deleteCreditAnalysis(<?php echo $analysis['id']; ?>)" class="admin-btn bg-red-800 hover:bg-red-900">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                            Deletar
+                                        </button>
+                                    <?php endif; ?>
+                                    
+                                    <!-- Mostrar apenas botão de confirmação em verde se não estiver confirmado -->
+                                    <button onclick="confirmCreditAnalysis(<?php echo $analysis['id']; ?>)" class="admin-btn bg-green-600 hover:bg-green-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Confirmar Análise de Crédito
+                                    </button>
                                 <?php endif; ?>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
+                            
+                            <!-- Exibição do status de confirmação com nome do funcionário -->
+                            <?php if ($analysis['analyzed_by']): ?>
+                                <div class="mt-4 p-4 bg-green-100 border-l-4 border-green-600 rounded-md shadow-sm">
+                                    <div class="flex items-center gap-2">
+                                    
+                                        <p class="font-bold text-green-900">ANÁLISE CONFIRMADA</p>
+                                    </div>
+                                    <p class="text-sm text-green-700 mt-2 font-medium">
+                                        Atendente responsável: <?php echo htmlspecialchars($analysis['confirmed_by_name'] ?? 'Não identificado'); ?>
+                                    </p>
+                                    <?php if ($analysis['status'] && $analysis['status'] !== 'pending'): ?>
+                                        <p class="text-sm text-green-700 mt-1">
+                                            Status da análise: <span class="font-semibold <?php 
+                                                echo $analysis['status'] === 'approved' ? 'text-green-800' : 
+                                                     ($analysis['status'] === 'rejected' ? 'text-red-700' : 'text-yellow-700');
+                                            ?>">
+                                                <?php 
+                                                $statusLabels = [
+                                                    'pending' => 'Pendente',
+                                                    'approved' => 'Aprovado',
+                                                    'rejected' => 'Rejeitado'
+                                                ];
+                                                echo $statusLabels[$analysis['status']] ?? 'Pendente';
+                                                ?>
+                                            </span>
+                                        </p>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -755,6 +810,19 @@ try {
             switchTab(savedTab);
         });
         
+        function toggleDocuments(analysisId) {
+            const container = document.getElementById('documents-' + analysisId);
+            const arrow = document.getElementById('doc-arrow-' + analysisId);
+            
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                container.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        
         async function updateCreditAnalysisStatus(id, status) {
             if (!confirm(`Confirmar ${status === 'approved' ? 'aprovação' : 'rejeição'} desta análise de crédito?`)) {
                 return;
@@ -780,6 +848,179 @@ try {
             } catch (error) {
                 console.error('[v0] Error updating status:', error);
                 alert('Erro ao atualizar status. Tente novamente.');
+            }
+        }
+
+        async function confirmCreditAnalysis(analysisId) {
+            // Fetch employee list only if not already loaded
+            if (typeof allEmployees === 'undefined' || allEmployees.length === 0) {
+                await loadEmployees();
+            }
+
+            if (typeof allEmployees === 'undefined' || allEmployees.length === 0) {
+                alert('Nenhum funcionário encontrado no sistema.');
+                return;
+            }
+
+            const employeeButtons = allEmployees.map(employee => {
+                const safeName = employee.name.replace(/'/g, "\\'");
+                return '<button onclick="showCreditStatusModal(' + analysisId + ',' + employee.id + ',\'' + safeName + '\')" class="employee-selection-button">' +
+                       '<div class="employee-info">' +
+                       '<div class="employee-name">' + employee.name + '</div>' +
+                       '<div class="employee-details">' + (employee.role || 'Funcionário') + ' - ' + employee.email + '</div>' +
+                       '</div>' +
+                       '</button>';
+            }).join('');
+
+            const modalHTML = '<div class="modal-overlay" onclick="closeModal()">' +
+                '<div class="modal-content employee-selection-modal" onclick="event.stopPropagation()">' +
+                '<h2>Selecione o Funcionário</h2>' +
+                '<p class="modal-subtitle">Escolha quem irá realizar esta análise de crédito:</p>' +
+                '<div class="employee-selection-grid">' + employeeButtons + '</div>' +
+                '<div class="modal-actions">' +
+                '<button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        async function updateCreditAnalysisWithEmployee(analysisId, employeeId, status, employeeName) {
+            const statusTexts = {
+                'pending': 'Pendente',
+                'approved': 'Aprovado',
+                'rejected': 'Recusado'
+            };
+
+            if (!confirm('Confirmar status "' + statusTexts[status] + '" para esta análise de crédito?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('../api/credit-analysis.php', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        id: analysisId, 
+                        status: status,
+                        analyzed_by: employeeId
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    closeModal();
+                    alert('Análise de crédito confirmada por ' + employeeName + ' com status: ' + statusTexts[status]);
+                    location.reload();
+                } else {
+                    alert('Erro ao atualizar análise: ' + result.message);
+                }
+            } catch (error) {
+                console.error('[v0] Erro ao atualizar análise:', error);
+                alert('Erro ao atualizar análise. Tente novamente.');
+            }
+        }
+
+        function viewCreditDocuments(analysisId) {
+            fetch('../api/credit-analysis.php?id=' + analysisId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        const analysis = data.data;
+                        let documentsHTML = '';
+
+                        if (analysis.doc_identidade) {
+                            documentsHTML += '<div class="doc-item">' +
+                                '<a href="../uploads/credit-analysis/' + analysis.doc_identidade + '" target="_blank" class="doc-link">' +
+                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
+                                '</svg>' +
+                                'CPF e RG/CNH' +
+                                '</a>' +
+                                '</div>';
+                        }
+
+                        if (analysis.doc_endereco) {
+                            documentsHTML += '<div class="doc-item">' +
+                                '<a href="../uploads/credit-analysis/' + analysis.doc_endereco + '" target="_blank" class="doc-link">' +
+                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
+                                '</svg>' +
+                                'Comprovante de Endereço' +
+                                '</a>' +
+                                '</div>';
+                        }
+
+                        if (analysis.doc_renda) {
+                            documentsHTML += '<div class="doc-item">' +
+                                '<a href="../uploads/credit-analysis/' + analysis.doc_renda + '" target="_blank" class="doc-link">' +
+                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
+                                '</svg>' +
+                                'Comprovante de Renda' +
+                                '</a>' +
+                                '</div>';
+                        }
+
+                        if (analysis.doc_bancario) {
+                            documentsHTML += '<div class="doc-item">' +
+                                '<a href="../uploads/credit-analysis/' + analysis.doc_bancario + '" target="_blank" class="doc-link">' +
+                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
+                                '</svg>' +
+                                'Dados Bancários' +
+                                '</a>' +
+                                '</div>';
+                        }
+
+                        if (!documentsHTML) {
+                            documentsHTML = '<p class="text-gray-500 text-center py-4">Nenhum documento enviado</p>';
+                        }
+
+                        const modalHTML = '<div class="modal-overlay" onclick="closeModal()">' +
+                            '<div class="modal-content documents-modal" onclick="event.stopPropagation()">' +
+                            '<h2>Documentos da Análise de Crédito</h2>' +
+                            '<p class="modal-subtitle">Telefone: ' + analysis.phone + '</p>' +
+                            '<div class="documents-grid">' + documentsHTML + '</div>' +
+                            '<div class="modal-actions">' +
+                            '<button onclick="closeModal()" class="btn btn-secondary">Fechar</button>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+
+                        document.body.insertAdjacentHTML('beforeend', modalHTML);
+                    } else {
+                        alert('Erro ao carregar documentos');
+                    }
+                })
+                .catch(error => {
+                    console.error('[v0] Erro ao carregar documentos:', error);
+                    alert('Erro ao carregar documentos');
+                });
+        }
+        
+        // Function to toggle document visibility
+        function toggleDocuments(id) {
+            const documentsDiv = document.getElementById(`documents-${id}`);
+            const arrowIcon = document.getElementById(`doc-arrow-${id}`);
+            
+            if (documentsDiv.style.display === 'none' || documentsDiv.style.display === '') {
+                documentsDiv.style.display = 'block';
+                arrowIcon.style.transform = 'rotate(90deg)'; // Rotate arrow
+            } else {
+                documentsDiv.style.display = 'none';
+                arrowIcon.style.transform = 'rotate(0deg)'; // Reset arrow rotation
+            }
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.remove();
             }
         }
     </script>

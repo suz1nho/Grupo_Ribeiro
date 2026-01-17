@@ -12,9 +12,19 @@ $db = Database::getInstance()->getConnection();
 try {
     switch ($method) {
         case 'GET':
-            if (isset($_GET['id'])) {
-                // Buscar análise específica
-                $stmt = $db->prepare("SELECT * FROM credit_analysis WHERE id = ?");
+            if (isset($_GET['action']) && $_GET['action'] === 'employees') {
+                // Buscar lista de funcionários ativos
+                $stmt = $db->prepare("SELECT id, name, email, role FROM employees WHERE status = 'active' ORDER BY name ASC");
+                $stmt->execute();
+                $employees = $stmt->fetchAll();
+                echo json_encode(['success' => true, 'data' => $employees]);
+            } elseif (isset($_GET['id'])) {
+                $stmt = $db->prepare("
+                    SELECT ca.*, e.name as confirmed_by_name 
+                    FROM credit_analysis ca 
+                    LEFT JOIN employees e ON ca.analyzed_by = e.id 
+                    WHERE ca.id = ?
+                ");
                 $stmt->execute([$_GET['id']]);
                 $analysis = $stmt->fetch();
                 
@@ -25,20 +35,21 @@ try {
                     echo json_encode(['success' => false, 'message' => 'Análise não encontrada']);
                 }
             } else {
-                // Buscar todas as análises
                 $status = $_GET['status'] ?? null;
                 $limit = $_GET['limit'] ?? 100;
                 $offset = $_GET['offset'] ?? 0;
                 
-                $sql = "SELECT * FROM credit_analysis";
+                $sql = "SELECT ca.*, e.name as confirmed_by_name 
+                        FROM credit_analysis ca 
+                        LEFT JOIN employees e ON ca.analyzed_by = e.id";
                 $params = [];
                 
                 if ($status) {
-                    $sql .= " WHERE status = ?";
+                    $sql .= " WHERE ca.status = ?";
                     $params[] = $status;
                 }
                 
-                $sql .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+                $sql .= " ORDER BY ca.created_at DESC LIMIT ? OFFSET ?";
                 $params[] = (int)$limit;
                 $params[] = (int)$offset;
                 
@@ -53,10 +64,24 @@ try {
         case 'POST':
             // Criar nova análise de crédito
             $telefone = $_POST['telefone'] ?? '';
+            $nome = $_POST['nome'] ?? '';
+            $email = $_POST['email'] ?? '';
             
             if (empty($telefone)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Telefone é obrigatório']);
+                exit;
+            }
+            
+            if (empty($nome)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Nome é obrigatório']);
+                exit;
+            }
+            
+            if (empty($email)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Email é obrigatório']);
                 exit;
             }
             
@@ -155,11 +180,13 @@ try {
             }
             
             $stmt = $db->prepare("
-                INSERT INTO credit_analysis (phone, doc_identidade, doc_endereco, doc_renda, doc_bancario, status)
-                VALUES (?, ?, ?, ?, ?, 'pending')
+                INSERT INTO credit_analysis (name, email, phone, doc_identidade, doc_endereco, doc_renda, doc_bancario, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
             ");
             
             $stmt->execute([
+                $nome,
+                $email,
                 $telefone,
                 $docIdentidade,
                 $docEndereco,
@@ -173,8 +200,8 @@ try {
             break;
             
         case 'PUT':
-            // Atualizar análise
             $data = json_decode(file_get_contents('php://input'), true);
+            error_log(file_get_contents('php://input'));
             
             if (empty($data['id'])) {
                 http_response_code(400);
@@ -185,12 +212,27 @@ try {
             $fields = [];
             $params = [];
             
-            $allowedFields = ['status', 'observacoes'];
+            $allowedFields = ['status', 'analyzed_by', 'score', 'notes'];
+            
+            if (isset($data['confirmed_by'])) {
+                $data['analyzed_by'] = $data['confirmed_by'];
+                unset($data['confirmed_by']);
+            }
+            
+            if (isset($data['analysis_status'])) {
+                $data['status'] = $data['analysis_status'];
+                unset($data['analysis_status']);
+            }
+            
             foreach ($allowedFields as $field) {
-                if (isset($data[$field])) {
+                if (array_key_exists($field, $data)) {
                     $fields[] = "$field = ?";
                     $params[] = $data[$field];
                 }
+            }
+            
+            if (isset($data['analyzed_by']) && $data['analyzed_by'] !== null) {
+                $fields[] = "analyzed_at = NOW()";
             }
             
             if (empty($fields)) {
@@ -202,6 +244,7 @@ try {
             $params[] = $data['id'];
             
             $sql = "UPDATE credit_analysis SET " . implode(', ', $fields) . " WHERE id = ?";
+            
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             
@@ -244,6 +287,7 @@ try {
     }
 } catch (PDOException $e) {
     http_response_code(500);
+    error_log("[v0] PDO Exception: " . $e->getMessage());
+    error_log("[v0] Stack trace: " . $e->getTraceAsString());
     echo json_encode(['success' => false, 'message' => 'Erro no servidor', 'error' => $e->getMessage()]);
-    error_log($e->getMessage());
 }
