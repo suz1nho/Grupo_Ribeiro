@@ -1,232 +1,158 @@
 
-# Grupo Ribeiro Codebase Map
+# Codebase Map
 
-## Overview
-This is a comprehensive map of the Grupo Ribeiro website codebase, showing all files, their dependencies, and how they interact with each other.
+## Project Overview
+
+This is a complete website for a consortium company with both public-facing and admin components. The frontend is built with vanilla HTML/CSS/JavaScript while the backend uses PHP with a MySQL database.
 
 ## File Structure
 
-### Root Files
-- `index.html` - Main landing page
-- `analise-credito.html` - Credit analysis form page
-- `script.js` - Main JavaScript with data and functionality
-- `style.css` - Main stylesheet
-- `sql.sql` - Database schema
+### Main Public Pages
+- **index.html** - Main landing page with all public facing content
+- **analise-credito.html** - Credit analysis request page
+- **style.css** - Main stylesheet for public pages
 
-### API Directory (`api/`)
-- `appointments.php` - Appointment management API
-- `auth.php` - Authentication API
-- `contacts.php` - Contact form API
-- `credit-analysis.php` - Credit analysis API
-- `employees.php` - Employee management API
-- `stats.php` - Statistics API
-- `teste.php` - Test file
+### Assets Directory
+- **assets/css/**
+  - **style.css** - Shared admin/frontend styles
+  - **analise-credito.css** - Credit analysis page styles
+  - **dashboard.css** - Admin dashboard styles
+  - **admin.css** - Admin panel component styles
 
-### Configuration (`config/`)
-- `database.php` - Database connection and configuration
+- **assets/js/**
+  - **main.js** - Calendar and scheduling system
+  - **calendar-border.js** - Calendar UI enhancements
+  - **analise-credito.js** - Credit analysis functionality
+  - **dashboard-admin.js** - Admin dashboard functionality
+  - **rank-admin.js** - Employee ranking functionality
+  - **register-admin.js** - Employee registration functionality
 
-### Admin Panel (`ham_admin/`)
-- `dashboard.php` - Main admin dashboard
-- `home.php` - Admin home page
-- `index.php` - Admin login page
-- `logout.php` - Admin logout
-- `register.php` - Employee registration
-- `partials/`
-  - `header.php` - Admin header
-  - `sidebar.php` - Admin sidebar
+### API Layer (PHP Backend)
+- **api/appointments.php** - Appointment CRUD operations and blocked slots
+- **api/auth.php** - Authentication system
+- **api/contacts.php** - Contact form submissions
+- **api/credit-analysis.php** - Credit analysis CRUD operations
+- **api/employees.php** - Employee management
+- **api/stats.php** - Dashboard statistics
+- **api/teste.php** - Testing endpoint
 
-### Assets
-#### CSS (`assets/css/`)
-- `admin.css` - Admin panel styles
-- `analise-credito.css` - Credit analysis form styles
-- `dashboard.css` - Dashboard styles
-- `style.css` - General styles
+### Admin Panel
+- **ham_admin/dashboard.php** - Admin dashboard main page
+- **ham_admin/home.php** - Admin home page
+- **ham_admin/index.php** - Admin login page
+- **ham_admin/logout.php** - Admin logout handler
+- **ham_admin/register.php** - Employee registration page
+- **ham_admin/partials/header.php** - Admin header component
+- **ham_admin/partials/sidebar.php** - Admin sidebar component
 
-#### JavaScript (`assets/js/`)
-- `analise-credito.js` - Credit analysis form JavaScript
-- `calendar-border.js` - Calendar functionality
-- `dashboard-admin.js` - Admin dashboard JavaScript
-- `main.js` - Main site JavaScript
-- `rank-admin.js` - Admin ranking functionality
-- `register-admin.js` - Admin registration JavaScrip
+### Configuration and Data
+- **config/database.php** - Database configuration
+- **data/mock_clients.json** - Mock client data
+- **sql.sql** - Database schema
 
-## Dependencies and Interactions
+### Assets and Media
+- **images/** - All image assets (logo, backgrounds, etc.)
+- **public/** - Publicly accessible assets
+- **favicon.ico** - Site favicon
 
-### Frontend (Client-side)
+## Dependencies
 
-#### Main Landing Page (`index.html`)
-**Dependencies:**
-- `style.css` - Main styling
-- `script.js` - Dynamic content and data
-- `assets/js/main.js` - Additional functionality
-- `assets/js/calendar-border.js` - Calendar functionality
-- Various images from `images/` directory
+### Frontend Dependencies
+1. **DOM Elements**
+   - Calendar system depends on specific HTML structure
+   - Form elements for credit analysis
+   - Appointment scheduling widgets
 
-**Interactions:**
-- Connects to `api/appointments.php` for appointment scheduling
-- Uses data from `script.js` for dynamic content
-- Links to `analise-credito.html` for credit analysis
+2. **CSS Classes**
+   - Animation classes for scroll effects
+   - Component-specific styling classes
+   - Responsive utility classes
 
-#### Credit Analysis Page (`analise-credito.html`)
-**Dependencies:**
-- `assets/css/style.css` - General styling
-- `assets/css/analise-credito.css` - Specific styling
-- `assets/js/analise-credito.js` - Form functionality
+3. **JavaScript Libraries**
+   - Vanilla JavaScript (no external libraries)
+   - Fetch API for backend communication
 
-**Interactions:**
-- Connects to `api/credit-analysis.php` for form submission
-- Uploads files to `uploads/credit-analysis/` directory
+### Backend Dependencies
+1. **PHP Extensions**
+   - MySQLi or PDO for database operations
+   - JSON support for API responses
+   - File upload handling
 
-#### Main JavaScript (`script.js`)
-**Dependencies:**
-- None (self-contained data and functions)
+2. **Database**
+   - MySQL database with specific schema (sql.sql)
+   - Tables for appointments, employees, credit analysis, etc.
 
-**Provides Data To:**
-- `index.html` - Dynamic content for:
-  - Brands ticker
-  - Carousel slides
-  - Benefits section
-  - Steps section
-  - Trust statistics
-  - Testimonials
-  - FAQ section
+3. **File System**
+   - Upload directory for credit analysis documents
+   - Read/write permissions for data files
 
-### Backend (Server-side)
+## Functionality Breakdown
 
-#### Database Configuration (`config/database.php`)
-**Used By:**
-- `api/appointments.php`
-- `api/auth.php`
-- `api/contacts.php`
-- `api/credit-analysis.php`
-- `api/employees.php`
-- `api/stats.php`
-- All admin panel files (`ham_admin/*.php`)
+### Public Website (index.html)
+1. **Navigation**
+   - Responsive navbar with mobile menu
+   - Smooth scrolling to sections
 
-#### API Files
+2. **Hero Section**
+   - Auto-rotating background slides
+   - Animated text elements
+   - Call-to-action buttons
 
-##### Appointments API (`api/appointments.php`)
-**Dependencies:**
-- `config/database.php`
+3. **Content Sections**
+   - Consortium types carousel
+   - Benefits listing
+   - How it works steps
+   - Trust statistics
+   - Testimonials with pagination
+   - FAQ accordion
+   - Contact information
 
-**Database Tables Used:**
-- `appointments`
+4. **Scheduling System**
+   - Calendar date selection
+   - Time slot selection with blocked indicators
+   - Personal information form
+   - Appointment submission
 
-**Provides Endpoints For:**
-- GET - Retrieve appointments
-- POST - Create new appointments
-- PUT - Update appointment status
-- DELETE - Delete appointments
+### Credit Analysis System (analise-credito.html)
+1. **Document Upload**
+   - Multiple file upload fields
+   - Preview for uploaded files
+   - "Don't have" toggle for missing documents
 
-**Used By:**
-- `index.html` - Appointment scheduling
-- Admin panel - Appointment management
+2. **Form Processing**
+   - Client-side validation
+   - Phone number formatting
+   - File type/size validation
+   - Submission to backend API
 
-##### Credit Analysis API (`api/credit-analysis.php`)
-**Dependencies:**
-- `config/database.php`
+## File Relationships
 
-**Database Tables Used:**
-- `credit_analysis`
-- `employees`
+### Core Website Files
+1. **index.html** ↔ **style.css** ↔ **script.js**
+   - Main landing page with all JavaScript functionality
 
-**Provides Endpoints For:**
-- GET - Retrieve credit analyses
-- POST - Create new credit analysis
-- PUT - Update credit analysis status
-- DELETE - Delete credit analysis
+2. **analise-credito.html** ↔ **assets/css/analise-credito.css** ↔ **assets/js/analise-credito.js**
+   - Credit analysis system with document upload
 
-**Used By:**
-- `analise-credito.html` - Form submission
-- Admin panel - Credit analysis management
+3. **assets/js/main.js** ↔ **api/appointments.php**
+   - Calendar system with blocked time slots integration
 
-#### Admin Panel (`ham_admin/`)
+### Admin Panel Files
+1. **ham_admin/dashboard.php** ↔ **assets/css/dashboard.css** ↔ **assets/js/dashboard-admin.js**
+   - Dashboard with statistics and appointment management
 
-##### Dashboard (`ham_admin/dashboard.php`)
-**Dependencies:**
-- `config/database.php`
-- `ham_admin/partials/header.php`
-- `ham_admin/partials/sidebar.php`
-- `assets/css/dashboard.css`
-- `assets/js/dashboard-admin.js`
+2. **ham_admin/register.php** ↔ **assets/js/register-admin.js**
+   - Employee registration with form validation
 
-**Database Tables Used:**
-- `appointments`
-- `credit_analysis`
-- `employees`
+3. **All admin files** ↔ **assets/css/admin.css**
+   - Shared styling for admin components
 
-**Interactions:**
-- Retrieves appointment statistics
-- Manages appointment statuses
-- Manages credit analysis statuses
-- Connects to `api/credit-analysis.php` for employee data
+### API Integration
+1. **All frontend JavaScript files** → **api/*.php**
+   - REST API calls for data operations
 
-##### Authentication (`ham_admin/index.php`)
-**Dependencies:**
-- `config/database.php`
+2. **api/*.php** ↔ **config/database.php**
+   - Database connection and queries
 
-**Database Tables Used:**
-- `employees`
-
-**Interactions:**
-- Authenticates employees
-- Creates user sessions
-
-### Database Schema (`sql.sql`)
-
-#### Tables:
-1. **employees**
-   - Stores employee information
-   - Used for admin panel authentication
-   - Linked to appointments and credit analysis
-
-2. **credit_analysis**
-   - Stores credit analysis submissions
-   - Links to employees table via analyzed_by
-   - Stores document file paths
-
-3. **contacts**
-   - Stores contact form submissions
-   - Links to employees table via responded_by
-
-4. **appointments**
-   - Stores appointment scheduling data
-   - Links to employees table via confirmed_by and contract_closed_by
-
-## Data Flow
-
-### Appointment Scheduling Flow
-1. User fills appointment form on `index.html`
-2. Form data sent to `api/appointments.php` via POST
-3. Data stored in `appointments` table
-4. Admin views appointments in `ham_admin/dashboard.php`
-5. Admin updates appointment status
-6. Status updates sent to `api/appointments.php` via PUT
-
-### Credit Analysis Flow
-1. User fills credit analysis form on `analise-credito.html`
-2. Form data and files sent to `api/credit-analysis.php` via POST
-3. Data stored in `credit_analysis` table
-4. Files uploaded to `uploads/credit-analysis/`
-5. Admin views analyses in `ham_admin/dashboard.php`
-6. Admin updates analysis status
-7. Status updates sent to `api/credit-analysis.php` via PUT
-
-### Authentication Flow
-1. Employee accesses `ham_admin/index.php`
-2. Login credentials checked against `employees` table
-3. Session created on successful authentication
-4. Session used for access control throughout admin panel
-
-## Security Considerations
-- Database credentials stored in `config/database.php`
-- File upload validation in `api/credit-analysis.php`
-- Session-based authentication for admin panel
-- Input validation in API endpoints
-- CORS headers configured for API access
-
-## Deployment Considerations
-- Database server at `192.168.122.175` must be accessible
-- Web server must support PHP
-- Upload directory must be writable
-- Database must be initialized with `sql.sql`
+3. **api/credit-analysis.php** ↔ **uploads/**
+   - File upload/download operations

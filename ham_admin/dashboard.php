@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require_once __DIR__ . '/../config/database.php';
@@ -68,6 +69,33 @@ try {
 
     $creditAnalyses = $stmt->fetchAll();
     
+    // Fetch clients based on user role
+    if ($_SESSION['employee_role'] === 'admin' || $_SESSION['employee_role'] === 'Administrativo') {
+        // Admins can see all clients
+        $stmt = $db->query(
+        "SELECT
+            c.*,
+            e.name as registered_by_name
+        FROM clients c
+        LEFT JOIN employees e ON c.client_registered_by = e.id
+        ORDER BY c.registered_at DESC
+        LIMIT 50");
+    } else {
+        // Regular employees can only see clients they registered
+        $stmt = $db->prepare(
+        "SELECT
+            c.*,
+            e.name as registered_by_name
+        FROM clients c
+        LEFT JOIN employees e ON c.client_registered_by = e.id
+        WHERE c.client_registered_by = ?
+        ORDER BY c.registered_at DESC
+        LIMIT 50");
+        $stmt->execute([$_SESSION['employee_id']]);
+    }
+    
+    $clients = $stmt->fetchAll();
+    
 } catch (PDOException $e) {
     error_log($e->getMessage());
     $totalAppointments = 0;
@@ -78,6 +106,7 @@ try {
     $recentAppointments = [];
     $closedContracts = [];
     $creditAnalyses = [];
+    $clients = [];
 }
 ?>
 <!DOCTYPE html>
@@ -279,6 +308,9 @@ try {
                 </button>
                 <button onclick="switchTab('credit')" id="tab-credit" class="tab-btn">
                     Análise de Crédito
+                </button>
+                <button onclick="switchTab('clients')" id="tab-clients" class="tab-btn">
+                    Clientes
                 </button>
             </div>
 
@@ -857,270 +889,130 @@ if (isset($contract["contract_closed_at"]) == true) {
                 <?php endif; ?>
             </div>
         </div>
+        
+        <!-- NEW Tab Content: Clientes -->
+        <div id="content-clients" class="tab-content" style="display: none;">
+            <div id="clientsList" class="space-y-4">
+                <?php if (empty($clients)): ?>
+                    <div class="text-center py-12 text-gray-500">
+                        Nenhum cliente cadastrado no momento
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($clients as $client): ?>
+                        <div class="appointment-card bg-blue-50 border-blue-200">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-3">
+                                    <!-- Nome -->
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7-7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-600">Nome</p>
+                                            <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($client['name']); ?></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- CPF -->
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7-7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-600">CPF</p>
+                                            <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($client['cpf'] ?? 'Não informado'); ?></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Status -->
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-600">Status</p>
+                                            <p class="font-semibold text-gray-900">
+                                                <?php 
+                                                echo $client['status'] === 'active' ? 'Ativo' : 'Suspenso'; 
+                                                ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <!-- Email -->
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-600">Email</p>
+                                            <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($client['email'] ?? 'Não informado'); ?></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Telefone -->
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-600">Telefone</p>
+                                            <p class="font-semibold text-gray-900"><?php echo htmlspecialchars($client['phone'] ?? 'Não informado'); ?></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Data de Registro -->
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="text-xs text-gray-600">Registrado em</p>
+                                            <p class="font-semibold text-gray-900"><?php echo date('d/m/Y H:i', strtotime($client['registered_at'])); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Descrição do Cliente -->
+                            <?php if (!empty($client['description'])): ?>
+                            <div class="flex items-center gap-3 mt-4">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-semibold text-blue-800 flex items-center gap-2">
+                                        Descrição
+                                    </p>
+                                    <p class="text-sm text-blue-700 mt-2 leading-relaxed">
+                                        <?php echo nl2br(htmlspecialchars($client['description'])); ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <!-- Registered by information -->
+                            <?php if (!empty($client['registered_by_name'])): ?>
+                            <div class="mt-4 pt-4 border-t border-blue-200">
+                                <p class="text-xs text-blue-600">
+                                    Registrado por: <span class="font-semibold"><?php echo htmlspecialchars($client['registered_by_name']); ?></span>
+                                </p>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 
     <!-- Pass employee ID to JavaScript for API calls -->
     <script>
         window.employeeId = <?php echo json_encode($_SESSION['employee_id']); ?>;
-        
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('active');
-        }
-        
-        function switchTab(tab) {
-            const tabActive = document.getElementById('tab-active');
-            const tabClosed = document.getElementById('tab-closed');
-            const tabCredit = document.getElementById('tab-credit');
-            const contentActive = document.getElementById('content-active');
-            const contentClosed = document.getElementById('content-closed');
-            const contentCredit = document.getElementById('content-credit');
-            
-            // Save current tab to localStorage
-            localStorage.setItem('activeTab', tab);
-            
-            // Remove active classes from all tabs
-            [tabActive, tabClosed, tabCredit].forEach(t => {
-                t.classList.remove('active');
-            });
-            
-            // Hide all content
-            [contentActive, contentClosed, contentCredit].forEach(c => {
-                c.style.display = 'none';
-            });
-            
-            // Show selected tab
-            if (tab === 'active') {
-                tabActive.classList.add('active');
-                contentActive.style.display = 'block';
-            } else if (tab === 'closed') {
-                tabClosed.classList.add('active');
-                contentClosed.style.display = 'block';
-            } else if (tab === 'credit') {
-                tabCredit.classList.add('active');
-                contentCredit.style.display = 'block';
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTab = localStorage.getItem('activeTab') || 'active';
-            switchTab(savedTab);
-        });
-        
-        function toggleDocuments(analysisId) {
-            const container = document.getElementById('documents-' + analysisId);
-            const arrow = document.getElementById('doc-arrow-' + analysisId);
-            
-            if (container.style.display === 'none') {
-                container.style.display = 'block';
-                arrow.style.transform = 'rotate(90deg)';
-            } else {
-                container.style.display = 'none';
-                arrow.style.transform = 'rotate(0deg)';
-            }
-        }
-        
-        async function updateCreditAnalysisStatus(id, status) {
-            if (!confirm(`Confirmar ${status === 'approved' ? 'aprovação' : 'rejeição'} desta análise de crédito?`)) {
-                return;
-            }
-            
-            try {
-                const response = await fetch('../api/credit-analysis.php', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id, status })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('Status atualizado com sucesso!');
-                    location.reload();
-                } else {
-                    alert('Erro ao atualizar status: ' + result.message);
-                }
-            } catch (error) {
-                console.error('[v0] Error updating status:', error);
-                alert('Erro ao atualizar status. Tente novamente.');
-            }
-        }
-
-        async function confirmCreditAnalysis(analysisId) {
-            // Fetch employee list only if not already loaded
-            if (typeof allEmployees === 'undefined' || allEmployees.length === 0) {
-                await loadEmployees();
-            }
-
-            if (typeof allEmployees === 'undefined' || allEmployees.length === 0) {
-                alert('Nenhum funcionário encontrado no sistema.');
-                return;
-            }
-
-            const employeeButtons = allEmployees.map(employee => {
-                const safeName = employee.name.replace(/'/g, "\\'");
-                return '<button onclick="showCreditStatusModal(' + analysisId + ',' + employee.id + ',\'' + safeName + '\')" class="employee-selection-button">' +
-                       '<div class="employee-info">' +
-                       '<div class="employee-name">' + employee.name + '</div>' +
-                       '<div class="employee-details">' + (employee.role || 'Funcionário') + ' - ' + employee.email + '</div>' +
-                       '</div>' +
-                       '</button>';
-            }).join('');
-
-            const modalHTML = '<div class="modal-overlay" onclick="closeModal()">' +
-                '<div class="modal-content employee-selection-modal" onclick="event.stopPropagation()">' +
-                '<h2>Selecione o Funcionário</h2>' +
-                '<p class="modal-subtitle">Escolha quem irá realizar esta análise de crédito:</p>' +
-                '<div class="employee-selection-grid">' + employeeButtons + '</div>' +
-                '<div class="modal-actions">' +
-                '<button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        }
-
-        async function updateCreditAnalysisWithEmployee(analysisId, employeeId, status, employeeName) {
-            const statusTexts = {
-                'pending': 'Pendente',
-                'approved': 'Aprovado',
-                'rejected': 'Recusado'
-            };
-
-            if (!confirm('Confirmar status "' + statusTexts[status] + '" para esta análise de crédito?')) {
-                return;
-            }
-
-            try {
-                const response = await fetch('../api/credit-analysis.php', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        id: analysisId, 
-                        status: status,
-                        analyzed_by: employeeId
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    closeModal();
-                    alert('Análise de crédito confirmada por ' + employeeName + ' com status: ' + statusTexts[status]);
-                    location.reload();
-                } else {
-                    alert('Erro ao atualizar análise: ' + result.message);
-                }
-            } catch (error) {
-                console.error('[v0] Erro ao atualizar análise:', error);
-                alert('Erro ao atualizar análise. Tente novamente.');
-            }
-        }
-
-        function viewCreditDocuments(analysisId) {
-            fetch('../api/credit-analysis.php?id=' + analysisId)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.data) {
-                        const analysis = data.data;
-                        let documentsHTML = '';
-
-                        if (analysis.doc_identidade) {
-                            documentsHTML += '<div class="doc-item">' +
-                                '<a href="../uploads/credit-analysis/' + analysis.doc_identidade + '" target="_blank" class="doc-link">' +
-                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
-                                '</svg>' +
-                                'CPF e RG/CNH' +
-                                '</a>' +
-                                '</div>';
-                        }
-
-                        if (analysis.doc_endereco) {
-                            documentsHTML += '<div class="doc-item">' +
-                                '<a href="../uploads/credit-analysis/' + analysis.doc_endereco + '" target="_blank" class="doc-link">' +
-                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
-                                '</svg>' +
-                                'Comprovante de Endereço' +
-                                '</a>' +
-                                '</div>';
-                        }
-
-                        if (analysis.doc_renda) {
-                            documentsHTML += '<div class="doc-item">' +
-                                '<a href="../uploads/credit-analysis/' + analysis.doc_renda + '" target="_blank" class="doc-link">' +
-                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
-                                '</svg>' +
-                                'Comprovante de Renda' +
-                                '</a>' +
-                                '</div>';
-                        }
-
-                        if (analysis.doc_bancario) {
-                            documentsHTML += '<div class="doc-item">' +
-                                '<a href="../uploads/credit-analysis/' + analysis.doc_bancario + '" target="_blank" class="doc-link">' +
-                                '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-                                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>' +
-                                '</svg>' +
-                                'Dados Bancários' +
-                                '</a>' +
-                                '</div>';
-                        }
-
-                        if (!documentsHTML) {
-                            documentsHTML = '<p class="text-gray-500 text-center py-4">Nenhum documento enviado</p>';
-                        }
-
-                        const modalHTML = '<div class="modal-overlay" onclick="closeModal()">' +
-                            '<div class="modal-content documents-modal" onclick="event.stopPropagation()">' +
-                            '<h2>Documentos da Análise de Crédito</h2>' +
-                            '<p class="modal-subtitle">Telefone: ' + analysis.phone + '</p>' +
-                            '<div class="documents-grid">' + documentsHTML + '</div>' +
-                            '<div class="modal-actions">' +
-                            '<button onclick="closeModal()" class="btn btn-secondary">Fechar</button>' +
-                            '</div>' +
-                            '</div>' +
-                            '</div>';
-
-                        document.body.insertAdjacentHTML('beforeend', modalHTML);
-                    } else {
-                        alert('Erro ao carregar documentos');
-                    }
-                })
-                .catch(error => {
-                    console.error('[v0] Erro ao carregar documentos:', error);
-                    alert('Erro ao carregar documentos');
-                });
-        }
-        
-        // Function to toggle document visibility
-        function toggleDocuments(id) {
-            const documentsDiv = document.getElementById(`documents-${id}`);
-            const arrowIcon = document.getElementById(`doc-arrow-${id}`);
-            
-            if (documentsDiv.style.display === 'none' || documentsDiv.style.display === '') {
-                documentsDiv.style.display = 'block';
-                arrowIcon.style.transform = 'rotate(90deg)'; // Rotate arrow
-            } else {
-                documentsDiv.style.display = 'none';
-                arrowIcon.style.transform = 'rotate(0deg)'; // Reset arrow rotation
-            }
-        }
-
-        function closeModal() {
-            const modal = document.querySelector('.modal-overlay');
-            if (modal) {
-                modal.remove();
-            }
-        }
+        window.employeeRole = <?php echo json_encode($_SESSION['employee_role']); ?>;
     </script>
-    <script src="../assets/js/dashboard-admin.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+
 /* ============================================
    DASHBOARD CSS - PROFISSIONAL E RESPONSIVO
    Cores e elementos mantidos em todas as resoluções
@@ -601,6 +602,11 @@ body {
   color: #0891b2;
 }
 
+.appointment-card.bg-blue-50 .flex.items-center.gap-3 svg {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
 .appointment-card .flex.items-center.gap-3 div {
   flex: 1;
 }
@@ -701,6 +707,27 @@ body {
 }
 .admin-btn.bg-green-600:hover {
   background-color: #15803d !important;
+}
+
+.admin-btn.bg-yellow-600 {
+  background-color: #ca8a04 !important;
+}
+.admin-btn.bg-yellow-600:hover {
+  background-color: #a16207 !important;
+}
+
+.admin-btn.bg-red-800 {
+  background-color: #991b1b !important;
+}
+.admin-btn.bg-red-800:hover {
+  background-color: #7f1d1d !important;
+}
+
+.admin-btn.bg-cyan-600 {
+  background-color: #0891b2 !important;
+}
+.admin-btn.bg-cyan-600:hover {
+  background-color: #0e7490 !important;
 }
 
 /* Status badges */
@@ -1035,28 +1062,6 @@ body {
   flex-shrink: 0;
   width: 1.25rem;
   height: 1.25rem;
-}
-
-/* Adicionar estilos para botão cyan e botões adicionais */
-.admin-btn.bg-cyan-600 {
-  background-color: #0891b2 !important;
-}
-.admin-btn.bg-cyan-600:hover {
-  background-color: #0e7490 !important;
-}
-
-.admin-btn.bg-yellow-600 {
-  background-color: #ca8a04 !important;
-}
-.admin-btn.bg-yellow-600:hover {
-  background-color: #a16207 !important;
-}
-
-.admin-btn.bg-red-800 {
-  background-color: #991b1b !important;
-}
-.admin-btn.bg-red-800:hover {
-  background-color: #7f1d1d !important;
 }
 
 /* Responsive adjustments for credit status */
