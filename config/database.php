@@ -3,7 +3,7 @@
 // Configuração do Banco
 // =============================
 define('DB_HOST', '192.168.122.175');
-define('DB_NAME', 'test_2');
+define('DB_NAME', 'Grupo_Ribeiro');
 define('DB_USER', 'user');
 define('DB_PASS', 'qwe');
 define('DB_CHARSET', 'utf8mb4');
@@ -11,7 +11,7 @@ define('DB_CHARSET', 'utf8mb4');
 // =============================
 // Configurações da Aplicação
 // =============================
-define('BASE_URL', 'http://localhost/grupo-ribeiro');
+define('BASE_URL', 'http://localhost/');
 define('SITE_NAME', 'Grupo Ribeiro');
 
 // Timezone

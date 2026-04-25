@@ -1,0 +1,123 @@
+
+[
+  {
+    "id": 1,
+    "name": "Ana Silva",
+    "email": "ana.silva@email.com",
+    "phone": "(11) 99999-1111",
+    "cpf": "123.456.789-00",
+    "status": "active",
+    "registration_date": "2023-01-15",
+    "last_activity": "2023-10-20",
+    "appointments_count": 3,
+    "contracts_count": 1
+  },
+  {
+    "id": 2,
+    "name": "Carlos Oliveira",
+    "email": "carlos.oliveira@email.com",
+    "phone": "(21) 98888-2222",
+    "cpf": "987.654.321-00",
+    "status": "active",
+    "registration_date": "2023-02-20",
+    "last_activity": "2023-10-18",
+    "appointments_count": 2,
+    "contracts_count": 0
+  },
+  {
+    "id": 3,
+    "name": "Mariana Santos",
+    "email": "mariana.santos@email.com",
+    "phone": "(31) 97777-3333",
+    "cpf": "456.789.123-00",
+    "status": "active",
+    "registration_date": "2023-03-10",
+    "last_activity": "2023-10-22",
+    "appointments_count": 5,
+    "contracts_count": 2
+  },
+  {
+    "id": 4,
+    "name": "Roberto Costa",
+    "email": "roberto.costa@email.com",
+    "phone": "(41) 96666-4444",
+    "cpf": "321.654.987-00",
+    "status": "inactive",
+    "registration_date": "2023-04-05",
+    "last_activity": "2023-09-15",
+    "appointments_count": 1,
+    "contracts_count": 0
+  },
+  {
+    "id": 5,
+    "name": "Juliana Pereira",
+    "email": "juliana.pereira@email.com",
+    "phone": "(51) 95555-5555",
+    "cpf": "789.123.456-00",
+    "status": "active",
+    "registration_date": "2023-05-12",
+    "last_activity": "2023-10-21",
+    "appointments_count": 4,
+    "contracts_count": 1
+  },
+  {
+    "id": 6,
+    "name": "Fernando Almeida",
+    "email": "fernando.almeida@email.com",
+    "phone": "(61) 94444-6666",
+    "cpf": "654.321.987-00",
+    "status": "active",
+    "registration_date": "2023-06-18",
+    "last_activity": "2023-10-19",
+    "appointments_count": 2,
+    "contracts_count": 0
+  },
+  {
+    "id": 7,
+    "name": "Patricia Lima",
+    "email": "patricia.lima@email.com",
+    "phone": "(71) 93333-7777",
+    "cpf": "159.753.468-00",
+    "status": "active",
+    "registration_date": "2023-07-22",
+    "last_activity": "2023-10-23",
+    "appointments_count": 3,
+    "contracts_count": 1
+  },
+  {
+    "id": 8,
+    "name": "Ricardo Nunes",
+    "email": "ricardo.nunes@email.com",
+    "phone": "(81) 92222-8888",
+    "cpf": "357.951.246-00",
+    "status": "inactive",
+    "registration_date": "2023-08-30",
+    "last_activity": "2023-10-05",
+    "appointments_count": 1,
+    "contracts_count": 0
+  },
+  {
+    "id": 9,
+    "name": "Camila Rocha",
+    "email": "camila.rocha@email.com",
+    "phone": "(91) 91111-9999",
+    "cpf": "258.467.139-00",
+    "status": "active",
+    "registration_date": "2023-09-14",
+    "last_activity": "2023-10-22",
+    "appointments_count": 2,
+    "contracts_count": 0
+  },
+  {
+    "id": 10,
+    "name": "Thiago Barbosa",
+    "email": "thiago.barbosa@email.com",
+    "phone": "(11) 99999-0000",
+    "cpf": "369.258.147-00",
+    "status": "active",
+    "registration_date": "2023-10-01",
+    "last_activity": "2023-10-23",
+    "appointments_count": 1,
+    "contracts_count": 0
+  }
+]

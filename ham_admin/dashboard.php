@@ -414,7 +414,7 @@ try {
                                 <!-- Action buttons -->
                                 <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
                                     <?php // Adicionado status 'approved' para mostrar botões após confirmação ?>
-                                    <?php if (($appointment['status'] == 'confirmed' || $appointment['status'] == 'approved') && $appointment['confirmed_by']): ?>
+                                    <?php if (($appointment['status'] == 'confirmed' || $appointment['status'] == 'approved') && $appointment['confirmed_by'] == $_SESSION['employee_id']): ?>
                                         <!-- Buttons only for employee who confirmed -->
                                         <button onclick="unconfirmAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-red-600 hover:bg-red-700">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,19 +440,6 @@ try {
                                             </svg>
                                             Marcar Contrato
                                         </button>
-                                        
-                                        <button onclick="printAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                                            </svg>
-                                            Imprimir
-                                        </button>
-                                        
-                                        <?php if ($_SESSION['employee_role'] === 'Administrativo'): ?>
-                                            <button onclick="deleteAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-red-500 hover:bg-red-600">
-                                                Deletar
-                                            </button>
-                                        <?php endif; ?>
                                     <?php // Adicionado status 'approved' na condição ?>
                                     <?php elseif ($appointment['status'] !== 'confirmed' && $appointment['status'] !== 'approved'): ?>
                                         <!-- Show confirm button only if not confirmed -->
@@ -468,7 +455,21 @@ try {
                                                 Deletar
                                             </button>
                                         <?php endif; ?>
+
                                     <?php endif; ?>
+
+                                        <button onclick="printAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-blue-600 hover:bg-blue-700">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                            </svg>
+                                            Imprimir
+                                        </button>
+
+                                        <?php if ($_SESSION['employee_role'] === 'Administrativo'): ?>
+                                            <button onclick="deleteAppointment(<?php echo $appointment['id']; ?>)" class="admin-btn bg-red-500 hover:bg-red-600">
+                                                Deletar
+                                            </button>
+                                        <?php endif; ?>
                                 </div>
                                 
                                 <!-- Updated confirmation status display with red background and better styling -->

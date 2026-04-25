@@ -1,0 +1,129 @@
+DROP DATABASE Grupo_Ribeiro;
+CREATE DATABASE Grupo_Ribeiro
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+SET GLOBAL time_zone = '-3:00';
+
+USE Grupo_Ribeiro;
+
+-- =============================
+-- TABELA: employees
+-- =============================
+CREATE TABLE IF NOT EXISTS employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'employee',
+	status VARCHAR(20) DEFAULT 'active',
+    hired_date DATE,
+    birth_date DATE,
+    phone VARCHAR(20),
+	emergency_contact VARCHAR(250),
+    address VARCHAR(50),
+	cpf VARCHAR(14) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_role (role)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================
+-- TABELA: credit_analysis
+-- =============================
+DROP TABLE credit_analysis;
+CREATE TABLE IF NOT EXISTS credit_analysis (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cpf VARCHAR(14),
+    doc_identidade VARCHAR(150),
+    doc_endereco VARCHAR(150),
+    doc_renda VARCHAR(150),
+    doc_bancario VARCHAR(150),
+    name VARCHAR(100),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    score INT,
+    notes TEXT,
+    analyzed_by INT NULL,
+    analyzed_at TIMESTAMP NULL DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_credit_analysis_employee
+        FOREIGN KEY (analyzed_by)
+        REFERENCES employees(id)
+        ON DELETE SET NULL,
+    INDEX idx_cpf (cpf),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================
+-- TABELA: contacts
+-- =============================
+CREATE TABLE IF NOT EXISTS contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    subject VARCHAR(200),
+    message TEXT NOT NULL,
+    status ENUM('new', 'read', 'responded') DEFAULT 'new',
+    responded_by INT NULL,
+    responded_at TIMESTAMP NULL DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_contacts_employee
+        FOREIGN KEY (responded_by)
+        REFERENCES employees(id)
+        ON DELETE SET NULL,
+    INDEX idx_status (status),
+    INDEX idx_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================
+-- TABELA: appointments (CORRIGIDA)
+-- =============================
+CREATE TABLE IF NOT EXISTS appointments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    cpf VARCHAR(14),
+    notes VARCHAR(250),
+    appointment_day VARCHAR(15) NOT NULL,
+    appointment_date DATE NOT NULL,
+    appointment_time VARCHAR(20) NOT NULL,
+    credit_analysis BOOLEAN DEFAULT FALSE,
+    message TEXT,
+    status VARCHAR(20) DEFAULT 'pending',
+
+    contract_closed_by INT NULL,
+    confirmed_by INT NULL,
+    contract_closed_at TIMESTAMP,
+
+    confirmed_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_appointments_employee
+        FOREIGN KEY (confirmed_by)
+        REFERENCES employees(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS clients (
+    client_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(350) NOT NULL,
+
+    email VARCHAR(255) DEFAULT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    cpf VARCHAR(15) DEFAULT NULL,
+
+    status ENUM('active', 'suspended') DEFAULT 'active',
+    client_registered_by INT NULL
+        REFERENCES employees(id) ON DELETE SET NULL,
+    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+

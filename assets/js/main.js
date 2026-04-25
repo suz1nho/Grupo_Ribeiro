@@ -99,7 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // Disable past dates and dates beyond 30 days
       if (dayDate < today || dayDate > maxDate) {
         dayButton.disabled = true
+        dayButton.classList.add("disabled")
       } else {
+        dayButton.classList.add("selectable")
         dayButton.addEventListener("click", function () {
           selectDate(this)
         })
