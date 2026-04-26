@@ -1,10 +1,7 @@
-
 /* ============================================
    DASHBOARD CSS - PROFISSIONAL E RESPONSIVO
-   Cores e elementos mantidos em todas as resoluções
    ============================================ */
 
-/* Reset e Base */
 * {
   margin: 0;
   padding: 0;
@@ -18,16 +15,12 @@ body {
   line-height: 1.6;
 }
 
-/* Container Principal */
 .container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -60,7 +53,6 @@ body {
   align-items: center;
 }
 
-/* Mobile menu button - hidden on desktop, visible on mobile */
 .mobile-menu-btn {
   display: none;
   align-items: center;
@@ -86,7 +78,6 @@ body {
   height: 1.25rem;
 }
 
-/* Simple logout button without gradient */
 .btn-logout {
   display: inline-flex;
   align-items: center;
@@ -108,7 +99,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* Mobile menu overlay - sidebar from right */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -179,7 +169,6 @@ body {
   height: 1.25rem;
 }
 
-/* Mobile stats cards - same colors as desktop */
 .mobile-stats-list {
   display: flex;
   flex-direction: column;
@@ -244,7 +233,6 @@ body {
   font-weight: 500;
 }
 
-/* Mobile stat card colors - matching desktop exactly */
 .mobile-stat-card.blue {
   border-color: #3b82f6;
   background: #eff6ff;
@@ -305,12 +293,21 @@ body {
   color: #5b21b6;
 }
 
-/* ============================================
-   CARDS DE ESTATÍSTICAS - DESKTOP
-   ============================================ */
+.mobile-stat-card.indigo {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+.mobile-stat-card.indigo .mobile-stat-icon {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.mobile-stat-card.indigo .mobile-stat-value {
+  color: #3730a3;
+}
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 1.5rem;
   margin-bottom: 2.5rem;
 }
@@ -386,7 +383,6 @@ body {
   height: 1.5rem;
 }
 
-/* Desktop stat card colors - matching mobile exactly */
 .stat-card.blue {
   color: #3b82f6;
 }
@@ -442,9 +438,17 @@ body {
   color: #5b21b6;
 }
 
-/* ============================================
-   PAINEL DE CONTEÚDO
-   ============================================ */
+.stat-card.indigo {
+  color: #6366f1;
+}
+.stat-card.indigo .stat-card-icon {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+.stat-card.indigo .stat-card-value {
+  color: #3730a3;
+}
+
 .content-panel {
   background: white;
   border-radius: 1rem;
@@ -453,7 +457,6 @@ body {
   border: 1px solid #e2e8f0;
 }
 
-/* Tabs with active state styling */
 .tabs-nav {
   display: flex;
   gap: 2rem;
@@ -492,9 +495,6 @@ body {
   border-bottom-color: #3b82f6;
 }
 
-/* ============================================
-   CARDS DE AGENDAMENTO
-   ============================================ */
 .appointment-card {
   background: white;
   border: 1px solid #e2e8f0;
@@ -509,7 +509,6 @@ body {
   border-color: #cbd5e1;
 }
 
-/* Fixed grid layout for proper alignment */
 .appointment-card .grid {
   display: grid;
   gap: 1.5rem;
@@ -562,7 +561,6 @@ body {
   border-top: 1px solid #e2e8f0;
 }
 
-/* Increased icon sizes and added colored backgrounds to info fields */
 .appointment-card .flex.items-center.gap-3 {
   display: flex;
   align-items: center;
@@ -579,10 +577,8 @@ body {
   border-color: #cbd5e1;
 }
 
-/* Icon container with colored backgrounds */
 .appointment-card .flex.items-center.gap-3 svg {
   flex-shrink: 0;
-  /* Reduzindo ícones de 1.25rem para 1rem (16px) para desktop */
   width: 1rem;
   height: 1rem;
   padding: 0.5rem;
@@ -591,7 +587,6 @@ body {
   color: #2563eb;
 }
 
-/* Different colors for different sections */
 .appointment-card.bg-green-50 .flex.items-center.gap-3 svg {
   background: #d1fae5;
   color: #16a34a;
@@ -626,7 +621,6 @@ body {
   color: #0f172a;
 }
 
-/* Admin buttons with explicit colors */
 .admin-btn {
   display: inline-flex !important;
   align-items: center;
@@ -655,7 +649,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Added smaller admin button variant */
 .admin-btn-sm {
   padding: 0.375rem 0.75rem !important;
   font-size: 0.8rem !important;
@@ -666,71 +659,25 @@ body {
   height: 0.875rem !important;
 }
 
-/* Explicit background colors for each button type */
-.admin-btn.bg-red-600 {
-  background-color: #dc2626 !important;
-}
-.admin-btn.bg-red-600:hover {
-  background-color: #b91c1c !important;
-}
+.admin-btn.bg-red-600 { background-color: #dc2626 !important; }
+.admin-btn.bg-red-600:hover { background-color: #b91c1c !important; }
+.admin-btn.bg-red-500 { background-color: #ef4444 !important; }
+.admin-btn.bg-red-500:hover { background-color: #dc2626 !important; }
+.admin-btn.bg-purple-600 { background-color: #9333ea !important; }
+.admin-btn.bg-purple-600:hover { background-color: #7e22ce !important; }
+.admin-btn.bg-gray-600 { background-color: #4b5563 !important; }
+.admin-btn.bg-gray-600:hover { background-color: #374151 !important; }
+.admin-btn.bg-blue-600 { background-color: #2563eb !important; }
+.admin-btn.bg-blue-600:hover { background-color: #1d4ed8 !important; }
+.admin-btn.bg-green-600 { background-color: #16a34a !important; }
+.admin-btn.bg-green-600:hover { background-color: #15803d !important; }
+.admin-btn.bg-yellow-600 { background-color: #ca8a04 !important; }
+.admin-btn.bg-yellow-600:hover { background-color: #a16207 !important; }
+.admin-btn.bg-red-800 { background-color: #991b1b !important; }
+.admin-btn.bg-red-800:hover { background-color: #7f1d1d !important; }
+.admin-btn.bg-cyan-600 { background-color: #0891b2 !important; }
+.admin-btn.bg-cyan-600:hover { background-color: #0e7490 !important; }
 
-.admin-btn.bg-red-500 {
-  background-color: #ef4444 !important;
-}
-.admin-btn.bg-red-500:hover {
-  background-color: #dc2626 !important;
-}
-
-.admin-btn.bg-purple-600 {
-  background-color: #9333ea !important;
-}
-.admin-btn.bg-purple-600:hover {
-  background-color: #7e22ce !important;
-}
-
-.admin-btn.bg-gray-600 {
-  background-color: #4b5563 !important;
-}
-.admin-btn.bg-gray-600:hover {
-  background-color: #374151 !important;
-}
-
-.admin-btn.bg-blue-600 {
-  background-color: #2563eb !important;
-}
-.admin-btn.bg-blue-600:hover {
-  background-color: #1d4ed8 !important;
-}
-
-.admin-btn.bg-green-600 {
-  background-color: #16a34a !important;
-}
-.admin-btn.bg-green-600:hover {
-  background-color: #15803d !important;
-}
-
-.admin-btn.bg-yellow-600 {
-  background-color: #ca8a04 !important;
-}
-.admin-btn.bg-yellow-600:hover {
-  background-color: #a16207 !important;
-}
-
-.admin-btn.bg-red-800 {
-  background-color: #991b1b !important;
-}
-.admin-btn.bg-red-800:hover {
-  background-color: #7f1d1d !important;
-}
-
-.admin-btn.bg-cyan-600 {
-  background-color: #0891b2 !important;
-}
-.admin-btn.bg-cyan-600:hover {
-  background-color: #0e7490 !important;
-}
-
-/* Status badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -760,7 +707,6 @@ body {
   border: 1px solid #93c5fd;
 }
 
-/* Empty state */
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -784,284 +730,256 @@ body {
   font-size: 0.95rem;
 }
 
-/* ============================================
-   RESPONSIVO - TELAS < 800px
-   ============================================ */
-
-@media (max-width: 800px) {
-  /* Show mobile menu button on small screens */
-  .mobile-menu-btn {
-    display: flex;
-  }
-
-  /* Hide desktop stats grid, show via mobile menu */
-  .stats-grid {
-    display: none;
-  }
-
-  /* Container mobile */
-  .container {
-    padding: 1rem 0.75rem;
-  }
-
-  /* Header mobile */
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-  }
-
-  .dashboard-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .dashboard-header p {
-    font-size: 0.875rem;
-  }
-
-  .header-actions {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .mobile-menu-btn,
-  .btn-logout {
-    flex: 1;
-    justify-content: center;
-    padding: 0.875rem 1rem;
-  }
-
-  /* Content panel mobile */
-  .content-panel {
-    padding: 1rem;
-    border-radius: 0.75rem;
-  }
-
-  /* Tabs mobile */
-  .tab-btn {
-    padding: 0.875rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  /* Appointment cards mobile */
-  .appointment-card {
-    padding: 1rem;
-  }
-
-  .appointment-card .grid.md\:grid-cols-2 {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  /* Mobile: maintain icon sizes and colors */
-  .appointment-card .flex.items-center.gap-3 {
-    padding: 0.625rem;
-  }
-
-  .appointment-card .flex.items-center.gap-3 svg {
-    /* Reduzindo ícones de 1.125rem para 0.875rem (14px) para mobile */
-    width: 0.875rem;
-    height: 0.875rem;
-    padding: 0.4rem;
-  }
-
-  /* Action buttons stack vertically on mobile with explicit colors */
-  .appointment-card .flex.justify-end,
-  .appointment-card .flex.gap-3 {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.75rem !important;
-    width: 100%;
-  }
-
-  .admin-btn {
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 1rem !important;
-    font-size: 0.95rem !important;
-    display: flex !important;
-  }
-
-  /* Ensure button text is visible */
-  .admin-btn svg {
-    display: inline-block !important;
-    width: 1.125rem !important;
-    height: 1.125rem !important;
-  }
-}
-
-/* Desktop - hide mobile menu */
-@media (min-width: 801px) {
-  .mobile-menu-btn {
-    display: none !important;
-  }
-
-  .mobile-menu-overlay {
-    display: none !important;
-  }
-
-  .appointment-card .grid.md\:grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Tablets */
-@media (max-width: 1024px) and (min-width: 801px) {
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* ============================================
-   UTILITÁRIOS
-   ============================================ */
-.hidden {
-  display: none !important;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-.mb-4 {
-  margin-bottom: 1rem;
-}
-.p-4 {
-  padding: 1rem;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.appointment-card {
-  animation: fadeIn 0.3s ease;
-}
-
-/* Adicionando estilos para modais de análise de crédito */
-
-/* Credit Status Grid - Botões de status para análise de crédito */
-.credit-status-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.status-btn {
+.clients-tab-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem 1rem;
-  border: 2px solid;
-  border-radius: 0.75rem;
-  background: white;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.clients-count {
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.add-client-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 0.95rem;
 }
 
-.status-btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+.add-client-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.status-btn svg {
-  width: 2rem;
-  height: 2rem;
-}
-
-/* Status button colors */
-.status-btn.status-pending {
-  border-color: #f59e0b;
-  color: #f59e0b;
-}
-
-.status-btn.status-pending:hover {
-  background: #fffbeb;
-  border-color: #d97706;
-}
-
-.status-btn.status-approved {
-  border-color: #10b981;
-  color: #10b981;
-}
-
-.status-btn.status-approved:hover {
-  background: #f0fdf4;
-  border-color: #059669;
-}
-
-.status-btn.status-rejected {
-  border-color: #ef4444;
-  color: #ef4444;
-}
-
-.status-btn.status-rejected:hover {
-  background: #fef2f2;
-  border-color: #dc2626;
-}
-
-/* Documents Modal */
-.documents-modal {
-  max-width: 700px;
-}
-
-.documents-grid {
-  display: grid;
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.doc-item {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  transition: all 0.2s ease;
-}
-
-.doc-item:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-}
-
-.doc-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #3b82f6;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
-}
-
-.doc-link:hover {
-  color: #2563eb;
-}
-
-.doc-link svg {
-  flex-shrink: 0;
+.add-client-btn svg {
   width: 1.25rem;
   height: 1.25rem;
+  flex-shrink: 0;
 }
 
-/* Responsive adjustments for credit status */
+.add-client-modal {
+  max-width: 600px;
+}
+
+.add-client-modal h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.add-client-modal .modal-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.client-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.client-form-grid .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.client-form-grid .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.client-form-grid .form-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.client-form-grid .form-group .form-input {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  width: 100%;
+  background: #fff;
+}
+
+.client-form-grid .form-group .form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.client-form-grid .form-group .form-input::placeholder {
+  color: #94a3b8;
+}
+
+.client-form-grid .form-group .form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalSlideUp 0.3s ease;
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.modal-actions .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-actions .btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.modal-actions .btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.modal-actions .btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.modal-actions .btn-cancel {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.modal-actions .btn-cancel:hover {
+  background: #e2e8f0;
+}
+
+@media (max-width: 800px) {
+  .mobile-menu-btn { display: flex; }
+  .stats-grid { display: none; }
+  .container { padding: 1rem 0.75rem; }
+  .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; }
+  .dashboard-header h1 { font-size: 1.5rem; }
+  .dashboard-header p { font-size: 0.875rem; }
+  .header-actions { width: 100%; flex-direction: row; justify-content: space-between; }
+  .mobile-menu-btn, .btn-logout { flex: 1; justify-content: center; padding: 0.875rem 1rem; }
+  .content-panel { padding: 1rem; border-radius: 0.75rem; }
+  .tab-btn { padding: 0.875rem 1rem; font-size: 0.9rem; }
+  .appointment-card { padding: 1rem; }
+  .appointment-card .grid.md\:grid-cols-2 { grid-template-columns: 1fr; gap: 1rem; }
+  .appointment-card .flex.items-center.gap-3 { padding: 0.625rem; }
+  .appointment-card .flex.items-center.gap-3 svg { width: 0.875rem; height: 0.875rem; padding: 0.4rem; }
+  .appointment-card .flex.justify-end, .appointment-card .flex.gap-3 { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; width: 100%; }
+  .admin-btn { width: 100% !important; justify-content: center !important; padding: 1rem !important; font-size: 0.95rem !important; display: flex !important; }
+  .admin-btn svg { display: inline-block !important; width: 1.125rem !important; height: 1.125rem !important; }
+  .clients-tab-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .add-client-btn { width: 100%; justify-content: center; }
+  .modal-content { padding: 1.5rem; max-height: 85vh; }
+  .client-form-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .modal-actions { flex-direction: column; gap: 0.75rem; }
+  .modal-actions .btn { width: 100%; justify-content: center; }
+}
+
+@media (min-width: 801px) {
+  .mobile-menu-btn { display: none !important; }
+  .mobile-menu-overlay { display: none !important; }
+  .appointment-card .grid.md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 1024px) and (min-width: 801px) {
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.p-4 { padding: 1rem; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.appointment-card { animation: fadeIn 0.3s ease; }
+
+.credit-status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.status-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; padding: 1.5rem 1rem; border: 2px solid; border-radius: 0.75rem; background: white; cursor: pointer; transition: all 0.3s ease; font-weight: 600; font-size: 0.95rem; }
+.status-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); }
+.status-btn svg { width: 2rem; height: 2rem; }
+.status-btn.status-pending { border-color: #f59e0b; color: #f59e0b; }
+.status-btn.status-pending:hover { background: #fffbeb; border-color: #d97706; }
+.status-btn.status-approved { border-color: #10b981; color: #10b981; }
+.status-btn.status-approved:hover { background: #f0fdf4; border-color: #059669; }
+.status-btn.status-rejected { border-color: #ef4444; color: #ef4444; }
+.status-btn.status-rejected:hover { background: #fef2f2; border-color: #dc2626; }
+.documents-modal { max-width: 700px; }
+.documents-grid { display: grid; gap: 1rem; margin: 1.5rem 0; }
+.doc-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.75rem; transition: all 0.2s ease; }
+.doc-item:hover { background: #f1f5f9; border-color: #cbd5e1; }
+.doc-link { display: flex; align-items: center; gap: 0.75rem; color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.2s ease; }
+.doc-link:hover { color: #2563eb; }
+.doc-link svg { flex-shrink: 0; width: 1.25rem; height: 1.25rem; }

@@ -1,4 +1,3 @@
-
 // Dashboard JavaScript
 
 // Function to toggle mobile menu
@@ -181,7 +180,7 @@ async function showEmployeeSelection(appointmentId) {
     }
 
     const employeeButtons = allEmployees.map(employee => {
-        const safeName = employee.name.replace(/'/g, "\\'");
+        const safeName = employee.name.replace(/'/g, "\'");
         return '<button onclick="confirmAppointmentWithEmployee(' + appointmentId + ',' + employee.id + ',\'' + safeName + '\')" class="employee-selection-button">' +
                '<div class="employee-info">' +
                '<div class="employee-name">' + employee.name + '</div>' +
@@ -745,6 +744,105 @@ async function deleteCreditAnalysis(analysisId) {
     } catch (error) {
         console.error('[v0] Erro ao deletar análise:', error);
         alert('Erro ao deletar análise. Tente novamente.');
+    }
+}
+
+// ==================== CLIENT MANAGEMENT ====================
+
+// Show "Add Client" modal
+function showAddClientModal() {
+    const modalHTML =
+        '<div class="modal-overlay" onclick="closeModal()">' +
+        '<div class="modal-content add-client-modal" onclick="event.stopPropagation()">' +
+        '<h2>Adicionar Novo Cliente</h2>' +
+        '<p class="modal-subtitle">Preencha os dados do cliente para cadastrá-lo no sistema:</p>' +
+        '<div class="form-grid client-form-grid">' +
+        '' + 
+        '<div class="form-group">' +
+        '<label for="clientName">Nome Completo <span style="color: #ef4444;">*</span></label>' +
+        '<input type="text" id="clientName" class="form-input" required placeholder="Digite o nome completo">' +
+        '</div>' +
+        '' + 
+        '<div class="form-group">' +
+        '<label for="clientEmail">Email</label>' +
+        '<input type="email" id="clientEmail" class="form-input" placeholder="email@exemplo.com">' +
+        '</div>' +
+        '' + 
+        '<div class="form-group">' +
+        '<label for="clientPhone">Telefone</label>' +
+        '<input type="tel" id="clientPhone" class="form-input" placeholder="(XX) XXXXX-XXXX">' +
+        '</div>' +
+        '' + 
+        '<div class="form-group">' +
+        '<label for="clientCpf">CPF</label>' +
+        '<input type="text" id="clientCpf" class="form-input" placeholder="XXX.XXX.XXX-XX">' +
+        '</div>' +
+        '' + 
+        '<div class="form-group full-width">' +
+        '<label for="clientDescription">Descrição <span style="color: #ef4444;">*</span></label>' +
+        '<textarea id="clientDescription" class="form-input form-textarea" required placeholder="Informações adicionais sobre o cliente..." rows="4"></textarea>' +
+        '</div>' +
+        '</div>' +
+        '<div class="modal-actions">' +
+        '<button onclick="closeModal()" class="btn btn-cancel">Cancelar</button>' +
+        '<button onclick="submitNewClient()" class="btn btn-primary">Salvar Cliente</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    setTimeout(() => {
+        const nameInput = document.getElementById('clientName');
+        if (nameInput) nameInput.focus();
+    }, 100);
+}
+
+// Submit new client via API
+async function submitNewClient() {
+    const name = document.getElementById('clientName').value.trim();
+    const email = document.getElementById('clientEmail').value.trim();
+    const phone = document.getElementById('clientPhone').value.trim();
+    const cpf = document.getElementById('clientCpf').value.trim();
+    const description = document.getElementById('clientDescription').value.trim();
+
+    if (!name) {
+        alert('O campo Nome é obrigatório.');
+        document.getElementById('clientName').focus();
+        return;
+    }
+
+    if (!description) {
+        alert('O campo Descrição é obrigatório.');
+        document.getElementById('clientDescription').focus();
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('cpf', cpf);
+    formData.append('description', description);
+
+    try {
+        const response = await fetch('../api/clients.php', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Cliente cadastrado com sucesso!');
+            closeModal();
+            location.reload();
+        } else {
+            alert('Erro ao cadastrar cliente: ' + (result.message || 'Erro desconhecido'));
+        }
+    } catch (error) {
+        console.error('[v0] Erro ao cadastrar cliente:', error);
+        alert('Erro ao cadastrar cliente. Tente novamente.');
     }
 }
 
