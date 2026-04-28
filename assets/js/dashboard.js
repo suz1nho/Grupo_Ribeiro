@@ -1,12 +1,10 @@
 // Dashboard JavaScript
 
-// Function to toggle mobile menu
 function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
     menu.classList.toggle('active');
 }
 
-// Function to switch between tabs
 function switchTab(tab) {
     const tabActive = document.getElementById('tab-active');
     const tabClosed = document.getElementById('tab-closed');
@@ -17,20 +15,16 @@ function switchTab(tab) {
     const contentCredit = document.getElementById('content-credit');
     const contentClients = document.getElementById('content-clients');
     
-    // Save current tab to localStorage
     localStorage.setItem('activeTab', tab);
     
-    // Remove active classes from all tabs
     [tabActive, tabClosed, tabCredit, tabClients].forEach(t => {
         t.classList.remove('active');
     });
     
-    // Hide all content
     [contentActive, contentClosed, contentCredit, contentClients].forEach(c => {
         c.style.display = 'none';
     });
     
-    // Show selected tab
     if (tab === 'active') {
         tabActive.classList.add('active');
         contentActive.style.display = 'block';
@@ -46,13 +40,11 @@ function switchTab(tab) {
     }
 }
 
-// Initialize tab switching on page load
 document.addEventListener('DOMContentLoaded', function() {
     const savedTab = localStorage.getItem('activeTab') || 'active';
     switchTab(savedTab);
 });
 
-// Function to toggle document visibility
 function toggleDocuments(analysisId) {
     const container = document.getElementById('documents-' + analysisId);
     const arrow = document.getElementById('doc-arrow-' + analysisId);
@@ -66,7 +58,6 @@ function toggleDocuments(analysisId) {
     }
 }
 
-// Function to close modal
 function closeModal() {
     const modal = document.querySelector('.modal-overlay');
     if (modal) {
@@ -74,17 +65,14 @@ function closeModal() {
     }
 }
 
-// Function to format date
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR");
 }
 
-// Global variables
 const API_BASE_URL = "../api";
 let allEmployees = [];
 
-// Load employees list
 async function loadEmployees() {
     try {
         const response = await fetch('../api/employees.php');
@@ -101,12 +89,10 @@ async function loadEmployees() {
     }
 }
 
-// Confirm appointment
 async function confirmAppointment(id) {
     showEmployeeSelection(id);
 }
 
-// Unconfirm appointment
 async function unconfirmAppointment(appointmentId) {
     if (!confirm("Tem certeza que deseja desconfirmar este agendamento?")) {
         return;
@@ -139,7 +125,6 @@ async function unconfirmAppointment(appointmentId) {
     }
 }
 
-// Delete appointment
 async function deleteAppointment(id) {
     if (!confirm("Tem certeza que deseja deletar este agendamento?")) {
         return;
@@ -168,7 +153,6 @@ async function deleteAppointment(id) {
     }
 }
 
-// Show employee selection modal
 async function showEmployeeSelection(appointmentId) {
     if (allEmployees.length === 0) {
         await loadEmployees();
@@ -203,7 +187,6 @@ async function showEmployeeSelection(appointmentId) {
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
 
-// Confirm appointment with selected employee
 async function confirmAppointmentWithEmployee(appointmentId, employeeId, employeeName) {
     try {
         const appointmentResponse = await fetch('../api/appointments.php?id=' + appointmentId);
@@ -244,9 +227,7 @@ async function confirmAppointmentWithEmployee(appointmentId, employeeId, employe
     }
 }
 
-// Send WhatsApp message
 function sendWhatsAppMessage(appointment, employeeName) {
-    // Format appointment date
     const appointmentDate = new Date(appointment.appointment_date + 'T00:00:00');
     const formattedDate = appointmentDate.toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -254,24 +235,18 @@ function sendWhatsAppMessage(appointment, employeeName) {
         year: 'numeric',
     });
 
-    // Format time
     const formattedTime = appointment.appointment_time;
 
-    // Create message
-    const message = `Olá, ${appointment.name}! O seu agendamento foi confirmado para o dia ${formattedDate} no horário ${formattedTime}. Aguardamos você!`;
+    const message = `Ol\u00e1, ${appointment.name}! O seu agendamento foi confirmado para o dia ${formattedDate} no hor\u00e1rio ${formattedTime}. Aguardamos voc\u00ea!`;
 
-    // Clean phone number
     const cleanPhone = appointment.phone.replace(/\D/g, '');
 
-    // Add country code if needed
     const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone;
     const whatsappURL = `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`;
 
-    // Open WhatsApp in new tab
     window.open(whatsappURL, '_blank');
 }
 
-// Mark contract as closed
 async function markContract(appointmentId) {
     if (!confirm('Confirmar que o contrato foi fechado?')) {
         return;
@@ -293,7 +268,7 @@ async function markContract(appointmentId) {
         const result = await response.json();
 
         if (result.success) {
-            alert('Contrato marcado como fechado! O horário ficará disponível novamente.');
+            alert('Contrato marcado como fechado! O hor\u00e1rio ficar\u00e1 dispon\u00edvel novamente.');
             location.reload();
         } else {
             alert('Erro ao marcar contrato: ' + result.message);
@@ -304,7 +279,6 @@ async function markContract(appointmentId) {
     }
 }
 
-// Print appointment
 function printAppointment(appointmentId) {
     fetch('../api/appointments.php?id=' + appointmentId)
         .then(response => response.json())
@@ -337,9 +311,9 @@ function printAppointment(appointmentId) {
                     '<div class="info-row"><span class="label">Email:</span><span class="value">' + apt.email + '</span></div>' +
                     '<div class="info-row"><span class="label">Telefone:</span><span class="value">' + apt.phone + '</span></div>' +
                     '<div class="info-row"><span class="label">Data:</span><span class="value">' + formatDate(apt.appointment_date) + '</span></div>' +
-                    '<div class="info-row"><span class="label">Horário:</span><span class="value">' + apt.appointment_time + '</span></div>' +
+                    '<div class="info-row"><span class="label">Hor\u00e1rio:</span><span class="value">' + apt.appointment_time + '</span></div>' +
                     (apt.confirmed_by_name
-                        ? '<div class="confirmed"><strong>Presença Confirmada</strong><br>Atendente: ' + apt.confirmed_by_name + '</div>'
+                        ? '<div class="confirmed"><strong>Presen\u00e7a Confirmada</strong><br>Atendente: ' + apt.confirmed_by_name + '</div>'
                         : '') +
                     (apt.contract_status === 'closed'
                         ? '<div class="contract-closed"><strong>Contrato Fechado</strong></div>'
@@ -362,7 +336,6 @@ function printAppointment(appointmentId) {
         });
 }
 
-// Show notes modal
 async function showNotesModal(appointmentId) {
     try {
         const response = await fetch('../api/appointments.php?id=' + appointmentId);
@@ -376,10 +349,10 @@ async function showNotesModal(appointmentId) {
         const modalHTML =
             '<div class="modal-overlay" onclick="closeModal()">' +
             '<div class="modal-content notes-modal" onclick="event.stopPropagation()">' +
-            '<h2>Informações do Agendamento</h2>' +
-            '<p class="modal-subtitle">Adicione anotações importantes sobre este agendamento:</p>' +
+            '<h2>Informa\u00e7\u00f5es do Agendamento</h2>' +
+            '<p class="modal-subtitle">Adicione anota\u00e7\u00f5es importantes sobre este agendamento:</p>' +
             '<div class="notes-container">' +
-            '<textarea id="appointmentNotes" class="notes-textarea" placeholder="Digite suas anotações aqui..." rows="10">' + currentNotes + '</textarea>' +
+            '<textarea id="appointmentNotes" class="notes-textarea" placeholder="Digite suas anota\u00e7\u00f5es aqui..." rows="10">' + currentNotes + '</textarea>' +
             '</div>' +
             '<div class="modal-actions">' +
             '<button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>' +
@@ -402,7 +375,6 @@ async function showNotesModal(appointmentId) {
     }
 }
 
-// Save notes
 async function saveNotes(appointmentId) {
     const notes = document.getElementById('appointmentNotes').value;
 
@@ -422,42 +394,40 @@ async function saveNotes(appointmentId) {
 
         if (result.success) {
             closeModal();
-            alert('Anotações salvas com sucesso!');
+            alert('Anota\u00e7\u00f5es salvas com sucesso!');
             location.reload();
         } else {
-            alert('Erro ao salvar anotações: ' + result.message);
+            alert('Erro ao salvar anota\u00e7\u00f5es: ' + result.message);
         }
     } catch (error) {
         console.error('[v0] Erro ao salvar notas:', error);
-        alert('Erro ao salvar anotações. Tente novamente.');
+        alert('Erro ao salvar anota\u00e7\u00f5es. Tente novamente.');
     }
 }
 
-// Confirm credit analysis
 async function confirmCreditAnalysis(analysisId) {
     try {
         const response = await fetch('../api/credit-analysis.php?action=employees');
         const data = await response.json();
 
         if (!data.success || !data.data) {
-            alert('Erro ao carregar funcionários');
+            alert('Erro ao carregar funcion\u00e1rios');
             return;
         }
 
         const employees = data.data;
 
-        // Create employee selection modal
         const modalHTML =
             '<div class="modal-overlay" onclick="closeModal()">' +
             '<div class="modal-content employee-selection-modal" onclick="event.stopPropagation()">' +
-            '<h2>Selecionar Funcionário Responsável</h2>' +
-            '<p class="modal-subtitle">Escolha o funcionário que será responsável por esta análise de crédito:</p>' +
+            '<h2>Selecionar Funcion\u00e1rio Respons\u00e1vel</h2>' +
+            '<p class="modal-subtitle">Escolha o funcion\u00e1rio que ser\u00e1 respons\u00e1vel por esta an\u00e1lise de cr\u00e9dito:</p>' +
             '<div class="employee-selection-grid">' +
             employees.map(emp =>
                 '<button class="employee-selection-button" onclick="executeCreditConfirmation(' + analysisId + ', ' + emp.id + ')">' +
                 '<div class="employee-info">' +
                 '<div class="employee-name">' + emp.name + '</div>' +
-                '<div class="employee-details">' + (emp.role || 'Funcionário') + '</div>' +
+                '<div class="employee-details">' + (emp.role || 'Funcion\u00e1rio') + '</div>' +
                 '</div>' +
                 '</button>'
             ).join('') +
@@ -470,12 +440,11 @@ async function confirmCreditAnalysis(analysisId) {
 
         document.body.insertAdjacentHTML('beforeend', modalHTML);
     } catch (error) {
-        console.error('[v0] Erro ao carregar funcionários:', error);
-        alert('Erro ao carregar funcionários. Tente novamente.');
+        console.error('[v0] Erro ao carregar funcion\u00e1rios:', error);
+        alert('Erro ao carregar funcion\u00e1rios. Tente novamente.');
     }
 }
 
-// Execute credit confirmation
 async function executeCreditConfirmation(analysisId, employeeId) {
     closeModal();
 
@@ -484,7 +453,7 @@ async function executeCreditConfirmation(analysisId, employeeId) {
         const analysisData = await analysisResponse.json();
 
         if (!analysisData.success || !analysisData.data) {
-            alert('Erro ao buscar dados da análise de crédito');
+            alert('Erro ao buscar dados da an\u00e1lise de cr\u00e9dito');
             return;
         }
 
@@ -506,44 +475,37 @@ async function executeCreditConfirmation(analysisId, employeeId) {
 
         if (result.success) {
             sendCreditAnalysisWhatsAppMessage(analysis);
-            alert('Análise de crédito confirmada com sucesso!');
+            alert('An\u00e1lise de cr\u00e9dito confirmada com sucesso!');
             location.reload();
         } else {
-            alert('Erro ao confirmar análise: ' + result.message);
+            alert('Erro ao confirmar an\u00e1lise: ' + result.message);
         }
     } catch (error) {
-        console.error('[v0] Erro ao confirmar análise:', error);
-        alert('Erro ao confirmar análise. Tente novamente.');
+        console.error('[v0] Erro ao confirmar an\u00e1lise:', error);
+        alert('Erro ao confirmar an\u00e1lise. Tente novamente.');
     }
 }
 
-// Send credit analysis WhatsApp message
 function sendCreditAnalysisWhatsAppMessage(analysis) {
-    // Format requested amount
     const formattedAmount = Number.parseFloat(analysis.requested_amount).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
     });
 
-    // Create message
-    const message = `Olá, ${analysis.name}! A sua análise de crédito foi confirmada! ✅
+    const message = `Ol\u00e1, ${analysis.name}! A sua an\u00e1lise de cr\u00e9dito foi confirmada! \u2705
 
 Valor solicitado: ${formattedAmount}
 
-Entre em contato conosco para darmos continuidade ao seu processo. Aguardamos você!`;
+Entre em contato conosco para darmos continuidade ao seu processo. Aguardamos voc\u00ea!`;
 
-    // Clean phone number
     const cleanPhone = analysis.phone.replace(/\D/g, '');
 
-    // Add country code if needed
     const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone;
     const whatsappURL = `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`;
 
-    // Open WhatsApp in new tab
     window.open(whatsappURL, '_blank');
 }
 
-// Update credit status
 async function updateCreditStatus(analysisId, status) {
     const statusLabels = {
         pending: 'Pendente',
@@ -551,7 +513,7 @@ async function updateCreditStatus(analysisId, status) {
         rejected: 'Rejeitado',
     };
 
-    if (!confirm('Confirmar alteração do status para: ' + statusLabels[status] + '?')) {
+    if (!confirm('Confirmar altera\u00e7\u00e3o do status para: ' + statusLabels[status] + '?')) {
         return;
     }
 
@@ -581,9 +543,8 @@ async function updateCreditStatus(analysisId, status) {
     }
 }
 
-// Unconfirm credit analysis
 async function unconfirmCreditAnalysis(analysisId) {
-    if (!confirm('Deseja desmarcar esta análise de crédito? O funcionário responsável será removido.')) {
+    if (!confirm('Deseja desmarcar esta an\u00e1lise de cr\u00e9dito? O funcion\u00e1rio respons\u00e1vel ser\u00e1 removido.')) {
         return;
     }
 
@@ -603,18 +564,17 @@ async function unconfirmCreditAnalysis(analysisId) {
         const result = await response.json();
 
         if (result.success) {
-            alert('Análise desmarcada com sucesso!');
+            alert('An\u00e1lise desmarcada com sucesso!');
             location.reload();
         } else {
-            alert('Erro ao desmarcar análise: ' + result.message);
+            alert('Erro ao desmarcar an\u00e1lise: ' + result.message);
         }
     } catch (error) {
-        console.error('[v0] Erro ao desmarcar análise:', error);
-        alert('Erro ao desmarcar análise. Tente novamente.');
+        console.error('[v0] Erro ao desmarcar an\u00e1lise:', error);
+        alert('Erro ao desmarcar an\u00e1lise. Tente novamente.');
     }
 }
 
-// View credit documents
 async function viewCreditDocuments(analysisId) {
     try {
         const response = await fetch('../api/credit-analysis.php?id=' + analysisId);
@@ -627,13 +587,12 @@ async function viewCreditDocuments(analysisId) {
 
         const analysis = data.data;
 
-        // Helper function to generate document preview
         function getDocumentPreview(docPath, docName) {
             if (!docPath) {
                 return (
                     '<div class="document-item no-doc">' +
                     '<span class="doc-label">' + docName + ':</span> ' +
-                    '<span class="doc-status">Não enviado</span>' +
+                    '<span class="doc-status">N\u00e3o enviado</span>' +
                     '</div>'
                 );
             }
@@ -662,23 +621,22 @@ async function viewCreditDocuments(analysisId) {
             }
         }
 
-        // Create modal with documents
         const modalHTML =
             '<div class="modal-overlay" onclick="closeModal()">' +
             '<div class="modal-content documents-modal" onclick="event.stopPropagation()">' +
-            '<h2>Documentos da Análise de Crédito</h2>' +
+            '<h2>Documentos da An\u00e1lise de Cr\u00e9dito</h2>' +
             '<div class="client-info-section">' +
-            '<p><strong>Nome:</strong> ' + (analysis.name || 'Não informado') + '</p>' +
-            '<p><strong>Email:</strong> ' + (analysis.email || 'Não informado') + '</p>' +
-            '<p><strong>Telefone:</strong> ' + (analysis.phone || 'Não informado') + '</p>' +
+            '<p><strong>Nome:</strong> ' + (analysis.name || 'N\u00e3o informado') + '</p>' +
+            '<p><strong>Email:</strong> ' + (analysis.email || 'N\u00e3o informado') + '</p>' +
+            '<p><strong>Telefone:</strong> ' + (analysis.phone || 'N\u00e3o informado') + '</p>' +
             '</div>' +
             '<hr style="margin: 15px 0; border: none; border-top: 1px solid #e5e7eb;">' +
             '<h3 style="margin-bottom: 15px; color: #374151;">Documentos Enviados</h3>' +
             '<div class="documents-grid">' +
             getDocumentPreview(analysis.doc_identidade, 'CPF e RG ou CNH') +
-            getDocumentPreview(analysis.doc_endereco, 'Comprovante de Endereço') +
+            getDocumentPreview(analysis.doc_endereco, 'Comprovante de Endere\u00e7o') +
             getDocumentPreview(analysis.doc_renda, 'Comprovante de Renda') +
-            getDocumentPreview(analysis.doc_bancario, 'Dados Bancários') +
+            getDocumentPreview(analysis.doc_bancario, 'Dados Banc\u00e1rios') +
             '</div>' +
             '<div class="modal-actions">' +
             '<button onclick="closeModal()" class="btn btn-primary">Fechar</button>' +
@@ -693,16 +651,14 @@ async function viewCreditDocuments(analysisId) {
     }
 }
 
-// Open document image in modal
 function openDocumentImage(imageSrc) {
     const imageModal = document.createElement('div');
     imageModal.className = 'image-modal-overlay';
+    // Use a simple text "X" button instead of an SVG image
     imageModal.innerHTML =
         '<div class="image-modal-content">' +
-        '<button class="image-modal-close" onclick="this.closest(\'.image-modal-overlay\').remove()">' +
-        '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">' +
-        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' +
-        '</svg>' +
+        '<button class="image-modal-close" onclick="this.closest(\'.image-modal-overlay\').remove()" aria-label="Fechar">' +
+        '\u2716' +
         '</button>' +
         '<img src="' + imageSrc + '" alt="Documento">' +
         '</div>';
@@ -716,9 +672,8 @@ function openDocumentImage(imageSrc) {
     document.body.appendChild(imageModal);
 }
 
-// Delete credit analysis
 async function deleteCreditAnalysis(analysisId) {
-    if (!confirm('ATENÇÃO: Deseja realmente deletar esta análise de crédito? Esta ação não pode ser desfeita!')) {
+    if (!confirm('ATEN\u00c7\u00c3O: Deseja realmente deletar esta an\u00e1lise de cr\u00e9dito? Esta a\u00e7\u00e3o n\u00e3o pode ser desfeita!')) {
         return;
     }
 
@@ -736,26 +691,25 @@ async function deleteCreditAnalysis(analysisId) {
         const result = await response.json();
 
         if (result.success) {
-            alert('Análise de crédito deletada com sucesso!');
+            alert('An\u00e1lise de cr\u00e9dito deletada com sucesso!');
             location.reload();
         } else {
-            alert('Erro ao deletar análise: ' + result.message);
+            alert('Erro ao deletar an\u00e1lise: ' + result.message);
         }
     } catch (error) {
-        console.error('[v0] Erro ao deletar análise:', error);
-        alert('Erro ao deletar análise. Tente novamente.');
+        console.error('[v0] Erro ao deletar an\u00e1lise:', error);
+        alert('Erro ao deletar an\u00e1lise. Tente novamente.');
     }
 }
 
 // ==================== CLIENT MANAGEMENT ====================
 
-// Show "Add Client" modal
 function showAddClientModal() {
     const modalHTML =
         '<div class="modal-overlay" onclick="closeModal()">' +
         '<div class="modal-content add-client-modal" onclick="event.stopPropagation()">' +
         '<h2>Adicionar Novo Cliente</h2>' +
-        '<p class="modal-subtitle">Preencha os dados do cliente para cadastrá-lo no sistema:</p>' +
+        '<p class="modal-subtitle">Preencha os dados do cliente para cadastr\u00e1-lo no sistema:</p>' +
         '<div class="form-grid client-form-grid">' +
         '' + 
         '<div class="form-group">' +
@@ -779,8 +733,8 @@ function showAddClientModal() {
         '</div>' +
         '' + 
         '<div class="form-group full-width">' +
-        '<label for="clientDescription">Descrição <span style="color: #ef4444;">*</span></label>' +
-        '<textarea id="clientDescription" class="form-input form-textarea" required placeholder="Informações adicionais sobre o cliente..." rows="4"></textarea>' +
+        '<label for="clientDescription">Descri\u00e7\u00e3o <span style="color: #ef4444;">*</span></label>' +
+        '<textarea id="clientDescription" class="form-input form-textarea" required placeholder="Informa\u00e7\u00f5es adicionais sobre o cliente..." rows="4"></textarea>' +
         '</div>' +
         '</div>' +
         '<div class="modal-actions">' +
@@ -798,7 +752,6 @@ function showAddClientModal() {
     }, 100);
 }
 
-// Submit new client via API
 async function submitNewClient() {
     const name = document.getElementById('clientName').value.trim();
     const email = document.getElementById('clientEmail').value.trim();
@@ -807,13 +760,13 @@ async function submitNewClient() {
     const description = document.getElementById('clientDescription').value.trim();
 
     if (!name) {
-        alert('O campo Nome é obrigatório.');
+        alert('O campo Nome \u00e9 obrigat\u00f3rio.');
         document.getElementById('clientName').focus();
         return;
     }
 
     if (!description) {
-        alert('O campo Descrição é obrigatório.');
+        alert('O campo Descri\u00e7\u00e3o \u00e9 obrigat\u00f3rio.');
         document.getElementById('clientDescription').focus();
         return;
     }
@@ -846,7 +799,6 @@ async function submitNewClient() {
     }
 }
 
-// Load employees on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadEmployees();
 });

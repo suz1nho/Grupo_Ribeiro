@@ -62,7 +62,6 @@ error_log("[API] Request Method: $method");
 try {
     $db = Database::getInstance()->getConnection();
     
-    // Verificar se a tabela existe
     $tableCheck = $db->query("SHOW TABLES LIKE 'appointments'");
     if ($tableCheck->rowCount() === 0) {
         sendJsonResponse([
@@ -89,8 +88,6 @@ try {
             if (isset($_GET['check_date'])) {
                 $date = $_GET['check_date'];
                 
-                // When employee confirms presence, status becomes 'confirmed' and blocks the slot
-                // When employee unconfirms, status goes back to 'pending' and unblocks the slot
                 $stmt = $db->prepare("
                     SELECT appointment_time 
                     FROM appointments 
@@ -141,9 +138,6 @@ try {
             
         case 'POST':
             $rawInput = file_get_contents('php://input');
-            // error_log("[API] Raw input: " . $rawInput);
-            // error_log("[API] [Appointments] +1 app.");
-            
             $data = json_decode($rawInput, true);
             
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -152,8 +146,6 @@ try {
                     'message' => 'JSON inválido: ' . json_last_error_msg()
                 ], 400);
             }
-            
-            // error_log("[API] Decoded data: " . print_r($data, true));
             
             $required = ['name', 'email', 'phone', 'appointment_date', 'appointment_time'];
             $missing = [];
@@ -239,8 +231,6 @@ try {
             $fields = [];
             $params = [];
 
-            // error_log("PUT: " . json_encode($data) . "\n");
-
             $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', "contract_closed_at", 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes'];
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
@@ -263,6 +253,50 @@ try {
 
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
+            
+            // If status changed to 'closed', copy appointment data to clients table
+            if (isset($data['status']) && $data['status'] === 'closed') {
+                try {
+                    // Fetch the appointment to get full details
+                    $stmtFetch = $db->prepare("SELECT name, email, phone, contract_closed_by FROM appointments WHERE id = ?");
+                    $stmtFetch->execute([$data['id']]);
+                    $appointment = $stmtFetch->fetch();
+                    
+                    if ($appointment) {
+                        $employeeId = $appointment['contract_closed_by'];
+                        
+                        // Check if a client with this email already exists to avoid duplicates
+                        $stmtCheck = $db->prepare("SELECT client_id FROM clients WHERE email = ?");
+                        $stmtCheck->execute([$appointment['email']]);
+                        $existingClient = $stmtCheck->fetch();
+                        
+                        if (!$existingClient) {
+                            // Build description
+                            $description = "Contrato fechado.";
+                            
+                            // Insert into clients table
+                            $stmtInsert = $db->prepare("
+                                INSERT INTO clients (name, email, phone, description, status, client_registered_by)
+                                VALUES (?, ?, ?, ?, 'active', ?)
+                            ");
+                            $stmtInsert->execute([
+                                $appointment['name'],
+                                $appointment['email'],
+                                $appointment['phone'],
+                                $description,
+                                $employeeId
+                            ]);
+                            
+                            error_log("[CLIENT COPY] Client created from appointment ID " . $data['id']);
+                        } else {
+                            error_log("[CLIENT COPY] Client with email " . $appointment['email'] . " already exists, skipping");
+                        }
+                    }
+                } catch (PDOException $e) {
+                    // Log error but don't fail the main operation
+                    error_log("[CLIENT COPY ERROR] " . $e->getMessage());
+                }
+            }
             
             sendJsonResponse(['success' => true, 'message' => 'Agendamento atualizado com sucesso']);
 
@@ -299,4 +333,3 @@ try {
         'error' => $e->getMessage()
     ], 500);
 }
-?>

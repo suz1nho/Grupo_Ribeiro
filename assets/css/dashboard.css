@@ -381,6 +381,7 @@ body {
 .stat-card-icon svg {
   width: 1.5rem;
   height: 1.5rem;
+  color: inherit;
 }
 
 .stat-card.blue {
@@ -647,6 +648,7 @@ body {
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
+  color: inherit;
 }
 
 .admin-btn-sm {
@@ -983,3 +985,120 @@ body {
 .doc-link { display: flex; align-items: center; gap: 0.75rem; color: #3b82f6; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.2s ease; }
 .doc-link:hover { color: #2563eb; }
 .doc-link svg { flex-shrink: 0; width: 1.25rem; height: 1.25rem; }
+
+/* ============================================
+   EMPLOYEE SELECTION MODAL STYLES
+   ============================================ */
+
+.employee-selection-modal {
+  max-width: 500px;
+}
+
+.employee-selection-modal h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.employee-selection-modal .modal-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.employee-selection-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.employee-selection-button {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: inherit;
+}
+
+.employee-selection-button:hover {
+  border-color: #3b82f6;
+  background: #f0f7ff;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.employee-selection-button .employee-info {
+  flex: 1;
+}
+
+.employee-selection-button .employee-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.employee-selection-button .employee-details {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Image modal for document viewing */
+.image-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.image-modal-close {
+  position: absolute;
+  top: -2.5rem;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.image-modal-close:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
