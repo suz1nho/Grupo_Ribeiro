@@ -919,6 +919,32 @@ body {
   background: #e2e8f0;
 }
 
+/* ============================================
+   BUTTON WRAPPING - FIX FOR OVERFLOW
+   ============================================ */
+
+/* Action buttons container inside cards */
+.appointment-card .flex.justify-end.gap-3,
+.appointment-card .flex.justify-end.gap-3.mt-6.pt-4.border-t {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 0.75rem !important;
+}
+
+/* Allow buttons to shrink and wrap when container is narrow */
+.appointment-card .flex.justify-end.gap-3 .admin-btn,
+.appointment-card [data-actions] .admin-btn {
+  flex-shrink: 1 !important;
+  min-width: fit-content;
+  flex: 0 1 auto;
+}
+
+/* Ensure the border-t wrapper that contains buttons also wraps */
+.appointment-card .mt-6.pt-4.border-t {
+  overflow: hidden;
+}
+
 @media (max-width: 800px) {
   .mobile-menu-btn { display: flex; }
   .stats-grid { display: none; }
@@ -949,6 +975,10 @@ body {
   .mobile-menu-btn { display: none !important; }
   .mobile-menu-overlay { display: none !important; }
   .appointment-card .grid.md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  /* On wider screens, allow buttons to naturally wrap to next line */
+  .appointment-card .flex.justify-end.gap-3.mt-6.pt-4.border-t {
+    flex-wrap: wrap !important;
+  }
 }
 
 @media (max-width: 1024px) and (min-width: 801px) {

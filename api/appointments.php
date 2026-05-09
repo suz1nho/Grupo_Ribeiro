@@ -57,7 +57,6 @@ try {
 }
 
 $method = $_SERVER['REQUEST_METHOD'];
-error_log("[API] Request Method: $method");
 
 try {
     $db = Database::getInstance()->getConnection();
@@ -67,18 +66,15 @@ try {
         sendJsonResponse([
             'success' => false,
             'message' => 'A tabela appointments não existe no banco de dados',
-            'action' => 'Execute o arquivo database/schema.sql no seu MySQL primeiro',
-            'sql_file' => 'database/schema.sql'
+            'action' => 'Execute o arquivo sql.sql no seu MySQL primeiro'
         ], 500);
     }
-    
 } catch (Exception $e) {
     error_log("Erro de conexão: " . $e->getMessage());
     sendJsonResponse([
         'success' => false,
         'message' => 'Erro ao conectar ao banco de dados',
-        'error' => $e->getMessage(),
-        'hint' => 'Verifique se o MySQL está rodando e as credenciais em conf/db.json estão corretas'
+        'error' => $e->getMessage()
     ], 500);
 }
 
@@ -87,51 +83,48 @@ try {
         case 'GET':
             if (isset($_GET['check_date'])) {
                 $date = $_GET['check_date'];
-                
-                $stmt = $db->prepare("
-                    SELECT appointment_time 
-                    FROM appointments 
-                    WHERE appointment_date = ? 
-                    AND status = 'confirmed'
-                ");
+                $stmt = $db->prepare("SELECT appointment_time FROM appointments WHERE appointment_date = ? AND status = 'confirmed'");
                 $stmt->execute([$date]);
                 $appointments = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                
-                sendJsonResponse([
-                    'success' => true,
-                    'blocked_slots' => $appointments
-                ]);
-            } elseif (isset($_GET['id'])) {
-                $stmt = $db->prepare("SELECT a.*, e.name as confirmed_by_name FROM appointments a LEFT JOIN employees e ON a.contract_closed_by = e.id WHERE a.id = ?");
+                sendJsonResponse(['success' => true, 'blocked_slots' => $appointments]);
+            } 
+            elseif (isset($_GET['id'])) {
+                $stmt = $db->prepare("SELECT a.*, e.name as confirmed_by_name FROM appointments a LEFT JOIN employees e ON a.confirmed_by = e.id WHERE a.id = ?");
                 $stmt->execute([$_GET['id']]);
                 $appointment = $stmt->fetch();
-                
                 if ($appointment) {
                     sendJsonResponse(['success' => true, 'data' => $appointment]);
                 } else {
                     sendJsonResponse(['success' => false, 'message' => 'Agendamento não encontrado'], 404);
                 }
-            } else {
+            } 
+            else {
                 $status = $_GET['status'] ?? null;
+                $type = $_GET['type'] ?? null; // 'active' or 'closed'
                 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
                 $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
                 
-                $sql = "SELECT a.* FROM appointments a";
-                $params = [];
-                
-                if ($status) {
-                    $sql .= " WHERE a.status = ?";
-                    $params[] = $status;
+                if ($type === 'active') {
+                    $sql = "SELECT a.*, e.name AS confirmed_by_name FROM appointments a LEFT JOIN employees e ON a.confirmed_by = e.id WHERE a.status IS NULL OR a.status IN ('pending','confirmed','approved') ORDER BY a.appointment_date DESC, a.appointment_time DESC LIMIT ? OFFSET ?";
+                    $params = [$limit, $offset];
+                } elseif ($type === 'closed') {
+                    $sql = "SELECT a.*, e.name AS contract_closed_by_name FROM appointments a LEFT JOIN employees e ON a.contract_closed_by = e.id WHERE a.status = 'closed' ORDER BY a.appointment_date DESC, a.appointment_time DESC LIMIT ? OFFSET ?";
+                    $params = [$limit, $offset];
+                } else {
+                    $sql = "SELECT a.* FROM appointments a";
+                    $params = [];
+                    if ($status) {
+                        $sql .= " WHERE a.status = ?";
+                        $params[] = $status;
+                    }
+                    $sql .= " ORDER BY a.appointment_date DESC, a.appointment_time DESC LIMIT ? OFFSET ?";
+                    $params[] = $limit;
+                    $params[] = $offset;
                 }
-                
-                $sql .= " ORDER BY a.appointment_date DESC, a.appointment_time DESC LIMIT ? OFFSET ?";
-                $params[] = $limit;
-                $params[] = $offset;
                 
                 $stmt = $db->prepare($sql);
                 $stmt->execute($params);
                 $appointments = $stmt->fetchAll();
-                
                 sendJsonResponse(['success' => true, 'data' => $appointments]);
             }
             break;
@@ -141,10 +134,7 @@ try {
             $data = json_decode($rawInput, true);
             
             if (json_last_error() !== JSON_ERROR_NONE) {
-                sendJsonResponse([
-                    'success' => false,
-                    'message' => 'JSON inválido: ' . json_last_error_msg()
-                ], 400);
+                sendJsonResponse(['success' => false, 'message' => 'JSON inválido: ' . json_last_error_msg()], 400);
             }
             
             $required = ['name', 'email', 'phone', 'appointment_date', 'appointment_time'];
@@ -154,42 +144,24 @@ try {
                     $missing[] = $field;
                 }
             }
-            
             if (!empty($missing)) {
-                sendJsonResponse([
-                    'success' => false,
-                    'message' => 'Campos obrigatórios ausentes: ' . implode(', ', $missing),
-                    'received_data' => $data
-                ], 400);
+                sendJsonResponse(['success' => false, 'message' => 'Campos obrigatórios: ' . implode(', ', $missing)], 400);
             }
             
             $date = DateTime::createFromFormat('Y-m-d', $data['appointment_date']);
             if (!$date || $date->format('Y-m-d') !== $data['appointment_date']) {
-                sendJsonResponse([
-                    'success' => false,
-                    'message' => 'Formato de data inválido. Use YYYY-MM-DD'
-                ], 400);
+                sendJsonResponse(['success' => false, 'message' => 'Formato de data inválido. Use YYYY-MM-DD'], 400);
             }
             
             $stmt = $db->prepare("SELECT COUNT(*) as count FROM appointments WHERE appointment_date = ? AND appointment_time = ?");
             $stmt->execute([$data['appointment_date'], $data['appointment_time']]);
             $result = $stmt->fetch();
-            
             if ($result['count'] > 0) {
-                sendJsonResponse([
-                    'success' => false,
-                    'message' => 'Este horário já está reservado. Por favor, escolha outro horário.'
-                ], 409);
+                sendJsonResponse(['success' => false, 'message' => 'Este horário já está reservado.'], 409);
             }
             
-            $stmt = $db->prepare("
-                INSERT INTO appointments (
-                    name, email, phone, appointment_date, appointment_day, 
-                    appointment_time, message, status, notes
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
-            ");
-            
-            $result = $stmt->execute([
+            $stmt = $db->prepare("INSERT INTO appointments (name, email, phone, appointment_date, appointment_day, appointment_time, message, status, notes) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)");
+            $stmt->execute([
                 trim($data['name']),
                 trim($data['email']),
                 trim($data['phone']),
@@ -199,39 +171,20 @@ try {
                 $data['message'] ?? '',
                 $data['notes'] ?? ''
             ]);
-            
-            if ($result) {
-                $id = $db->lastInsertId();
-                error_log("[API SUCCESS] Appointment created with ID: $id");
-                sendJsonResponse([
-                    'success' => true,
-                    'message' => 'Agendamento criado com sucesso!',
-                    'id' => $id
-                ], 201);
-            } else {
-                $errorInfo = $stmt->errorInfo();
-                error_log("[API ERROR] Insert failed: " . print_r($errorInfo, true));
-                sendJsonResponse([
-                    'success' => false,
-                    'message' => 'Erro ao salvar agendamento',
-                    'error' => $errorInfo[2]
-                ], 500);
-            }
+            $id = $db->lastInsertId();
+            sendJsonResponse(['success' => true, 'message' => 'Agendamento criado com sucesso!', 'id' => $id], 201);
             break;
             
         case 'PUT':
             $data = json_decode(file_get_contents('php://input'), true);
-
-            error_log(file_get_contents('php://input'));
-            
             if (empty($data['id'])) {
                 sendJsonResponse(['success' => false, 'message' => 'ID é obrigatório'], 400);
             }
             
             $fields = [];
             $params = [];
-
-            $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', "contract_closed_at", 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes'];
+            $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', 'contract_closed_at', 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes'];
+            
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
                     $fields[] = "$field = ?";
@@ -239,79 +192,59 @@ try {
                 }
             }
             
+            // When setting status to 'closed', set contract_closed_at
+            if (isset($data['status']) && $data['status'] === 'closed' && !isset($data['contract_closed_at'])) {
+                $fields[] = "contract_closed_at = CURRENT_TIMESTAMP";
+            }
+            
+            // When unconfirming (setting pending and clearing confirmed_by)
+            if (isset($data['status']) && $data['status'] === 'pending' && array_key_exists('confirmed_by', $data) && $data['confirmed_by'] === null) {
+                // Ensure confirmed_by is set to null
+                if (!in_array('confirmed_by = ?', $fields)) {
+                    $fields[] = "confirmed_by = NULL";
+                }
+            }
+            
             if (empty($fields)) {
                 sendJsonResponse(['success' => false, 'message' => 'Nenhum campo para atualizar'], 400);
             }
-
-            if (isset($data['status']) && $data['status'] === 'approved') {
-                $fields[] = "contract_closed_at = CURRENT_TIMESTAMP";
-            }
-
-            $params[] = $data['id'];
             
+            $params[] = $data['id'];
             $sql = "UPDATE appointments SET " . implode(', ', $fields) . " WHERE id = ?";
-
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             
             // If status changed to 'closed', copy appointment data to clients table
             if (isset($data['status']) && $data['status'] === 'closed') {
                 try {
-                    // Fetch the appointment to get full details
                     $stmtFetch = $db->prepare("SELECT name, email, phone, contract_closed_by FROM appointments WHERE id = ?");
                     $stmtFetch->execute([$data['id']]);
                     $appointment = $stmtFetch->fetch();
-                    
                     if ($appointment) {
                         $employeeId = $appointment['contract_closed_by'];
-                        
-                        // Check if a client with this email already exists to avoid duplicates
                         $stmtCheck = $db->prepare("SELECT client_id FROM clients WHERE email = ?");
                         $stmtCheck->execute([$appointment['email']]);
                         $existingClient = $stmtCheck->fetch();
-                        
                         if (!$existingClient) {
-                            // Build description
-                            $description = "Contrato fechado.";
-                            
-                            // Insert into clients table
-                            $stmtInsert = $db->prepare("
-                                INSERT INTO clients (name, email, phone, description, status, client_registered_by)
-                                VALUES (?, ?, ?, ?, 'active', ?)
-                            ");
-                            $stmtInsert->execute([
-                                $appointment['name'],
-                                $appointment['email'],
-                                $appointment['phone'],
-                                $description,
-                                $employeeId
-                            ]);
-                            
-                            error_log("[CLIENT COPY] Client created from appointment ID " . $data['id']);
-                        } else {
-                            error_log("[CLIENT COPY] Client with email " . $appointment['email'] . " already exists, skipping");
+                            $stmtInsert = $db->prepare("INSERT INTO clients (name, email, phone, description, status, client_registered_by) VALUES (?, ?, ?, 'Contrato fechado.', 'active', ?)");
+                            $stmtInsert->execute([$appointment['name'], $appointment['email'], $appointment['phone'], $employeeId]);
                         }
                     }
                 } catch (PDOException $e) {
-                    // Log error but don't fail the main operation
                     error_log("[CLIENT COPY ERROR] " . $e->getMessage());
                 }
             }
             
             sendJsonResponse(['success' => true, 'message' => 'Agendamento atualizado com sucesso']);
-
             break;
             
         case 'DELETE':
             $data = json_decode(file_get_contents('php://input'), true);
-            
             if (empty($data['id'])) {
                 sendJsonResponse(['success' => false, 'message' => 'ID é obrigatório'], 400);
             }
-            
             $stmt = $db->prepare("DELETE FROM appointments WHERE id = ?");
             $stmt->execute([$data['id']]);
-            
             sendJsonResponse(['success' => true, 'message' => 'Agendamento deletado com sucesso']);
             break;
             
@@ -320,16 +253,8 @@ try {
     }
 } catch (PDOException $e) {
     error_log("[API ERROR] PDO Exception: " . $e->getMessage());
-    sendJsonResponse([
-        'success' => false,
-        'message' => 'Erro no banco de dados',
-        'error' => $e->getMessage()
-    ], 500);
+    sendJsonResponse(['success' => false, 'message' => 'Erro no banco de dados', 'error' => $e->getMessage()], 500);
 } catch (Exception $e) {
     error_log("[API ERROR] General Exception: " . $e->getMessage());
-    sendJsonResponse([
-        'success' => false,
-        'message' => 'Erro inesperado no servidor',
-        'error' => $e->getMessage()
-    ], 500);
+    sendJsonResponse(['success' => false, 'message' => 'Erro inesperado no servidor', 'error' => $e->getMessage()], 500);
 }

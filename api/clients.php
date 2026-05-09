@@ -13,7 +13,6 @@ try {
     switch ($method) {
         case 'GET':
             if (isset($_GET['id'])) {
-                // Fetch single client
                 $stmt = $db->prepare("
                     SELECT c.*, e.name as registered_by_name 
                     FROM clients c 
@@ -22,7 +21,6 @@ try {
                 ");
                 $stmt->execute([$_GET['id']]);
                 $client = $stmt->fetch();
-                
                 if ($client) {
                     echo json_encode(['success' => true, 'data' => $client]);
                 } else {
@@ -30,35 +28,39 @@ try {
                     echo json_encode(['success' => false, 'message' => 'Cliente não encontrado']);
                 }
             } else {
-                // Fetch all or filtered clients
-                $limit = $_GET['limit'] ?? 50;
-                $offset = $_GET['offset'] ?? 0;
+                $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 50;
+                $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
                 
-                // Role-based filtering is handled in dashboard.php directly
                 $sql = "SELECT c.*, e.name as registered_by_name 
                         FROM clients c 
                         LEFT JOIN employees e ON c.client_registered_by = e.id 
                         ORDER BY c.registered_at DESC 
                         LIMIT ? OFFSET ?";
-                $params = [(int)$limit, (int)$offset];
-                
                 $stmt = $db->prepare($sql);
-                $stmt->execute($params);
+                $stmt->execute([$limit, $offset]);
                 $clients = $stmt->fetchAll();
-                
                 echo json_encode(['success' => true, 'data' => $clients, 'total' => count($clients)]);
             }
             break;
             
         case 'POST':
-            // Create new client
-            session_start();
+            // Support both JSON and form-data
+            $rawInput = file_get_contents('php://input');
+            $data = json_decode($rawInput, true);
             
-            $name = trim($_POST['name'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $phone = trim($_POST['phone'] ?? '');
-            $cpf = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
-            $description = trim($_POST['description'] ?? '');
+            if ($data && is_array($data)) {
+                $name = trim($data['name'] ?? '');
+                $email = trim($data['email'] ?? '');
+                $phone = trim($data['phone'] ?? '');
+                $cpf = preg_replace('/\D/', '', $data['cpf'] ?? '');
+                $description = trim($data['description'] ?? '');
+            } else {
+                $name = trim($_POST['name'] ?? '');
+                $email = trim($_POST['email'] ?? '');
+                $phone = trim($_POST['phone'] ?? '');
+                $cpf = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
+                $description = trim($_POST['description'] ?? '');
+            }
             
             if (empty($name)) {
                 http_response_code(400);
@@ -66,22 +68,11 @@ try {
                 exit;
             }
             
-            if (empty($description)) {
-                http_response_code(400);
-                echo json_encode(['success' => false, 'message' => 'Descrição é obrigatória']);
-                exit;
-            }
-            
-            // Get the employee ID from session
+            session_start();
             $employeeId = $_SESSION['employee_id'] ?? null;
             
-            $stmt = $db->prepare("
-                INSERT INTO clients (name, email, phone, cpf, description, status, client_registered_by)
-                VALUES (?, ?, ?, ?, ?, 'active', ?)
-            ");
-            
+            $stmt = $db->prepare("INSERT INTO clients (name, email, phone, cpf, description, status, client_registered_by) VALUES (?, ?, ?, ?, ?, 'active', ?)");
             $stmt->execute([$name, $email, $phone, $cpf, $description, $employeeId]);
-            
             $clientId = $db->lastInsertId();
             
             echo json_encode([
@@ -112,7 +103,6 @@ try {
             
             $fields = [];
             $params = [];
-            
             $allowedFields = ['name', 'email', 'phone', 'cpf', 'description', 'status'];
             
             foreach ($allowedFields as $field) {
@@ -129,7 +119,6 @@ try {
             }
             
             $params[] = $data['client_id'];
-            
             $sql = "UPDATE clients SET " . implode(', ', $fields) . " WHERE client_id = ?";
             $stmt = $db->prepare($sql);
             $stmt->execute($params);

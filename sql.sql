@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS appointments (
 CREATE TABLE IF NOT EXISTS clients (
     client_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description VARCHAR(350) DEFAULT "",
+    description VARCHAR(700) DEFAULT "",
 
     email VARCHAR(255) DEFAULT NULL,
     phone VARCHAR(20) DEFAULT NULL,
@@ -124,6 +124,3 @@ CREATE TABLE IF NOT EXISTS clients (
         REFERENCES employees(id) ON DELETE SET NULL,
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-
-
