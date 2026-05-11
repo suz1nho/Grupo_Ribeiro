@@ -1,8 +1,7 @@
 // ==============================
-// Dashboard Tab Renderers & Modals
+// DASHBOARD SHARED MODULE - Icons, Helpers, Modals
 // ==============================
 
-// ─── Icons loaded from SVG files ───
 window.__ICONS__ = {};
 
 async function loadIcons() {
@@ -30,260 +29,6 @@ function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
-}
-
-// ─── Active Appointments ───
-function renderActiveAppointments(appointments) {
-    const container = document.getElementById('content-active');
-    if (!appointments.length) {
-        container.innerHTML = '<div class="text-center py-12 text-gray-500">Nenhum agendamento no momento</div>';
-        return;
-    }
-    container.innerHTML = appointments.map(a => buildAppointmentCard(a)).join('');
-}
-
-function buildAppointmentCard(a) {
-    const emp = window.__EMPLOYEE__;
-    let actions = '';
-    if ((a.status === 'confirmed' || a.status === 'approved') && a.confirmed_by == emp.id) {
-        actions += `<button data-action="unconfirm" data-id="${a.id}" class="admin-btn bg-red-600 hover:bg-red-700">${icon('x')} Desconfirmar</button>`;
-        actions += `<button data-action="notes" data-id="${a.id}" class="admin-btn bg-purple-600 hover:bg-purple-700">${icon('document')} Informações</button>`;
-        actions += `<button data-action="markcontract" data-id="${a.id}" class="admin-btn bg-gray-600 hover:bg-gray-700">${icon('confirmed')} Marcar Contrato</button>`;
-    } else if (a.status !== 'confirmed' && a.status !== 'approved') {
-        actions += `<button data-action="confirm" data-id="${a.id}" class="admin-btn bg-green-600 hover:bg-green-700">${icon('confirmed')} Confirmar Presença</button>`;
-        actions += `<button data-action="notes" data-id="${a.id}" class="admin-btn bg-purple-600 hover:bg-purple-700">${icon('document')} Informações</button>`;
-    }
-    actions += `<button data-action="print" data-id="${a.id}" data-type="appointment" class="admin-btn bg-blue-600 hover:bg-blue-700">${icon('printer')} Imprimir</button>`;
-    if (emp.role === 'Administrativo' || emp.role === 'admin') {
-        actions += `<button data-action="delete" data-id="${a.id}" class="admin-btn bg-red-500 hover:bg-red-600">Deletar</button>`;
-    }
-    const msgHtml = a.message ? `<div class="flex items-center gap-3 mt-4">${icon('document')}<div><p class="font-semibold text-blue-800">Mensagem do Cliente</p><p class="text-sm text-blue-700 mt-2 leading-relaxed">${a.message}</p></div></div>` : '';
-    return `
-        <div class="appointment-card" data-id="${a.id}">
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3">${icon('total_appointments')}<div><p class="text-xs text-gray-600">Data</p><p class="font-semibold">${a.appointment_date_formatted}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clock')}<div><p class="text-xs text-gray-600">Horário</p><p class="font-semibold">${a.appointment_time}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clock')}<div><p class="text-xs text-gray-600">Atendente</p><p class="font-semibold">${escapeHtml(a.confirmed_by_name)}</p></div></div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Nome</p><p class="font-semibold">${escapeHtml(a.name)}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Email</p><p class="font-semibold">${escapeHtml(a.email)}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Telefone</p><p class="font-semibold">${escapeHtml(a.phone)}</p></div></div>
-                </div>
-            </div>
-            ${msgHtml}
-            <div class="flex justify-end gap-3 mt-6 pt-4 border-t">${actions}</div>
-        </div>
-    `;
-}
-
-// ─── Closed Contracts ───
-function renderClosedContracts(contracts) {
-    const container = document.getElementById('content-closed');
-    if (!contracts.length) {
-        container.innerHTML = '<div class="text-center py-12 text-gray-500">Nenhum contrato fechado no momento</div>';
-        return;
-    }
-    const emp = window.__EMPLOYEE__;
-    container.innerHTML = contracts.map(c => `
-        <div class="appointment-card bg-green-50 border-green-200">
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3">${icon('total_appointments')}<div><p class="text-xs text-gray-600">Data do contrato</p><p class="font-semibold">${c.contract_closed_at_formatted}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clock')}<div><p class="text-xs text-gray-600">Horário</p><p class="font-semibold">${c.appointment_time}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Atendente</p><p class="font-semibold">${escapeHtml(c.contract_closed_by_name)}</p></div></div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Nome</p><p class="font-semibold">${escapeHtml(c.name)}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Email</p><p class="font-semibold">${escapeHtml(c.email)}</p></div></div>
-                    <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Telefone</p><p class="font-semibold">${escapeHtml(c.phone)}</p></div></div>
-                </div>
-            </div>
-            ${c.message ? `<div class="flex items-center gap-3 mt-4">${icon('document')}<div><p class="font-semibold text-blue-800">Mensagem</p><p class="text-sm text-blue-700">${c.message}</p></div></div>` : ''}
-            <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                <button data-action="print" data-id="${c.id}" data-type="contract" class="admin-btn bg-blue-600 hover:bg-blue-700">${icon('printer')} Imprimir</button>
-                ${(emp.role === 'Administrativo' || emp.role === 'admin') ? `<button data-action="delete" data-id="${c.id}" class="admin-btn bg-red-500 hover:bg-red-600">Deletar</button>` : ''}
-            </div>
-        </div>
-    `).join('');
-}
-
-// ─── Credit Analyses ───
-function renderCreditAnalyses(analyses) {
-    const container = document.getElementById('content-credit');
-    if (!analyses.length) {
-        container.innerHTML = '<div class="text-center py-12 text-gray-500">Nenhuma análise de crédito no momento</div>';
-        return;
-    }
-    const emp = window.__EMPLOYEE__;
-    container.innerHTML = analyses.map(ca => {
-        const statusColor = ca.status === 'approved' ? 'text-green-600' : ca.status === 'rejected' ? 'text-red-600' : 'text-yellow-600';
-        const analyzerActions = ca.analyzed_by ? `
-            <button data-action="viewDocs" data-id="${ca.id}" class="admin-btn bg-blue-600 hover:bg-blue-700">${icon('eye')} Ver Documentos</button>
-            <button data-action="creditStatus" data-id="${ca.id}" data-status="pending" class="admin-btn bg-yellow-600 hover:bg-yellow-700">${icon('clock')} Pendente</button>
-            <button data-action="creditStatus" data-id="${ca.id}" data-status="approved" class="admin-btn bg-green-600 hover:bg-green-700">${icon('confirmed')} Aprovado</button>
-            <button data-action="creditStatus" data-id="${ca.id}" data-status="rejected" class="admin-btn bg-red-600 hover:bg-red-700">${icon('x')} Rejeitado</button>
-            <button data-action="unassignCredit" data-id="${ca.id}" class="admin-btn bg-gray-600 hover:bg-gray-700">${icon('x')} Desmarcar Análise</button>
-        ` : `
-            <button data-action="viewDocs" data-id="${ca.id}" class="admin-btn bg-blue-600 hover:bg-blue-700">${icon('eye')} Ver Documentos</button>
-            <button data-action="assignCredit" data-id="${ca.id}" class="admin-btn bg-green-600 hover:bg-green-700">${icon('confirmed')} Confirmar Análise de Crédito</button>
-        `;
-        const adminDelete = (emp.role === 'Administrativo' || emp.role === 'admin') 
-            ? `<button data-action="deleteCredit" data-id="${ca.id}" class="admin-btn bg-red-800 hover:bg-red-900">${icon('x')} Deletar</button>` 
-            : '';
-        return `
-            <div class="appointment-card bg-cyan-50 border-cyan-200">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3">${icon('total_appointments')}<div><p class="text-xs text-gray-600">Data de Envio</p><p class="font-semibold">${ca.data_formatada}</p></div></div>
-                        <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Telefone</p><p class="font-semibold">${escapeHtml(ca.phone)}</p></div></div>
-                        <div class="flex items-center gap-3">${icon('confirmed')}<div><p class="text-xs text-gray-600">Status</p><p class="font-semibold ${statusColor}">${ca.status_text}</p></div></div>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Nome</p><p class="font-semibold">${escapeHtml(ca.name ?? 'Nome não disponível')}</p></div></div>
-                        <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Email</p><p class="font-semibold">${escapeHtml(ca.email ?? 'E-mail não disponível')}</p></div></div>
-                        <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Atendente</p><p class="font-semibold">${escapeHtml(ca.confirmed_by_name)}</p></div></div>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                    ${analyzerActions}
-                    <button data-action="print" data-id="${ca.id}" data-type="credit" class="admin-btn bg-gray-600 hover:bg-gray-700">${icon('printer')} Imprimir</button>
-                    ${adminDelete}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-// ─── Clients ───
-function renderClients(clients) {
-    const container = document.getElementById('content-clients');
-    const total = clients.length;
-    let listHtml = '';
-    if (!total) {
-        listHtml = '<div class="text-center py-12 text-gray-500">Nenhum cliente cadastrado no momento</div>';
-    } else {
-        listHtml = clients.map(c => {
-            const safePhone = escapeHtml(c.phone || '');
-            const safeName = escapeHtml(c.name);
-            const descHtml = c.description ? `<div class="flex items-center gap-3 mt-4">${icon('document')}<div><p class="font-semibold text-blue-800">Descrição</p><p class="text-sm text-blue-700">${escapeHtml(c.description)}</p></div></div>` : '';
-            const registeredByHtml = c.registered_by_name ? `<div class="mt-4 pt-4 border-t border-blue-200"><p class="text-xs text-blue-600">Registrado por: <span class="font-semibold">${escapeHtml(c.registered_by_name)}</span></p></div>` : '';
-            return `
-                <div class="appointment-card bg-blue-50 border-blue-200">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Nome</p><p class="font-semibold">${safeName}</p></div></div>
-                            <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">CPF</p><p class="font-semibold">${escapeHtml(c.cpf || 'Não informado')}</p></div></div>
-                            <div class="flex items-center gap-3">${icon('confirmed')}<div><p class="text-xs text-gray-600">Status</p><p class="font-semibold">${c.status_text}</p></div></div>
-                        </div>
-                        <div class="space-y-3">
-                            <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Email</p><p class="font-semibold">${escapeHtml(c.email || 'Não informado')}</p></div></div>
-                            <div class="flex items-center gap-3">${icon('clients')}<div><p class="text-xs text-gray-600">Telefone</p><p class="font-semibold">${safePhone}</p></div></div>
-                            <div class="flex items-center gap-3">${icon('total_appointments')}<div><p class="text-xs text-gray-600">Registrado em</p><p class="font-semibold">${c.registered_at_formatted}</p></div></div>
-                        </div>
-                    </div>
-                    ${descHtml}
-                    ${registeredByHtml}
-                    <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                        <button data-action="print" data-id="${c.client_id}" data-type="client" class="admin-btn bg-gray-600 hover:bg-gray-700">${icon('printer')} Imprimir</button>
-                        <button data-action="whatsapp" data-phone="${safePhone}" data-name="${safeName}" class="admin-btn bg-green-500 hover:bg-green-600">${icon('whatsapp')} WhatsApp</button>
-                        <button data-action="editClient" data-id="${c.client_id}" class="admin-btn bg-blue-600 hover:bg-blue-700">${icon('edit')} Editar</button>
-                        <button data-action="deleteClient" data-id="${c.client_id}" class="admin-btn bg-red-500 hover:bg-red-600">Deletar</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-    container.innerHTML = `
-        <div class="clients-tab-header">
-            <span class="clients-count">Total: ${total} clientes cadastrados</span>
-            <button id="addClientBtn" class="add-client-btn">${icon('clients')} Adicionar Cliente</button>
-        </div>
-        <div class="space-y-4">${listHtml}</div>
-    `;
-    document.getElementById('addClientBtn').onclick = () => showAddClientModal();
-}
-
-// ─── Document Viewer Modal ───
-async function viewCreditDocuments(id) {
-    try {
-        const resp = await fetch(`${API_BASE}/credit-analysis.php?id=${id}`);
-        const json = await resp.json();
-        if (!json.success || !json.data) {
-            alert('Erro ao carregar documentos.');
-            return;
-        }
-        const ca = json.data;
-        
-        // Build document links
-        const uploadBase = '../uploads/credit-analysis/';
-        const docs = [
-            { label: 'Documento de Identidade', file: ca.doc_identidade },
-            { label: 'Comprovante de Endereço', file: ca.doc_endereco },
-            { label: 'Comprovante de Renda', file: ca.doc_renda },
-            { label: 'Extrato Bancário', file: ca.doc_bancario }
-        ];
-        
-        let docHtml = '';
-        let hasDocs = false;
-        docs.forEach(d => {
-            if (d.file) {
-                hasDocs = true;
-                const ext = d.file.split('.').pop().toLowerCase();
-                const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
-                const fileUrl = uploadBase + d.file;
-                if (isImage) {
-                    docHtml += `
-                        <div class="doc-item">
-                            <p class="font-semibold text-gray-700 mb-2">${d.label}</p>
-                            <img src="${fileUrl}" alt="${d.label}" class="doc-thumbnail" onclick="window.open('${fileUrl}', '_blank')" style="max-width:100%;max-height:200px;cursor:pointer;border-radius:8px;object-fit:cover;">
-                            <div class="mt-2">
-                                <a href="${fileUrl}" target="_blank" class="doc-link">${icon('eye')} Abrir em nova aba</a>
-                                <a href="${fileUrl}" download class="doc-link ml-4">${icon('document')} Download</a>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    docHtml += `
-                        <div class="doc-item">
-                            <p class="font-semibold text-gray-700 mb-2">${d.label}</p>
-                            <div class="flex gap-3">
-                                <a href="${fileUrl}" target="_blank" class="doc-link">${icon('eye')} Visualizar</a>
-                                <a href="${fileUrl}" download class="doc-link">${icon('document')} Download</a>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-        });
-        
-        if (!hasDocs) {
-            docHtml = '<p class="text-gray-500 text-center py-4">Nenhum documento enviado para esta análise.</p>';
-        }
-        
-        // Create modal
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.innerHTML = `
-            <div class="modal-content documents-modal">
-                <div class="modal-header">
-                    <h2>Documentos da Análise #${id}</h2>
-                    <button onclick="this.closest('.modal-overlay').remove()" class="btn-close" style="background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0.25rem;color:#6b7280;">&times;</button>
-                </div>
-                <p class="modal-subtitle">${escapeHtml(ca.name)} - ${escapeHtml(ca.email)}</p>
-                <div class="documents-grid">${docHtml}</div>
-                <div class="modal-actions">
-                    <button onclick="this.closest('.modal-overlay').remove()" class="btn btn-secondary">Fechar</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-        
-    } catch (e) {
-        console.error(e);
-        alert('Erro ao carregar documentos.');
-    }
 }
 
 // ─── Employee Selection Modal (for appointments) ───
@@ -394,7 +139,7 @@ async function confirmCreditWithEmployee(employeeId) {
     loadDashboard();
 }
 
-// ─── Info / Notes Modal (for appointments) ───
+// ─── Employee Message Editor Modal (uses `notes` field) ───
 async function showNotesModal(id) {
     try {
         const resp = await fetch(`${API_BASE}/appointments.php?id=${id}`);
@@ -407,65 +152,18 @@ async function showNotesModal(id) {
 
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
-        overlay.id = 'notesModalOverlay';
+        overlay.id = 'employeeMessageModal';
         overlay.innerHTML = `
-            <div class="modal-content" style="max-width:600px;">
+            <div class="modal-content" style="max-width:500px;">
                 <div class="modal-header">
-                    <h2>Informações do Agendamento #${id}</h2>
+                    <h2>Mensagem do Funcionário</h2>
                     <button onclick="this.closest('.modal-overlay').remove()" class="btn-close" style="background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0.25rem;color:#6b7280;">&times;</button>
                 </div>
-                <div style="display:grid;gap:1rem;margin:1.5rem 0;">
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Cliente:</strong>
-                        <span>${escapeHtml(appointment.name)}</span>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Email:</strong>
-                        <span>${escapeHtml(appointment.email)}</span>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Telefone:</strong>
-                        <span>${escapeHtml(appointment.phone)}</span>
-                    </div>
-                    ${appointment.cpf ? `
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">CPF:</strong>
-                        <span>${escapeHtml(appointment.cpf)}</span>
-                    </div>` : ''}
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Data:</strong>
-                        <span>${appointment.appointment_date || ''}</span>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Horário:</strong>
-                        <span>${appointment.appointment_time || ''}</span>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Status:</strong>
-                        <span>${appointment.status === 'confirmed' ? 'Confirmado' : appointment.status === 'closed' ? 'Contrato Fechado' : 'Pendente'}</span>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#f8fafc;border-radius:0.5rem;border:1px solid #e2e8f0;">
-                        <strong style="min-width:130px;color:#475569;">Atendente:</strong>
-                        <span>${escapeHtml(appointment.confirmed_by_name || 'Não confirmado')}</span>
-                    </div>
-                    ${appointment.message ? `
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#fef3c7;border-radius:0.5rem;border:1px solid #fde68a;">
-                        <strong style="min-width:130px;color:#92400e;">Mensagem:</strong>
-                        <span style="color:#78350f;">${escapeHtml(appointment.message)}</span>
-                    </div>` : ''}
-                    ${appointment.notes ? `
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#e0f2fe;border-radius:0.5rem;border:1px solid #bae6fd;">
-                        <strong style="min-width:130px;color:#075985;">Observações:</strong>
-                        <span style="color:#0c4a6e;">${escapeHtml(appointment.notes)}</span>
-                    </div>` : ''}
-                    ${appointment.contract_closed_at ? `
-                    <div style="display:flex;gap:0.5rem;padding:0.75rem;background:#d1fae5;border-radius:0.5rem;border:1px solid #a7f3d0;">
-                        <strong style="min-width:130px;color:#065f46;">Contrato fechado em:</strong>
-                        <span>${new Date(appointment.contract_closed_at).toLocaleString('pt-BR')}</span>
-                    </div>` : ''}
-                </div>
-                <div class="modal-actions">
-                    <button onclick="this.closest('.modal-overlay').remove()" class="btn btn-secondary">Fechar</button>
+                <p style="color:#6b7280;margin-bottom:1rem;">Agendamento #${id} - ${escapeHtml(appointment.name)}</p>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <label style="font-weight:600;color:#374151;">Mensagem interna (só visível para funcionários):</label>
+                    <textarea id="employeeMessageInput" style="width:100%;min-height:120px;padding:0.75rem;border:1px solid #c4b5fd;border-radius:0.5rem;font-size:0.9rem;resize:vertical;" placeholder="Digite sua observação ou instrução...">${escapeHtml(appointment.notes || '')}</textarea>
+                    <button onclick="saveEmployeeMessage(${id})" class="btn btn-primary" style="align-self:flex-end;padding:0.625rem 1.5rem;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;border:none;border-radius:0.5rem;cursor:pointer;font-weight:600;">Salvar Mensagem</button>
                 </div>
             </div>
         `;
@@ -474,6 +172,109 @@ async function showNotesModal(id) {
     } catch (e) {
         console.error(e);
         alert('Erro ao carregar informações do agendamento.');
+    }
+}
+
+async function saveEmployeeMessage(appointmentId) {
+    const input = document.getElementById('employeeMessageInput');
+    if (!input) return;
+    const message = input.value.trim();
+    const btn = input.nextElementSibling;
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+    try {
+        // Use `notes` field instead of employee_message
+        const result = await updateAppointment(appointmentId, { notes: message });
+        if (result.success) {
+            const overlay = document.getElementById('employeeMessageModal');
+            if (overlay) overlay.remove();
+            loadDashboard();
+        } else {
+            alert('Erro ao salvar mensagem: ' + (result.message || 'Erro desconhecido'));
+        }
+    } catch (e) {
+        alert('Erro ao salvar mensagem.');
+        console.error(e);
+    }
+    if (btn) { btn.disabled = false; btn.textContent = 'Salvar Mensagem'; }
+}
+
+// ─── Document Viewer Modal ───
+async function viewCreditDocuments(id) {
+    try {
+        const resp = await fetch(`${API_BASE}/credit-analysis.php?id=${id}`);
+        const json = await resp.json();
+        if (!json.success || !json.data) {
+            alert('Erro ao carregar documentos.');
+            return;
+        }
+        const ca = json.data;
+        
+        const uploadBase = '../uploads/credit-analysis/';
+        const docs = [
+            { label: 'Documento de Identidade', file: ca.doc_identidade },
+            { label: 'Comprovante de Endereço', file: ca.doc_endereco },
+            { label: 'Comprovante de Renda', file: ca.doc_renda },
+            { label: 'Extrato Bancário', file: ca.doc_bancario }
+        ];
+        
+        let docHtml = '';
+        let hasDocs = false;
+        docs.forEach(d => {
+            if (d.file) {
+                hasDocs = true;
+                const ext = d.file.split('.').pop().toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+                const fileUrl = uploadBase + d.file;
+                if (isImage) {
+                    docHtml += `
+                        <div class="doc-item">
+                            <p class="font-semibold text-gray-700 mb-2">${d.label}</p>
+                            <img src="${fileUrl}" alt="${d.label}" class="doc-thumbnail" onclick="window.open('${fileUrl}', '_blank')" style="max-width:100%;max-height:200px;cursor:pointer;border-radius:8px;object-fit:cover;">
+                            <div class="mt-2">
+                                <a href="${fileUrl}" target="_blank" class="doc-link">${icon('eye')} Abrir em nova aba</a>
+                                <a href="${fileUrl}" download class="doc-link ml-4">${icon('document')} Download</a>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    docHtml += `
+                        <div class="doc-item">
+                            <p class="font-semibold text-gray-700 mb-2">${d.label}</p>
+                            <div class="flex gap-3">
+                                <a href="${fileUrl}" target="_blank" class="doc-link">${icon('eye')} Visualizar</a>
+                                <a href="${fileUrl}" download class="doc-link">${icon('document')} Download</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        });
+        
+        if (!hasDocs) {
+            docHtml = '<p class="text-gray-500 text-center py-4">Nenhum documento enviado para esta análise.</p>';
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+            <div class="modal-content documents-modal">
+                <div class="modal-header">
+                    <h2>Documentos da Análise #${id}</h2>
+                    <button onclick="this.closest('.modal-overlay').remove()" class="btn-close" style="background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0.25rem;color:#6b7280;">&times;</button>
+                </div>
+                <p class="modal-subtitle">${escapeHtml(ca.name)} - ${escapeHtml(ca.email)}</p>
+                <div class="documents-grid">${docHtml}</div>
+                <div class="modal-actions">
+                    <button onclick="this.closest('.modal-overlay').remove()" class="btn btn-secondary">Fechar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+    } catch (e) {
+        console.error(e);
+        alert('Erro ao carregar documentos.');
     }
 }
 
@@ -506,7 +307,6 @@ async function printRecord(type, id) {
         return;
     }
 
-    // Open a new window with a clean print layout
     const win = window.open('', '_blank', 'width=800,height=600');
     if (!win) {
         alert('Pop-up bloqueado. Permita pop-ups para este site.');
@@ -527,7 +327,7 @@ async function printRecord(type, id) {
                 <div class="print-row"><strong>Telefone:</strong> ${escapeHtml(data.phone)}</div>
                 ${data.cpf ? `<div class="print-row"><strong>CPF:</strong> ${escapeHtml(data.cpf)}</div>` : ''}
                 ${data.message ? `<div class="print-row"><strong>Mensagem:</strong> ${escapeHtml(data.message)}</div>` : ''}
-                ${data.notes ? `<div class="print-row"><strong>Observações:</strong> ${escapeHtml(data.notes)}</div>` : ''}
+                ${data.notes ? `<div class="print-row"><strong>Mensagem do Funcionário:</strong> ${escapeHtml(data.notes)}</div>` : ''}
                 ${data.confirmed_by_name ? `<div class="print-row"><strong>Atendente:</strong> ${escapeHtml(data.confirmed_by_name)}</div>` : ''}
                 <div class="print-row"><strong>Status:</strong> ${data.status === 'confirmed' ? 'Confirmado' : data.status === 'closed' ? 'Contrato Fechado' : 'Pendente'}</div>
             </div>
@@ -542,6 +342,7 @@ async function printRecord(type, id) {
                 <div class="print-row"><strong>Telefone:</strong> ${escapeHtml(data.phone)}</div>
                 ${data.cpf ? `<div class="print-row"><strong>CPF:</strong> ${escapeHtml(data.cpf)}</div>` : ''}
                 ${data.message ? `<div class="print-row"><strong>Mensagem:</strong> ${escapeHtml(data.message)}</div>` : ''}
+                ${data.notes ? `<div class="print-row"><strong>Mensagem do Funcionário:</strong> ${escapeHtml(data.notes)}</div>` : ''}
                 <div class="print-row"><strong>Atendente:</strong> ${escapeHtml(data.contract_closed_by_name || data.confirmed_by_name || 'Não identificado')}</div>
             </div>
         `;
@@ -626,7 +427,7 @@ async function printRecord(type, id) {
                 }
                 .print-row:last-child { border-bottom: none; }
                 .print-row strong {
-                    min-width: 140px;
+                    min-width: 170px;
                     color: #475569;
                     flex-shrink: 0;
                 }
@@ -676,7 +477,6 @@ async function printRecord(type, id) {
 }
 
 // ─── Client Modals (Add / Edit) ───
-
 function closeClientModal() {
     const overlay = document.getElementById('clientModalOverlay');
     if (overlay) overlay.remove();
@@ -732,7 +532,6 @@ function showAddClientModal() {
     `;
     document.body.appendChild(overlay);
 
-    // Form submit handler
     document.getElementById('addClientForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitClientBtn');
@@ -772,7 +571,6 @@ function showAddClientModal() {
 }
 
 async function editClient(clientId) {
-    // Fetch current client data
     const resp = await fetch(`${API_BASE}/clients.php?id=${clientId}`);
     const json = await resp.json();
     if (!json.success || !json.data) {
@@ -833,7 +631,6 @@ function showEditClientModal(client) {
     `;
     document.body.appendChild(overlay);
 
-    // Form submit handler
     document.getElementById('editClientForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitEditClientBtn');

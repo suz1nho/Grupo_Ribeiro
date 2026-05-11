@@ -125,7 +125,6 @@ function renderMobileStats(stats) {
 let iconsLoaded = false;
 
 async function loadDashboard() {
-    // Ensure icons are loaded before first render
     if (!iconsLoaded) {
         await loadIcons();
         iconsLoaded = true;
@@ -172,7 +171,7 @@ document.addEventListener('click', async (e) => {
     if (!btn) return;
     const action = btn.dataset.action;
     const id = btn.dataset.id;
-    const type = btn.dataset.type; // For print actions
+    const type = btn.dataset.type;
 
     switch (action) {
         case 'confirm':
@@ -195,7 +194,6 @@ document.addEventListener('click', async (e) => {
             if (type) {
                 printRecord(type, id);
             } else {
-                // Fallback for cards without data-type (should not happen)
                 window.print();
             }
             break;
@@ -226,6 +224,12 @@ document.addEventListener('click', async (e) => {
             const name = btn.dataset.name;
             const msg = encodeURIComponent(`Olá ${name}, tudo bem?`);
             window.open(`https://wa.me/55${phone.replace(/\D/g,'')}?text=${msg}`, '_blank');
+            break;
+        }
+        case 'email': {
+            const email = btn.dataset.email;
+            const name = btn.dataset.name;
+            window.open(`mailto:${email}?subject=Contato%20Grupo%20Ribeiro&body=Olá%20${encodeURIComponent(name)}%2C`, '_blank');
             break;
         }
         case 'editClient':

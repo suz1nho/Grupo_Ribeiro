@@ -100,7 +100,7 @@ try {
             } 
             else {
                 $status = $_GET['status'] ?? null;
-                $type = $_GET['type'] ?? null; // 'active' or 'closed'
+                $type = $_GET['type'] ?? null;
                 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
                 $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
                 
@@ -183,7 +183,8 @@ try {
             
             $fields = [];
             $params = [];
-            $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', 'contract_closed_at', 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes'];
+            // employee_message is now a writable field
+            $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', 'contract_closed_at', 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes', 'employee_message'];
             
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
@@ -192,14 +193,11 @@ try {
                 }
             }
             
-            // When setting status to 'closed', set contract_closed_at
             if (isset($data['status']) && $data['status'] === 'closed' && !isset($data['contract_closed_at'])) {
                 $fields[] = "contract_closed_at = CURRENT_TIMESTAMP";
             }
             
-            // When unconfirming (setting pending and clearing confirmed_by)
             if (isset($data['status']) && $data['status'] === 'pending' && array_key_exists('confirmed_by', $data) && $data['confirmed_by'] === null) {
-                // Ensure confirmed_by is set to null
                 if (!in_array('confirmed_by = ?', $fields)) {
                     $fields[] = "confirmed_by = NULL";
                 }
@@ -214,7 +212,6 @@ try {
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
             
-            // If status changed to 'closed', copy appointment data to clients table
             if (isset($data['status']) && $data['status'] === 'closed') {
                 try {
                     $stmtFetch = $db->prepare("SELECT name, email, phone, contract_closed_by FROM appointments WHERE id = ?");

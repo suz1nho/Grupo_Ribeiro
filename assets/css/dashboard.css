@@ -1,7 +1,3 @@
-/* ============================================
-   DASHBOARD CSS - PROFISSIONAL E RESPONSIVO
-   ============================================ */
-
 * {
   margin: 0;
   padding: 0;
@@ -1131,4 +1127,30 @@ body {
 
 .image-modal-close:hover {
   background: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================
+   EMPLOYEE MESSAGE BOX
+   ============================================ */
+.employee-message-box {
+  margin-top: 0.625rem;
+  padding: 0.75rem 1rem;
+  background: #faf5ff;
+  border-left: 4px solid #8b5cf6;
+  border-radius: 0.5rem;
+}
+
+.employee-message-box .msg-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6d28d9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.employee-message-box .msg-content {
+  font-size: 0.9rem;
+  color: #4c1d95;
+  line-height: 1.5;
 }
