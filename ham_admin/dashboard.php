@@ -36,7 +36,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - GR7</title>
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <div class="container">
@@ -121,12 +121,12 @@ try {
     <script>window.__EMPLOYEE__ = <?php echo json_encode($employeeData); ?>;</script>
 
     <!-- Load order: API -> Shared utilities -> Per-tab scripts -> Main app -->
-    <script src="../assets/js/dashboard-api.js"></script>
-    <script src="../assets/js/dashboard-tabs.js"></script>
-    <script src="../assets/js/dashboard-active.js"></script>
-    <script src="../assets/js/dashboard-closed.js"></script>
-    <script src="../assets/js/dashboard-credit.js"></script>
-    <script src="../assets/js/dashboard-clients.js"></script>
-    <script src="../assets/js/dashboard-app.js"></script>
+    <script src="dashboard-api.js"></script>
+    <script src="dashboard-tabs.js"></script>
+    <script src="dashboard-active.js"></script>
+    <script src="dashboard-closed.js"></script>
+    <script src="dashboard-credit.js"></script>
+    <script src="dashboard-clients.js"></script>
+    <script src="dashboard-app.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grupo Ribeiro - Sistema de Gestão</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="admin.css">
     <style>
         * {
             margin: 0;
@@ -169,7 +169,7 @@ session_start();
 <body>
     <div class="home-container">
         <div class="logo-header">
-            <img src="../public/logo.jpeg" alt="Grupo Ribeiro Logo">
+            <img src="logo.jpeg" alt="Grupo Ribeiro Logo">
             <h1>Grupo Ribeiro</h1>
             <p>Sistema de Gestão Empresarial</p>
         </div>

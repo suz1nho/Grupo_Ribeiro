@@ -23,7 +23,7 @@ if (!$accessGranted) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso Restrito - Cadastro de Funcionários</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="admin.css">
     <style>
         * {
             margin: 0;
@@ -253,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Funcionários</title>
-    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="admin.css">
     <style>
         * {
             margin: 0;
@@ -756,7 +756,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
         </div>
     </div>
 
-    <script src="../assets/js/register-admin.js"></script>
+    <script src="register-admin.js"></script>
     <script>
         function performSearch() {
             const searchTerm = document.getElementById('search-input').value;

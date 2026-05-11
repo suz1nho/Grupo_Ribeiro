@@ -2,7 +2,7 @@
 // Dashboard API Helpers
 // ==============================
 
-const API_BASE = '../api';
+const API_BASE = 'api';
 
 // ─── Generic fetch helper ───
 async function apiFetch(endpoint, options = {}) {

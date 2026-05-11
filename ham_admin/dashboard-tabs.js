@@ -11,7 +11,7 @@ async function loadIcons() {
     ];
     await Promise.all(names.map(async (name) => {
         try {
-            const resp = await fetch(`../assets/svg/${name}.svg`);
+            const resp = await fetch(`svg/${name}.svg`);
             if (resp.ok) {
                 window.__ICONS__[name] = await resp.text();
             }
@@ -669,3 +669,4 @@ function showEditClientModal(client) {
         btn.textContent = 'Atualizar Cliente';
     });
 }
+

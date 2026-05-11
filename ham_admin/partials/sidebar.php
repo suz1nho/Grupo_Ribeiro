@@ -1,6 +1,6 @@
 <aside class="admin-sidebar">
     <div class="sidebar-header">
-        <img src="../public/logo.jpeg" alt="Grupo Ribeiro" class="sidebar-logo">
+        <img src="../ham_admin/logo.jpeg" alt="Grupo Ribeiro" class="sidebar-logo">
         <h2>Admin Panel</h2>
     </div>
     

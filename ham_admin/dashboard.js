@@ -76,7 +76,7 @@ var allEmployees = [];
 
 async function loadEmployees() {
     try {
-        var response = await fetch('../api/employees.php');
+        var response = await fetch('api/employees.php');
         var data = await response.json();
         if (data.success && data.data) {
             allEmployees = data.data;
@@ -99,7 +99,7 @@ async function unconfirmAppointment(appointmentId) {
     }
 
     try {
-        var response = await fetch('../api/appointments.php', {
+        var response = await fetch('api/appointments.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: appointmentId, status: 'pending', confirmed_by: null }),
@@ -124,7 +124,7 @@ async function deleteAppointment(id) {
     }
 
     try {
-        var response = await fetch('../api/appointments.php', {
+        var response = await fetch('api/appointments.php', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id }),
@@ -177,11 +177,11 @@ async function showEmployeeSelection(appointmentId) {
 
 async function confirmAppointmentWithEmployee(appointmentId, employeeId) {
     try {
-        var apptRes = await fetch('../api/appointments.php?id=' + appointmentId);
+        var apptRes = await fetch('api/appointments.php?id=' + appointmentId);
         var apptData = await apptRes.json();
         if (!apptData.success) { alert('Erro ao buscar agendamento'); return; }
 
-        var resp = await fetch('../api/appointments.php', {
+        var resp = await fetch('api/appointments.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: appointmentId, status: 'approved', confirmed_by: employeeId }),
@@ -215,7 +215,7 @@ async function markContract(appointmentId) {
     if (!confirm('Confirmar que o contrato foi fechado?')) return;
 
     try {
-        var resp = await fetch('../api/appointments.php', {
+        var resp = await fetch('api/appointments.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: appointmentId, status: 'closed', contract_closed_by: window.employeeId }),
@@ -235,7 +235,7 @@ async function markContract(appointmentId) {
 }
 
 function printAppointment(appointmentId) {
-    fetch('../api/appointments.php?id=' + appointmentId)
+    fetch('api/appointments.php?id=' + appointmentId)
         .then(function(r) { return r.json(); })
         .then(function(response) {
             if (response.success) {
@@ -264,7 +264,7 @@ function printAppointment(appointmentId) {
 
 async function showNotesModal(appointmentId) {
     try {
-        var resp = await fetch('../api/appointments.php?id=' + appointmentId);
+        var resp = await fetch('api/appointments.php?id=' + appointmentId);
         var data = await resp.json();
         var currentNotes = (data.success && data.data) ? (data.data.notes || '') : '';
 
@@ -294,7 +294,7 @@ async function saveNotes(appointmentId) {
     var notes = document.getElementById('appointmentNotes').value;
 
     try {
-        var resp = await fetch('../api/appointments.php', {
+        var resp = await fetch('api/appointments.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: appointmentId, notes: notes }),
@@ -316,7 +316,7 @@ async function saveNotes(appointmentId) {
 
 async function confirmCreditAnalysis(analysisId) {
     try {
-        var resp = await fetch('../api/credit-analysis.php?action=employees');
+        var resp = await fetch('api/credit-analysis.php?action=employees');
         var data = await resp.json();
         if (!data.success || !data.data) { alert('Erro ao carregar funcionarios'); return; }
 
@@ -350,11 +350,11 @@ async function executeCreditConfirmation(analysisId, employeeId) {
     closeModal();
 
     try {
-        var analysisResp = await fetch('../api/credit-analysis.php?id=' + analysisId);
+        var analysisResp = await fetch('api/credit-analysis.php?id=' + analysisId);
         var analysisData = await analysisResp.json();
         if (!analysisData.success) { alert('Erro ao buscar analise'); return; }
 
-        var resp = await fetch('../api/credit-analysis.php', {
+        var resp = await fetch('api/credit-analysis.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: analysisId, status: 'approved', analyzed_by: employeeId }),
@@ -387,7 +387,7 @@ async function updateCreditStatus(analysisId, status) {
     if (!confirm('Alterar status para ' + labels[status] + '?')) return;
 
     try {
-        var resp = await fetch('../api/credit-analysis.php', {
+        var resp = await fetch('api/credit-analysis.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: analysisId, status: status }),
@@ -410,7 +410,7 @@ async function unconfirmCreditAnalysis(analysisId) {
     if (!confirm('Desmarcar esta analise?')) return;
 
     try {
-        var resp = await fetch('../api/credit-analysis.php', {
+        var resp = await fetch('api/credit-analysis.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: analysisId, status: 'pending', analyzed_by: null }),
@@ -431,7 +431,7 @@ async function unconfirmCreditAnalysis(analysisId) {
 
 async function viewCreditDocuments(analysisId) {
     try {
-        var resp = await fetch('../api/credit-analysis.php?id=' + analysisId);
+        var resp = await fetch('api/credit-analysis.php?id=' + analysisId);
         var data = await resp.json();
         if (!data.success) { alert('Erro ao carregar documentos'); return; }
 
@@ -445,7 +445,7 @@ async function viewCreditDocuments(analysisId) {
             var ext = path.split('.').pop().toLowerCase();
             var isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].indexOf(ext) !== -1;
             if (isImg) {
-                return '<div class="document-item has-doc"><span class="doc-label">' + label + ':</span><div class="doc-image-container"><img src="' + fullPath + '" alt="' + label + '" class="doc-thumbnail" onclick="openDocumentImage(\'' + fullPath + '\')"><a href="' + fullPath + '" target="_blank" class="doc-link-btn">Abrir</a></div></div>';
+                return '<div class="document-item has-doc"><span class="doc-label">' + label + ':</span><div class="doc-image-container"><img src="' + fullPath + '" alt="' + label + '" class="doc-thumbnail" onclick="openDocumentImage('' + fullPath + '')"><a href="' + fullPath + '" target="_blank" class="doc-link-btn">Abrir</a></div></div>';
             } else {
                 return '<div class="document-item has-doc"><span class="doc-label">' + label + ':</span> <a href="' + fullPath + '" target="_blank" class="doc-link">Ver documento (PDF)</a></div>';
             }
@@ -489,7 +489,7 @@ async function deleteCreditAnalysis(analysisId) {
     if (!confirm('ATENCAO: Deletar esta analise?')) return;
 
     try {
-        var resp = await fetch('../api/credit-analysis.php', {
+        var resp = await fetch('api/credit-analysis.php', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: analysisId }),
@@ -547,7 +547,7 @@ async function submitNewClient() {
     fd.append('description', desc);
 
     try {
-        var resp = await fetch('../api/clients.php', { method: 'POST', body: fd });
+        var resp = await fetch('api/clients.php', { method: 'POST', body: fd });
         var result = await resp.json();
         if (result.success) {
             alert('Cliente cadastrado!');
@@ -568,14 +568,15 @@ function sendClientWhatsApp(phone, name) {
     if (!phone) { alert('Sem telefone.'); return; }
     var cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length < 10) { alert('Telefone invalido.'); return; }
-    var msg = 'Ola ' + name.replace(/[\r\n]+/g, ' ').trim() + '! Somos do Grupo Ribeiro. Como podemos ajudar?';
+    var msg = 'Ola ' + name.replace(/[
+]+/g, ' ').trim() + '! Somos do Grupo Ribeiro. Como podemos ajudar?';
     var code = cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone;
     window.open('https://wa.me/' + code + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
 async function editClient(clientId) {
     try {
-        var resp = await fetch('../api/clients.php?id=' + clientId);
+        var resp = await fetch('api/clients.php?id=' + clientId);
         var data = await resp.json();
         if (!data.success) { alert('Erro ao carregar cliente.'); return; }
 
@@ -611,7 +612,7 @@ async function submitEditClient(clientId) {
     if (!name) { alert('Nome obrigatorio.'); document.getElementById('editClientName').focus(); return; }
 
     try {
-        var resp = await fetch('../api/clients.php', {
+        var resp = await fetch('api/clients.php', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -643,7 +644,7 @@ async function deleteClient(clientId) {
     if (!confirm('ATENCAO: Deletar este cliente?')) return;
 
     try {
-        var resp = await fetch('../api/clients.php', {
+        var resp = await fetch('api/clients.php', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ client_id: clientId }),
@@ -665,7 +666,8 @@ async function deleteClient(clientId) {
 // Helper: Escape HTML
 function escHtml(text) {
     if (!text) return '';
-    text = text.replace(/[\r\n]+/g, ' ');
+    text = text.replace(/[
+]+/g, ' ');
     text = text.replace(/&/g, '&amp;');
     text = text.replace(/</g, '&lt;');
     text = text.replace(/>/g, '&gt;');

@@ -1,7 +1,7 @@
 
 // Dashboard Admin JavaScript - Legacy functions kept for backward compatibility
 
-const API_BASE_URL = "../api"
+const API_BASE_URL = "api"
 
 // Função para fazer requisições à API
 async function fetchAPI(endpoint, options = {}) {
