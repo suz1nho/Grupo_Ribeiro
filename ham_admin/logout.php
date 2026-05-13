@@ -2,13 +2,12 @@
 session_start();
 require_once __DIR__ . '/../config/database.php';
 
-// Remover sessão do banco de dados
-if (isset($_SESSION['employee_id'])) {
+// Revoke the token in the logins table
+if (isset($_SESSION['employee_id'], $_SESSION['api_token'])) {
     try {
         $db = Database::getInstance()->getConnection();
-        $sessionId = session_id();
-        $stmt = $db->prepare("DELETE FROM sessions WHERE id = ?");
-        $stmt->execute([$sessionId]);
+        $stmt = $db->prepare("UPDATE logins SET status = 'revoked', expires_at = NOW() WHERE employee_id = ? AND token = ? AND status = 'active'");
+        $stmt->execute([$_SESSION['employee_id'], $_SESSION['api_token']]);
     } catch (PDOException $e) {
         error_log($e->getMessage());
     }

@@ -12,9 +12,10 @@ $employeeData = [
     'name'  => htmlspecialchars($_SESSION['employee_name']),
     'email' => htmlspecialchars($_SESSION['employee_email']),
     'role'  => htmlspecialchars($_SESSION['employee_role'] ?? 'Administrativo'),
+    'api_token' => $_SESSION['api_token'] ?? '',
 ];
 
-// Monthly info (no strftime – use month array instead)
+// Monthly info
 $firstDay = date('Y-m-01');
 $lastDay  = date('Y-m-t');
 $monthNumber = (int)date('m');
@@ -26,7 +27,7 @@ $monthNames = [
 ];
 $monthLabel = $monthNames[$monthNumber] . ' de ' . $yearNumber;
 
-// Fallback query – show ALL records (no monthly filter, keep old data visible)
+// Fallback query
 try {
     $db = Database::getInstance()->getConnection();
     $stmt = $db->query("
@@ -140,7 +141,6 @@ try {
 
     <script>window.__EMPLOYEE__ = <?php echo json_encode($employeeData); ?>;</script>
 
-    <!-- Load order: API -> Shared utilities -> Per-tab scripts -> Main app -->
     <script src="dashboard-api.js"></script>
     <script src="dashboard-tabs.js"></script>
     <script src="dashboard-active.js"></script>

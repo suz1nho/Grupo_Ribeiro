@@ -26,10 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($employee['status'] !== 'active') {
                     $error = 'Sua conta está inativa. Contate o administrador.';
                 } else {
+                    // Generate API token (64 hex chars) - 7 days expiration
+                    $token = bin2hex(random_bytes(32));
+                    $expires = date('Y-m-d H:i:s', strtotime('+7 days'));
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+                    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+                    $metadata = json_encode(['login_source' => 'web']);
+
+                    // Insert into logins table
+                    $stmt = $db->prepare("INSERT INTO logins (employee_id, token, expires_at, ip_address, user_agent, metadata) VALUES (?, ?, ?, ?, ?, ?)");
+                    $stmt->execute([$employee['id'], $token, $expires, $ip, $ua, $metadata]);
+
+                    // Set session for page rendering
                     $_SESSION['employee_id'] = $employee['id'];
                     $_SESSION['employee_name'] = $employee['name'];
                     $_SESSION['employee_email'] = $employee['email'];
                     $_SESSION['employee_role'] = $employee['role'];
+                    $_SESSION['api_token'] = $token;
                     
                     header('Location: dashboard.php');
                     exit;

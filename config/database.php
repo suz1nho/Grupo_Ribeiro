@@ -55,3 +55,51 @@ class Database {
         return $this->connection;
     }
 }
+
+// =============================
+// Token Authentication Helper
+// =============================
+/**
+ * Authenticate the request using Bearer token from the logins table.
+ * Returns employee data (id, name, email, role) or exits with 401.
+ */
+function authenticateToken() {
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? '';
+    if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
+        http_response_code(401);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Token não fornecido']);
+        exit;
+    }
+
+    $token = $matches[1];
+    $db = Database::getInstance()->getConnection();
+
+    $stmt = $db->prepare("
+        SELECT l.employee_id, e.name AS employee_name, e.email AS employee_email, e.role AS employee_role
+        FROM logins l
+        JOIN employees e ON l.employee_id = e.id
+        WHERE l.token = ?
+          AND l.status = 'active'
+          AND l.expires_at > NOW()
+          AND e.status = 'active'
+        LIMIT 1
+    ");
+    $stmt->execute([$token]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        http_response_code(401);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Token inválido ou expirado']);
+        exit;
+    }
+
+    return [
+        'id'    => $row['employee_id'],
+        'name'  => $row['employee_name'],
+        'email' => $row['employee_email'],
+        'role'  => $row['employee_role'],
+    ];
+}

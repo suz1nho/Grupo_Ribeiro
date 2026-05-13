@@ -4,13 +4,29 @@
 
 const API_BASE = 'api';
 
-// ─── Generic fetch helper ───
+// ─── Helper to get the Bearer token from the global employee object ───
+function getToken() {
+    return (window.__EMPLOYEE__ && window.__EMPLOYEE__.api_token) || '';
+}
+
+// ─── Generic fetch helper with token authentication ───
 async function apiFetch(endpoint, options = {}) {
+    const token = getToken();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        ...(options.headers || {})
+    };
     try {
         const response = await fetch(`${API_BASE}/${endpoint}`, {
-            headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+            headers: headers,
             ...options,
         });
+        if (response.status === 401) {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = 'index.php';
+            return { success: false, message: 'Sessão expirada' };
+        }
         return await response.json();
     } catch (error) {
         console.error('[API] Error:', error);
@@ -20,7 +36,10 @@ async function apiFetch(endpoint, options = {}) {
 
 // ─── Specific API calls ───
 async function loadDashboardData() {
-    const resp = await fetch(`${API_BASE}/dashboard.php`);
+    const token = getToken();
+    const resp = await fetch(`${API_BASE}/dashboard.php`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+    });
     return await resp.json();
 }
 
@@ -60,6 +79,9 @@ async function deleteClient(clientId) {
 }
 
 async function getEmployees() {
-    const resp = await fetch(`${API_BASE}/employees-list.php`);
+    const token = getToken();
+    const resp = await fetch(`${API_BASE}/employees-list.php`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+    });
     return await resp.json();
 }

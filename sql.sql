@@ -124,3 +124,20 @@ CREATE TABLE IF NOT EXISTS clients (
         REFERENCES employees(id) ON DELETE SET NULL,
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE logins (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    token       VARCHAR(128) NOT NULL UNIQUE,
+    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at  DATETIME NOT NULL,
+    ip_address  VARCHAR(45) DEFAULT NULL,
+    user_agent  VARCHAR(500) DEFAULT NULL,
+    metadata    JSON DEFAULT NULL,
+    status      ENUM('active','expired','revoked') DEFAULT 'active',
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+    INDEX idx_token (token),
+    INDEX idx_employee (employee_id),
+    INDEX idx_expires (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+

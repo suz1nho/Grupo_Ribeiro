@@ -31,6 +31,16 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
+// ─── Helper to get the Bearer token ───
+function getToken() {
+    return (window.__EMPLOYEE__ && window.__EMPLOYEE__.api_token) || '';
+}
+
+// ─── Helper to create fetch headers with token ───
+function authHeaders() {
+    return { 'Authorization': 'Bearer ' + getToken() };
+}
+
 // ─── Employee Selection Modal (for appointments) ───
 let pendingConfirmId = null;
 
@@ -139,10 +149,12 @@ async function confirmCreditWithEmployee(employeeId) {
     loadDashboard();
 }
 
-// ─── Employee Message Editor Modal (uses `notes` field) ───
+// ─── Employee Message Editor Modal ───
 async function showNotesModal(id) {
     try {
-        const resp = await fetch(`${API_BASE}/appointments.php?id=${id}`);
+        const resp = await fetch(`${API_BASE}/appointments.php?id=${id}`, {
+            headers: authHeaders()
+        });
         const json = await resp.json();
         if (!json.success || !json.data) {
             alert('Erro ao carregar dados do agendamento.');
@@ -183,7 +195,6 @@ async function saveEmployeeMessage(appointmentId) {
     btn.disabled = true;
     btn.textContent = 'Salvando...';
     try {
-        // Use `notes` field instead of employee_message
         const result = await updateAppointment(appointmentId, { notes: message });
         if (result.success) {
             const overlay = document.getElementById('employeeMessageModal');
@@ -202,7 +213,9 @@ async function saveEmployeeMessage(appointmentId) {
 // ─── Document Viewer Modal ───
 async function viewCreditDocuments(id) {
     try {
-        const resp = await fetch(`${API_BASE}/credit-analysis.php?id=${id}`);
+        const resp = await fetch(`${API_BASE}/credit-analysis.php?id=${id}`, {
+            headers: authHeaders()
+        });
         const json = await resp.json();
         if (!json.success || !json.data) {
             alert('Erro ao carregar documentos.');
@@ -282,18 +295,19 @@ async function viewCreditDocuments(id) {
 async function printRecord(type, id) {
     let data = null;
     try {
+        const headers = authHeaders();
         if (type === 'appointment' || type === 'contract') {
-            const resp = await fetch(`${API_BASE}/appointments.php?id=${id}`);
+            const resp = await fetch(`${API_BASE}/appointments.php?id=${id}`, { headers });
             const json = await resp.json();
             if (!json.success) throw new Error('Record not found');
             data = json.data;
         } else if (type === 'client') {
-            const resp = await fetch(`${API_BASE}/clients.php?id=${id}`);
+            const resp = await fetch(`${API_BASE}/clients.php?id=${id}`, { headers });
             const json = await resp.json();
             if (!json.success) throw new Error('Record not found');
             data = json.data;
         } else if (type === 'credit') {
-            const resp = await fetch(`${API_BASE}/credit-analysis.php?id=${id}`);
+            const resp = await fetch(`${API_BASE}/credit-analysis.php?id=${id}`, { headers });
             const json = await resp.json();
             if (!json.success) throw new Error('Record not found');
             data = json.data;
@@ -571,7 +585,9 @@ function showAddClientModal() {
 }
 
 async function editClient(clientId) {
-    const resp = await fetch(`${API_BASE}/clients.php?id=${clientId}`);
+    const resp = await fetch(`${API_BASE}/clients.php?id=${clientId}`, {
+        headers: authHeaders()
+    });
     const json = await resp.json();
     if (!json.success || !json.data) {
         alert('Erro ao carregar dados do cliente.');
@@ -669,4 +685,3 @@ function showEditClientModal(client) {
         btn.textContent = 'Atualizar Cliente';
     });
 }
-
