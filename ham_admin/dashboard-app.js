@@ -10,7 +10,7 @@ function renderStats(stats) {
                 <div class="stat-card-content">
                     <h3>Total de Agendamentos</h3>
                     <div class="stat-card-value">${stats.total_appointments}</div>
-                    <div class="stat-card-label">Todos os agendamentos</div>
+                    <div class="stat-card-label">Agendamentos deste mês</div>
                 </div>
                 <div class="stat-card-icon">${icon('total_appointments')}</div>
             </div>
@@ -20,7 +20,7 @@ function renderStats(stats) {
                 <div class="stat-card-content">
                     <h3>Agendamentos Confirmados</h3>
                     <div class="stat-card-value">${stats.confirmed_appointments}</div>
-                    <div class="stat-card-label">Presença confirmada</div>
+                    <div class="stat-card-label">Presenças confirmadas este mês</div>
                 </div>
                 <div class="stat-card-icon">${icon('confirmed')}</div>
             </div>
@@ -30,7 +30,7 @@ function renderStats(stats) {
                 <div class="stat-card-content">
                     <h3>Contratos Fechados</h3>
                     <div class="stat-card-value">${stats.contracts_closed}</div>
-                    <div class="stat-card-label">Contratos concluídos</div>
+                    <div class="stat-card-label">Contratos fechados este mês</div>
                 </div>
                 <div class="stat-card-icon">${icon('document')}</div>
             </div>
@@ -40,7 +40,7 @@ function renderStats(stats) {
                 <div class="stat-card-content">
                     <h3>Análise de Crédito</h3>
                     <div class="stat-card-value">${stats.pending_credit_analysis}</div>
-                    <div class="stat-card-label">Pendentes de análise</div>
+                    <div class="stat-card-label">Pendentes de análise este mês</div>
                 </div>
                 <div class="stat-card-icon">${icon('document')}</div>
             </div>
@@ -50,7 +50,7 @@ function renderStats(stats) {
                 <div class="stat-card-content">
                     <h3>Taxa de Conversão</h3>
                     <div class="stat-card-value">${stats.confirmation_rate}%</div>
-                    <div class="stat-card-label">Taxa de conversão</div>
+                    <div class="stat-card-label">Conversão mensal</div>
                 </div>
                 <div class="stat-card-icon">${icon('conversion_rate')}</div>
             </div>
@@ -60,7 +60,7 @@ function renderStats(stats) {
                 <div class="stat-card-content">
                     <h3>Meus Clientes</h3>
                     <div class="stat-card-value">${stats.my_clients}</div>
-                    <div class="stat-card-label">Clientes cadastrados por você</div>
+                    <div class="stat-card-label">Clientes cadastrados este mês</div>
                 </div>
                 <div class="stat-card-icon">${icon('clients')}</div>
             </div>
@@ -75,7 +75,7 @@ function renderMobileStats(stats) {
             <div class="mobile-stat-content">
                 <h3>Total de Agendamentos</h3>
                 <div class="mobile-stat-value">${stats.total_appointments}</div>
-                <div class="mobile-stat-label">Todos os agendamentos</div>
+                <div class="mobile-stat-label">Agendamentos deste mês</div>
             </div>
         </div>
         <div class="mobile-stat-card orange">
@@ -83,7 +83,7 @@ function renderMobileStats(stats) {
             <div class="mobile-stat-content">
                 <h3>Agendamentos Confirmados</h3>
                 <div class="mobile-stat-value">${stats.confirmed_appointments}</div>
-                <div class="mobile-stat-label">Presença confirmada</div>
+                <div class="mobile-stat-label">Presenças confirmadas este mês</div>
             </div>
         </div>
         <div class="mobile-stat-card green">
@@ -91,7 +91,7 @@ function renderMobileStats(stats) {
             <div class="mobile-stat-content">
                 <h3>Contratos Fechados</h3>
                 <div class="mobile-stat-value">${stats.contracts_closed}</div>
-                <div class="mobile-stat-label">Contratos concluídos</div>
+                <div class="mobile-stat-label">Contratos fechados este mês</div>
             </div>
         </div>
         <div class="mobile-stat-card cyan">
@@ -99,7 +99,7 @@ function renderMobileStats(stats) {
             <div class="mobile-stat-content">
                 <h3>Análise de Crédito</h3>
                 <div class="mobile-stat-value">${stats.pending_credit_analysis}</div>
-                <div class="mobile-stat-label">Pendentes de análise</div>
+                <div class="mobile-stat-label">Pendentes de análise este mês</div>
             </div>
         </div>
         <div class="mobile-stat-card purple">
@@ -107,7 +107,7 @@ function renderMobileStats(stats) {
             <div class="mobile-stat-content">
                 <h3>Taxa Confirmação</h3>
                 <div class="mobile-stat-value">${stats.confirmation_rate}%</div>
-                <div class="mobile-stat-label">Taxa de conversão</div>
+                <div class="mobile-stat-label">Conversão mensal</div>
             </div>
         </div>
         <div class="mobile-stat-card indigo">
@@ -115,7 +115,7 @@ function renderMobileStats(stats) {
             <div class="mobile-stat-content">
                 <h3>Meus Clientes</h3>
                 <div class="mobile-stat-value">${stats.my_clients}</div>
-                <div class="mobile-stat-label">Clientes cadastrados por você</div>
+                <div class="mobile-stat-label">Clientes cadastrados este mês</div>
             </div>
         </div>
     `;
@@ -222,14 +222,14 @@ document.addEventListener('click', async (e) => {
         case 'whatsapp': {
             const phone = btn.dataset.phone;
             const name = btn.dataset.name;
-            const msg = encodeURIComponent(`Olá ${name}, tudo bem?`);
+            const msg = encodeURIComponent(`Ola ${name}, tudo bem?`);
             window.open(`https://wa.me/55${phone.replace(/\D/g,'')}?text=${msg}`, '_blank');
             break;
         }
         case 'email': {
             const email = btn.dataset.email;
             const name = btn.dataset.name;
-            window.open(`mailto:${email}?subject=Contato%20Grupo%20Ribeiro&body=Olá%20${encodeURIComponent(name)}%2C`, '_blank');
+            window.open(`mailto:${email}?subject=Contato%20Grupo%20Ribeiro&body=Ola%20${encodeURIComponent(name)}%2C`, '_blank');
             break;
         }
         case 'editClient':

@@ -14,13 +14,26 @@ $employeeData = [
     'role'  => htmlspecialchars($_SESSION['employee_role'] ?? 'Administrativo'),
 ];
 
+// Monthly info (no strftime – use month array instead)
+$firstDay = date('Y-m-01');
+$lastDay  = date('Y-m-t');
+$monthNumber = (int)date('m');
+$yearNumber  = date('Y');
+$monthNames = [
+    1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Marco', 4 => 'Abril',
+    5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+    9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+];
+$monthLabel = $monthNames[$monthNumber] . ' de ' . $yearNumber;
+
+// Fallback query – show ALL records (no monthly filter, keep old data visible)
 try {
     $db = Database::getInstance()->getConnection();
     $stmt = $db->query("
         SELECT a.*, e.name AS confirmed_by_name
         FROM appointments a
         LEFT JOIN employees e ON a.confirmed_by = e.id
-        WHERE a.status IS NULL OR a.status IN ('pending','confirmed','approved')
+        WHERE (a.status IS NULL OR a.status IN ('pending','confirmed','approved'))
         ORDER BY a.appointment_date DESC, a.appointment_time DESC
         LIMIT 50
     ");
@@ -44,6 +57,9 @@ try {
             <div>
                 <h1>Painel Administrativo</h1>
                 <p>Logado como: <span class="user-name" id="userName"></span> (<span id="userRole"></span>)</p>
+                <p class="month-period" id="monthPeriod" style="font-size:0.85rem;color:#6b7280;margin-top:0.25rem;">
+                    Periodo: <?php echo date('d/m/Y', strtotime($firstDay)); ?> a <?php echo date('d/m/Y', strtotime($lastDay)); ?>
+                </p>
             </div>
             <div class="header-actions">
                 <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleMobileMenu()">
@@ -70,34 +86,38 @@ try {
             <div class="tabs-nav">
                 <button onclick="switchTab('active')" id="tab-active" class="tab-btn active">Agendamentos Ativos</button>
                 <button onclick="switchTab('closed')" id="tab-closed" class="tab-btn">Contratos Fechados</button>
-                <button onclick="switchTab('credit')" id="tab-credit" class="tab-btn">Análise de Crédito</button>
+                <button onclick="switchTab('credit')" id="tab-credit" class="tab-btn">Analise de Credito</button>
                 <button onclick="switchTab('clients')" id="tab-clients" class="tab-btn">Clientes</button>
             </div>
 
             <div id="content-active" class="tab-content">
                 <div id="server-side-active" style="display: none;">
                     <h3>Agendamentos Ativos (fallback)</h3>
-                    <?php foreach ($activeAppointments as $app): ?>
-                        <div class="appointment-card">
-                            <div><strong><?php echo htmlspecialchars($app['name']); ?></strong> - <?php echo htmlspecialchars($app['appointment_date']); ?> - <?php echo htmlspecialchars($app['appointment_time']); ?></div>
-                            <?php if (!empty($app['message'])): ?>
-                                <div class="user-message"><strong>Mensagem do cliente:</strong> <?php echo nl2br(htmlspecialchars($app['message'])); ?></div>
-                            <?php endif; ?>
-                            <?php if (!empty($app['notes'])): ?>
-                                <div class="employee-message-box">
-                                    <p class="msg-label">Mensagem do Funcionário</p>
-                                    <p class="msg-content"><?php echo nl2br(htmlspecialchars($app['notes'])); ?></p>
+                    <?php if (count($activeAppointments) === 0): ?>
+                        <div class="text-center py-12 text-gray-500">Nenhum agendamento</div>
+                    <?php else: ?>
+                        <?php foreach ($activeAppointments as $app): ?>
+                            <div class="appointment-card">
+                                <div><strong><?php echo htmlspecialchars($app['name']); ?></strong> - <?php echo htmlspecialchars($app['appointment_date']); ?> - <?php echo htmlspecialchars($app['appointment_time']); ?></div>
+                                <?php if (!empty($app['message'])): ?>
+                                    <div class="user-message"><strong>Mensagem do cliente:</strong> <?php echo nl2br(htmlspecialchars($app['message'])); ?></div>
+                                <?php endif; ?>
+                                <?php if (!empty($app['notes'])): ?>
+                                    <div class="employee-message-box">
+                                        <p class="msg-label">Mensagem do Funcionario</p>
+                                        <p class="msg-content"><?php echo nl2br(htmlspecialchars($app['notes'])); ?></p>
+                                    </div>
+                                <?php endif; ?>
+                                <div style="margin-top: 0.5rem; color: #6b7280; font-size: 0.8rem;">
+                                    Confirmacao: <?php echo htmlspecialchars($app['confirmed_by_name'] ?? 'Nao confirmado ainda'); ?>
+                                    &nbsp;|&nbsp;
+                                    <a href="mailto:<?php echo htmlspecialchars($app['email']); ?>?subject=Contato%20Grupo%20Ribeiro&body=Ola%20<?php echo urlencode($app['name']); ?>%2C" style="color:#2563eb;">Email</a>
+                                    &nbsp;|&nbsp;
+                                    <a href="https://wa.me/55<?php echo preg_replace('/\D/', '', $app['phone']); ?>?text=Ola%20<?php echo urlencode($app['name']); ?>%2C%20tudo%20bem%3F" style="color:#059669;" target="_blank">WhatsApp</a>
                                 </div>
-                            <?php endif; ?>
-                            <div style="margin-top: 0.5rem; color: #6b7280; font-size: 0.8rem;">
-                                Confirmação: <?php echo htmlspecialchars($app['confirmed_by_name']); ?>
-                                &nbsp;|&nbsp;
-                                <a href="mailto:<?php echo htmlspecialchars($app['email']); ?>?subject=Contato%20Grupo%20Ribeiro&body=Ol%C3%A1%20<?php echo urlencode($app['name']); ?>%2C" style="color:#2563eb;">Email</a>
-                                &nbsp;|&nbsp;
-                                <a href="https://wa.me/55<?php echo preg_replace('/\D/', '', $app['phone']); ?>?text=Ol%C3%A1%20<?php echo urlencode($app['name']); ?>%2C%20tudo%20bem%3F" style="color:#059669;" target="_blank">WhatsApp</a>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
             <div id="content-closed" class="tab-content" style="display:none;"></div>
