@@ -1,27 +1,23 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../config/database.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-if (!isset($_SESSION['employee_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
-}
+// Require authentication via Bearer token
+$auth = requireAuth();
+$employeeId = $auth['id'];
+$employeeRole = $auth['role'];
 
 try {
     $db = Database::getInstance()->getConnection();
-    $employeeId = $_SESSION['employee_id'];
-    $employeeRole = $_SESSION['employee_role'] ?? '';
 
     // --- Monthly boundaries (first and last day of current month) ---
     $firstDayOfMonth = date('Y-m-01');
     $lastDayOfMonth  = date('Y-m-t');
-    // Build month name manually (avoid deprecated strftime)
+    // Build month name manually
     $monthNumber = (int)date('m');
     $yearNumber  = date('Y');
     $monthNames = [

@@ -2,9 +2,12 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 require_once __DIR__ . '/../../config/database.php';
+
+// Require authentication via Bearer token
+$auth = requireAuth(); // returns employee data or exits with 401
 
 $method = $_SERVER['REQUEST_METHOD'];
 $db = Database::getInstance()->getConnection();
@@ -12,74 +15,72 @@ $db = Database::getInstance()->getConnection();
 try {
     if ($method === 'GET') {
         $stats = [];
-        
+
         // Total de agendamentos
         $stmt = $db->query("SELECT COUNT(*) as total FROM appointments");
-        $stats['total_appointments'] = $stmt->fetch()['total'];
-        
+        $stats['total_appointments'] = (int)$stmt->fetch()['total'];
+
         // Agendamentos pendentes
         $stmt = $db->query("SELECT COUNT(*) as total FROM appointments WHERE status = 'pending'");
-        $stats['pending_appointments'] = $stmt->fetch()['total'];
-        
+        $stats['pending_appointments'] = (int)$stmt->fetch()['total'];
+
         // Agendamentos confirmados
         $stmt = $db->query("SELECT COUNT(*) as total FROM appointments WHERE status = 'confirmed'");
-        $stats['confirmed_appointments'] = $stmt->fetch()['total'];
-        
+        $stats['confirmed_appointments'] = (int)$stmt->fetch()['total'];
+
         // Agendamentos cancelados
         $stmt = $db->query("SELECT COUNT(*) as total FROM appointments WHERE status = 'cancelled'");
-        $stats['cancelled_appointments'] = $stmt->fetch()['total'];
-        
+        $stats['cancelled_appointments'] = (int)$stmt->fetch()['total'];
+
         // Taxa de confirmação
-        if ($stats['total_appointments'] > 0) {
-            $stats['confirmation_rate'] = round(($stats['confirmed_appointments'] / $stats['total_appointments']) * 100, 2);
-        } else {
-            $stats['confirmation_rate'] = 0;
-        }
-        
+        $stats['confirmation_rate'] = ($stats['total_appointments'] > 0)
+            ? round(($stats['confirmed_appointments'] / $stats['total_appointments']) * 100, 2)
+            : 0;
+
         // Total de contatos
         $stmt = $db->query("SELECT COUNT(*) as total FROM contacts");
-        $stats['total_contacts'] = $stmt->fetch()['total'];
-        
+        $stats['total_contacts'] = (int)$stmt->fetch()['total'];
+
         // Contatos novos
         $stmt = $db->query("SELECT COUNT(*) as total FROM contacts WHERE status = 'new'");
-        $stats['new_contacts'] = $stmt->fetch()['total'];
-        
+        $stats['new_contacts'] = (int)$stmt->fetch()['total'];
+
         // Análises de crédito
         $stmt = $db->query("SELECT COUNT(*) as total FROM credit_analysis");
-        $stats['total_credit_analysis'] = $stmt->fetch()['total'];
-        
+        $stats['total_credit_analysis'] = (int)$stmt->fetch()['total'];
+
         // Análises pendentes
         $stmt = $db->query("SELECT COUNT(*) as total FROM credit_analysis WHERE status = 'pendente'");
-        $stats['pending_credit_analysis'] = $stmt->fetch()['total'];
-        
+        $stats['pending_credit_analysis'] = (int)$stmt->fetch()['total'];
+
         // Análises aprovadas
         $stmt = $db->query("SELECT COUNT(*) as total FROM credit_analysis WHERE status = 'aprovado'");
-        $stats['approved_credit_analysis'] = $stmt->fetch()['total'];
-        
+        $stats['approved_credit_analysis'] = (int)$stmt->fetch()['total'];
+
         // Total de funcionários
         $stmt = $db->query("SELECT COUNT(*) as total FROM employees WHERE status = 'active'");
-        $stats['total_employees'] = $stmt->fetch()['total'];
-        
+        $stats['total_employees'] = (int)$stmt->fetch()['total'];
+
         // Ranking de funcionários (por agendamentos confirmados)
         $stmt = $db->query("
-            SELECT 
+            SELECT
                 e.id,
                 e.name,
                 COUNT(a.id) as total_confirmations,
                 SUM(CASE WHEN a.status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
                 SUM(CASE WHEN a.status = 'cancelled' THEN 1 ELSE 0 END) as cancelled
             FROM employees e
-            LEFT JOIN appointments a ON e.id = a.contract_closed_by
+            LEFT JOIN appointments a ON e.id = a.confirmed_by
             WHERE e.status = 'active'
             GROUP BY e.id, e.name
             ORDER BY confirmed DESC, total_confirmations DESC
             LIMIT 10
         ");
         $stats['employee_ranking'] = $stmt->fetchAll();
-        
+
         // Agendamentos por mês (últimos 6 meses)
         $stmt = $db->query("
-            SELECT 
+            SELECT
                 DATE_FORMAT(created_at, '%Y-%m') as month,
                 COUNT(*) as total,
                 SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
@@ -90,24 +91,22 @@ try {
             ORDER BY month DESC
         ");
         $stats['appointments_by_month'] = $stmt->fetchAll();
-        
+
         // Agendamentos de hoje
-        $stmt = $db->query("
-            SELECT COUNT(*) as total 
-            FROM appointments 
-            WHERE DATE(appointment_date) = CURDATE()
-        ");
-        $stats['today_appointments'] = $stmt->fetch()['total'];
-        
+        $stmt = $db->prepare("SELECT COUNT(*) as total FROM appointments WHERE DATE(appointment_date) = CURDATE()");
+        $stmt->execute();
+        $stats['today_appointments'] = (int)$stmt->fetch()['total'];
+
         // Agendamentos desta semana
-        $stmt = $db->query("
-            SELECT COUNT(*) as total 
-            FROM appointments 
-            WHERE WEEK(appointment_date) = WEEK(CURDATE()) 
+        $stmt = $db->prepare("
+            SELECT COUNT(*) as total
+            FROM appointments
+            WHERE WEEK(appointment_date) = WEEK(CURDATE())
             AND YEAR(appointment_date) = YEAR(CURDATE())
         ");
-        $stats['week_appointments'] = $stmt->fetch()['total'];
-        
+        $stmt->execute();
+        $stats['week_appointments'] = (int)$stmt->fetch()['total'];
+
         echo json_encode(['success' => true, 'data' => $stats]);
     } else {
         http_response_code(405);
@@ -115,6 +114,6 @@ try {
     }
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro no servidor', 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erro no servidor']);
     error_log($e->getMessage());
 }

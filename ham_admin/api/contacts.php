@@ -2,9 +2,12 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 require_once __DIR__ . '/../../config/database.php';
+
+// Require authentication via Bearer token
+$auth = requireAuth();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $db = Database::getInstance()->getConnection();
@@ -17,7 +20,7 @@ try {
                 $stmt = $db->prepare("SELECT * FROM contacts WHERE id = ?");
                 $stmt->execute([$_GET['id']]);
                 $contact = $stmt->fetch();
-                
+
                 if ($contact) {
                     echo json_encode(['success' => true, 'data' => $contact]);
                 } else {
@@ -27,33 +30,33 @@ try {
             } else {
                 // Buscar todos os contatos
                 $status = $_GET['status'] ?? null;
-                $limit = $_GET['limit'] ?? 100;
-                $offset = $_GET['offset'] ?? 0;
-                
+                $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
+                $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+
                 $sql = "SELECT * FROM contacts";
                 $params = [];
-                
+
                 if ($status) {
                     $sql .= " WHERE status = ?";
                     $params[] = $status;
                 }
-                
+
                 $sql .= " ORDER BY created_at DESC LIMIT ? OFFSET ?";
-                $params[] = (int)$limit;
-                $params[] = (int)$offset;
-                
+                $params[] = $limit;
+                $params[] = $offset;
+
                 $stmt = $db->prepare($sql);
                 $stmt->execute($params);
                 $contacts = $stmt->fetchAll();
-                
+
                 echo json_encode(['success' => true, 'data' => $contacts]);
             }
             break;
-            
+
         case 'POST':
             // Criar novo contato
             $data = json_decode(file_get_contents('php://input'), true);
-            
+
             $required = ['name', 'email', 'phone', 'message'];
             foreach ($required as $field) {
                 if (empty($data[$field])) {
@@ -62,37 +65,37 @@ try {
                     exit;
                 }
             }
-            
+
             $stmt = $db->prepare("
                 INSERT INTO contacts (name, email, phone, message, status)
                 VALUES (?, ?, ?, ?, 'new')
             ");
-            
+
             $stmt->execute([
                 $data['name'],
                 $data['email'],
                 $data['phone'],
                 $data['message']
             ]);
-            
+
             $id = $db->lastInsertId();
-            
+
             echo json_encode(['success' => true, 'message' => 'Contato registrado com sucesso', 'id' => $id]);
             break;
-            
+
         case 'PUT':
             // Atualizar contato
             $data = json_decode(file_get_contents('php://input'), true);
-            
+
             if (empty($data['id'])) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'ID é obrigatório']);
                 exit;
             }
-            
+
             $fields = [];
             $params = [];
-            
+
             $allowedFields = ['status', 'name', 'email', 'phone', 'message'];
             foreach ($allowedFields as $field) {
                 if (isset($data[$field])) {
@@ -100,44 +103,44 @@ try {
                     $params[] = $data[$field];
                 }
             }
-            
+
             if (empty($fields)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Nenhum campo para atualizar']);
                 exit;
             }
-            
+
             $params[] = $data['id'];
-            
+
             $sql = "UPDATE contacts SET " . implode(', ', $fields) . " WHERE id = ?";
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
-            
+
             echo json_encode(['success' => true, 'message' => 'Contato atualizado com sucesso']);
             break;
-            
+
         case 'DELETE':
             // Deletar contato
             $data = json_decode(file_get_contents('php://input'), true);
-            
+
             if (empty($data['id'])) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'ID é obrigatório']);
                 exit;
             }
-            
+
             $stmt = $db->prepare("DELETE FROM contacts WHERE id = ?");
             $stmt->execute([$data['id']]);
-            
+
             echo json_encode(['success' => true, 'message' => 'Contato deletado com sucesso']);
             break;
-            
+
         default:
             http_response_code(405);
             echo json_encode(['success' => false, 'message' => 'Método não permitido']);
     }
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro no servidor', 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erro no servidor']);
     error_log($e->getMessage());
 }
