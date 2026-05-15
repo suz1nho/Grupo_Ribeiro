@@ -29,8 +29,7 @@ register_shutdown_function(function() {
         http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Erro fatal no servidor',
-            'debug' => "Erro em {$error['file']} linha {$error['line']}: {$error['message']}"
+            'message' => 'Erro interno do servidor'
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
@@ -40,8 +39,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     error_log("PHP Error [$errno]: $errstr in $errfile on line $errline");
     sendJsonResponse([
         'success' => false,
-        'message' => 'Erro interno do servidor',
-        'debug' => "Error in $errfile line $errline"
+        'message' => 'Erro interno do servidor'
     ], 500);
 });
 
@@ -51,8 +49,7 @@ try {
     error_log("Erro ao carregar database.php: " . $e->getMessage());
     sendJsonResponse([
         'success' => false,
-        'message' => 'Erro ao carregar configurações do banco de dados',
-        'error' => $e->getMessage()
+        'message' => 'Erro ao carregar configurações do banco de dados'
     ], 500);
 }
 
@@ -73,10 +70,18 @@ try {
     error_log("Erro de conexão: " . $e->getMessage());
     sendJsonResponse([
         'success' => false,
-        'message' => 'Erro ao conectar ao banco de dados',
-        'error' => $e->getMessage()
+        'message' => 'Erro ao conectar ao banco de dados'
     ], 500);
 }
+
+// PUBLIC methods: POST (public form), GET with check_date (public check availability)
+// All other methods require authentication
+if ($method === 'GET' && !isset($_GET['check_date'])) {
+    requireAuth([]);
+} elseif (in_array($method, ['PUT', 'DELETE'])) {
+    requireAuth([]);
+}
+// POST and GET with check_date remain public
 
 try {
     switch ($method) {
@@ -183,7 +188,6 @@ try {
             
             $fields = [];
             $params = [];
-            // employee_message is now a writable field
             $allowedFields = ['status', 'confirmed_by', 'contract_closed_by', 'contract_closed_at', 'name', 'email', 'phone', 'appointment_date', 'appointment_day', 'appointment_time', 'message', 'notes', 'employee_message'];
             
             foreach ($allowedFields as $field) {
@@ -250,8 +254,8 @@ try {
     }
 } catch (PDOException $e) {
     error_log("[API ERROR] PDO Exception: " . $e->getMessage());
-    sendJsonResponse(['success' => false, 'message' => 'Erro no banco de dados', 'error' => $e->getMessage()], 500);
+    sendJsonResponse(['success' => false, 'message' => 'Erro no banco de dados'], 500);
 } catch (Exception $e) {
     error_log("[API ERROR] General Exception: " . $e->getMessage());
-    sendJsonResponse(['success' => false, 'message' => 'Erro inesperado no servidor', 'error' => $e->getMessage()], 500);
+    sendJsonResponse(['success' => false, 'message' => 'Erro inesperado no servidor'], 500);
 }

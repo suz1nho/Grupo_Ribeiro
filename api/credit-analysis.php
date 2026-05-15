@@ -2,12 +2,17 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 require_once __DIR__ . '/../config/database.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $db = Database::getInstance()->getConnection();
+
+// GET, PUT, DELETE require authentication; POST is public (credit analysis form)
+if (in_array($method, ['GET', 'PUT', 'DELETE'])) {
+    requireAuth([]);
+}
 
 try {
     switch ($method) {
@@ -249,5 +254,5 @@ try {
 } catch (PDOException $e) {
     http_response_code(500);
     error_log("[v0] PDO Exception: " . $e->getMessage());
-    echo json_encode(['success' => false, 'message' => 'Erro no servidor', 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Erro no servidor']);
 }

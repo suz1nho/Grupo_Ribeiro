@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['access_password'])) {
     }
 }
 
-// Se não tem acesso, mostra tela de senha
+// Se nao tem acesso, mostra tela de senha
 if (!$accessGranted) {
 ?>
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ if (!$accessGranted) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso Restrito - Cadastro de Funcionários</title>
+    <title>Acesso Restrito - Cadastro de Funcionarios</title>
     <link rel="stylesheet" href="admin.css">
     <style>
         * {
@@ -150,9 +150,9 @@ if (!$accessGranted) {
 </head>
 <body>
     <div class="access-container">
-        <div class="lock-icon">🔒</div>
+        <div class="lock-icon">?</div>
         <h1>Acesso Restrito</h1>
-        <p>Digite a senha de administrador para acessar o cadastro de funcionários</p>
+        <p>Digite a senha de administrador para acessar o cadastro de funcionarios</p>
         
         <?php if (isset($accessError)): ?>
             <div class="alert-error">
@@ -168,7 +168,7 @@ if (!$accessGranted) {
             <button type="submit" class="btn-access">Acessar</button>
         </form>
         
-        <a href="home.php" class="back-link">← Voltar para o início</a>
+        <a href="home.php" class="back-link">? Voltar para o inicio</a>
     </div>
 </body>
 </html>
@@ -176,7 +176,7 @@ if (!$accessGranted) {
     exit;
 }
 
-// Código original do register.php continua aqui
+// Codigo original do register.php continua aqui
 $success = '';
 $error = '';
 $employees = [];
@@ -187,11 +187,11 @@ $searchTerm = trim($_GET['search'] ?? '');
 
 try {
     if (!empty($searchTerm)) {
-        $stmt = $db->prepare("SELECT id, name, email, cpf, phone, role, hired_date, status, password FROM employees WHERE name LIKE ? OR cpf LIKE ? OR role LIKE ? ORDER BY created_at DESC");
+        $stmt = $db->prepare("SELECT id, name, email, cpf, phone, role, hired_date, status FROM employees WHERE name LIKE ? OR cpf LIKE ? OR role LIKE ? ORDER BY created_at DESC");
         $searchParam = "%{$searchTerm}%";
         $stmt->execute([$searchParam, $searchParam, $searchParam]);
     } else {
-        $stmt = $db->query("SELECT id, name, email, cpf, phone, role, hired_date, status, password FROM employees ORDER BY created_at DESC");
+        $stmt = $db->query("SELECT id, name, email, cpf, phone, role, hired_date, status FROM employees ORDER BY created_at DESC");
     }
     $employees = $stmt->fetchAll();
 } catch (PDOException $e) {
@@ -201,10 +201,6 @@ try {
 function formatCPF($cpf) {
     $cpf = preg_replace('/\D/', '', $cpf);
     return preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $cpf);
-}
-
-function maskPassword($password) {
-    return str_repeat('*', min(strlen($password), 8));
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) {
@@ -219,30 +215,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
     $password = $_POST['password'] ?? '';
     
     if (empty($name) || empty($email) || empty($cpf) || empty($phone) || empty($role) || empty($password)) {
-        $error = 'Por favor, preencha todos os campos obrigatórios.';
+        $error = 'Por favor, preencha todos os campos obrigatorios.';
     } else {
         try {
             // Check if employee already exists
             $stmt = $db->prepare("SELECT id FROM employees WHERE email = ? OR cpf = ?");
             $stmt->execute([$email, $cpf]);
             if ($stmt->fetch()) {
-                $error = 'Funcionário já cadastrado com este email ou CPF.';
+                $error = 'Funcionario ja cadastrado com este email ou CPF.';
             } else {
                 // Insert new employee
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $db->prepare("INSERT INTO employees (name, email, cpf, phone, birth_date, address, emergency_contact, role, password, status, hired_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', CURDATE())");
                 $stmt->execute([$name, $email, $cpf, $phone, $birth_date, $address, $emergency_contact, $role, $hashedPassword]);
                 
-                $success = 'Funcionário cadastrado com sucesso!';
+                $success = 'Funcionario cadastrado com sucesso!';
                 
                 // Reload employees list
-                $stmt = $db->query("SELECT id, name, email, cpf, phone, role, hired_date, status, password FROM employees ORDER BY created_at DESC");
+                $stmt = $db->query("SELECT id, name, email, cpf, phone, role, hired_date, status FROM employees ORDER BY created_at DESC");
                 $employees = $stmt->fetchAll();
             }
         } catch (PDOException $e) {
-            $error = 'Erro ao cadastrar funcionário. Tente novamente.';
-            $error = $e;
-            // error_log($e->getMessage());
+            $error = 'Erro ao cadastrar funcionario. Tente novamente.';
+            error_log($e->getMessage());
         }
     }
 }
@@ -252,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Funcionários</title>
+    <title>Gestao de Funcionarios</title>
     <link rel="stylesheet" href="admin.css">
     <style>
         * {
@@ -626,16 +621,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
     <div class="page-container">
         <div class="page-header">
             <div class="page-title">
-                <h1>Gestão de Funcionários</h1>
-                <p>Total: <?php echo count($employees); ?> funcionários cadastrados</p>
+                <h1>Gestao de Funcionarios</h1>
+                <p>Total: <?php echo count($employees); ?> funcionarios cadastrados</p>
             </div>
             <a href="home.php" class="back-link">
-                ← Voltar
+                ? Voltar
             </a>
         </div>
 
         <div class="form-card">
-            <h2 class="form-title">Cadastrar Novo Funcionário</h2>
+            <h2 class="form-title">Cadastrar Novo Funcionario</h2>
 
             <?php if ($success): ?>
                 <div class="alert alert-success">
@@ -677,13 +672,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
                     </div>
 
                     <div class="form-group">
-                        <label for="emergency_contact">Contato de Emergência</label>
+                        <label for="emergency_contact">Contato de Emergencia</label>
                         <input type="text" id="emergency_contact" name="emergency_contact" placeholder="Nome e telefone">
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="address">Endereço</label>
-                        <input type="text" id="address" name="address" placeholder="Rua, número, bairro, cidade">
+                        <label for="address">Endereco</label>
+                        <input type="text" id="address" name="address" placeholder="Rua, numero, bairro, cidade">
                     </div>
 
                     <div class="form-group">
@@ -701,19 +696,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
                     <div class="form-group">
                         <label for="password">Senha de Acesso <span>*</span></label>
                         <input type="password" id="password" name="password" required placeholder="Digite uma senha segura para acesso ao painel">
-                        <div class="form-help">Esta senha será usada para acessar o painel administrativo</div>
+                        <div class="form-help">Esta senha sera usada para acessar o painel administrativo</div>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="button" class="btn btn-cancel" onclick="document.getElementById('register-form').reset()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Adicionar Funcionário</button>
+                    <button type="submit" class="btn btn-primary">Adicionar Funcionario</button>
                 </div>
             </form>
         </div>
 
         <div class="employees-list">
-            <!-- Added search bar -->
             <div class="search-container">
                 <input type="text" class="search-input" id="search-input" placeholder="Buscar por nome, CPF ou cargo..." value="<?php echo htmlspecialchars($searchTerm); ?>">
                 <button type="button" class="btn-search" onclick="performSearch()">Buscar</button>
@@ -721,19 +715,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
 
             <?php if (empty($employees)): ?>
                 <div class="empty-state">
-                    Nenhum funcionário cadastrado
+                    Nenhum funcionario cadastrado
                 </div>
             <?php else: ?>
-                <!-- Updated employee list columns: nome, senha, cpf, cargo, ver mais -->
+                <!-- Employee list: nome, email, cpf, cargo, ver mais (no password hash shown) -->
                 <?php foreach ($employees as $employee): ?>
                     <div class="employee-item">
                         <div>
                             <div class="employee-name"><?php echo htmlspecialchars($employee['name']); ?></div>
                             <div class="employee-email"><?php echo htmlspecialchars($employee['email']); ?></div>
                         </div>
-                        <div class="employee-info"><?php echo maskPassword($employee['password'] ?? '********'); ?></div>
                         <div class="employee-info"><?php echo formatCPF($employee['cpf']); ?></div>
                         <div class="employee-info"><?php echo htmlspecialchars($employee['role']); ?></div>
+                        <div class="employee-info"><?php echo htmlspecialchars($employee['status'] === 'active' ? 'Ativo' : 'Inativo'); ?></div>
                         <div>
                             <button class="btn-view-more" onclick="viewEmployee(<?php echo $employee['id']; ?>)">Ver Mais</button>
                         </div>
@@ -747,7 +741,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
     <div class="modal" id="employee-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Detalhes do Funcionário</h3>
+                <h3 class="modal-title">Detalhes do Funcionario</h3>
                 <button class="btn-close" onclick="closeModal()">&times;</button>
             </div>
             <div id="modal-body">
@@ -756,11 +750,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
         </div>
     </div>
 
-    <script src="register-admin.js"></script>
     <script>
         function performSearch() {
             const searchTerm = document.getElementById('search-input').value;
-            window.location.href = `?search=${encodeURIComponent(searchTerm)}`;
+            window.location.href = '?search=' + encodeURIComponent(searchTerm);
         }
 
         // Allow search on Enter key
@@ -778,7 +771,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
             modal.classList.add('active');
 
             try {
-                const response = await fetch(`../api/employees.php?id=${id}`);
+                const response = await fetch('../api/employees.php?id=' + id);
                 const data = await response.json();
 
                 if (data.success && data.employee) {
@@ -805,11 +798,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
                             <div class="modal-detail-value">${emp.birth_date || '-'}</div>
                         </div>
                         <div class="modal-detail">
-                            <div class="modal-detail-label">Endereço</div>
+                            <div class="modal-detail-label">Endereco</div>
                             <div class="modal-detail-value">${emp.address || '-'}</div>
                         </div>
                         <div class="modal-detail">
-                            <div class="modal-detail-label">Contato de Emergência</div>
+                            <div class="modal-detail-label">Contato de Emergencia</div>
                             <div class="modal-detail-value">${emp.emergency_contact || '-'}</div>
                         </div>
                         <div class="modal-detail">
@@ -821,15 +814,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['access_password'])) 
                             <div class="modal-detail-value">${emp.status === 'active' ? 'Ativo' : 'Inativo'}</div>
                         </div>
                         <div class="modal-detail">
-                            <div class="modal-detail-label">Data de Contratação</div>
+                            <div class="modal-detail-label">Data de Contratacao</div>
                             <div class="modal-detail-value">${emp.hired_date || '-'}</div>
                         </div>
                     `;
                 } else {
-                    modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar dados do funcionário.</p>';
+                    modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar dados do funcionario.</p>';
                 }
             } catch (error) {
-                modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar dados do funcionário.</p>';
+                modalBody.innerHTML = '<p style="text-align: center; padding: 2rem; color: #ef4444;">Erro ao carregar dados do funcionario.</p>';
             }
         }
 
